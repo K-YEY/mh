@@ -1,6 +1,7 @@
 <script setup>
+import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { BookOpen, Scale } from 'lucide-vue-next'
+import { BookOpen, Scale, Plus } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
 
@@ -12,10 +13,10 @@ const props = defineProps({
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
-          <BookOpen class="w-6 h-6 text-zinc-950" />
+          <BookOpen class="w-6 h-6 text-blue-700" />
           <span>{{ isAr ? 'دفتر اليومية العامة الموزونة (JV)' : 'General Ledger Double-Entry Journals (JV)' }}</span>
         </h1>
         <p class="text-xs text-zinc-500">
@@ -23,9 +24,19 @@ const props = defineProps({
         </p>
       </div>
 
-      <div class="shadcn-card px-4 py-2 flex items-center gap-2 bg-zinc-900 text-white border-zinc-900">
-        <Scale class="w-4 h-4 text-white" />
-        <span class="text-xs font-bold text-white">{{ isAr ? 'توازن المدين والدائن مفعل صارم' : 'Strict Double-Entry Balancing Enforced' }}</span>
+      <div class="flex items-center gap-3">
+        <Link
+          :href="route('ledger.journals.create')"
+          class="px-4 py-2 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Plus class="w-4 h-4 font-bold" />
+          <span>{{ isAr ? 'إنشاء قيد يدوي / تسوية' : 'New Journal Entry' }}</span>
+        </Link>
+
+        <div class="shadcn-card px-3 py-2 flex items-center gap-2 bg-zinc-900 text-white border-zinc-900">
+          <Scale class="w-4 h-4 text-emerald-400" />
+          <span class="text-xs font-bold text-white">{{ isAr ? 'توازن صارم مفعل' : 'Balanced Double-Entry' }}</span>
+        </div>
       </div>
     </div>
 

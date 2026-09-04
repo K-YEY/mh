@@ -27,12 +27,29 @@ class PaymentVoucherController extends Controller
 
     public function create(): Response
     {
-        $parties = Party::where('is_active', true)->get();
-        $treasuryAccounts = Account::whereIn('code', ['11100', '11110', '11120'])->get(); // Cash & Bank
+        $parties = Party::where('is_active', true)->orderBy('name_en')->get();
+        $treasuryAccounts = Account::where('code', 'LIKE', '111%')
+            ->where('is_active', true)
+            ->whereNotNull('parent_id')
+            ->orderBy('code')
+            ->get();
+
+        if ($treasuryAccounts->isEmpty()) {
+            $treasuryAccounts = Account::where('type', 'ASSET')->where('is_active', true)->get();
+        }
 
         return Inertia::render('Accounting/Vouchers/Create', [
             'parties' => $parties,
             'accounts' => $treasuryAccounts,
+        ]);
+    }
+
+    public function show(PaymentVoucher $voucher): Response
+    {
+        $voucher->load(['party', 'account', 'journalEntry.lines.account']);
+
+        return Inertia::render('Accounting/Vouchers/Show', [
+            'voucher' => $voucher,
         ]);
     }
 
@@ -50,9 +67,9 @@ class PaymentVoucherController extends Controller
             'reference_number' => 'nullable|string',
         ]);
 
-        $action->execute($validated);
+        $voucher = $action->execute($validated);
 
-        return redirect()->route('vouchers.index')
-            ->with('success', 'Treasury Voucher processed and posted successfully.');
+        return redirect()->route('vouchers.show', $voucher->id)
+            ->with('success', 'تم حفظ وترحيل السند المحاسبي بنجاح وتوليد القيد الآلي.');
     }
 }

@@ -6,7 +6,7 @@ import {
   Anchor, LayoutDashboard, Ship, Calculator, Receipt, Coins, ShieldCheck, 
   TrendingUp, BookOpen, Building2, FileCheck2, User, Search, Bell, 
   ThermometerSnowflake, ChevronsUpDown, PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
-  Truck
+  Truck, Scale, FileSpreadsheet, BarChart3
 } from 'lucide-vue-next'
 
 const isSidebarOpen = ref(true)
@@ -122,16 +122,36 @@ const navGroups = computed(() => [
         pattern: 'exchange-rates.*' 
       },
       { 
-        name: isAr.value ? 'دفتر اليومية العامة (GL)' : 'General Ledger (GL)', 
+        name: isAr.value ? 'دفتر اليومية العامة (JV)' : 'Journal Entries (JV)', 
         href: route('ledger.journals'), 
         icon: BookOpen, 
-        pattern: 'ledger.journals' 
+        pattern: 'ledger.journals*' 
+      },
+      { 
+        name: isAr.value ? 'دفتر الأستاذ العام (Ledger)' : 'General Ledger Account', 
+        href: route('accounting.reports.general-ledger'), 
+        icon: FileSpreadsheet, 
+        pattern: 'accounting.reports.general-ledger*' 
       },
       { 
         name: isAr.value ? 'كشف حساب الأطراف' : 'Party Sub-Ledger', 
         href: route('ledger.statement'), 
         icon: Building2, 
-        pattern: 'ledger.statement' 
+        pattern: 'ledger.statement*' 
+      },
+      { 
+        name: isAr.value ? 'ميزان المراجعة (Trial Balance)' : 'Trial Balance', 
+        href: route('accounting.reports.trial-balance'), 
+        icon: Scale, 
+        pattern: 'accounting.reports.trial-balance*', 
+        badge: isAr.value ? 'ميزان' : 'TB' 
+      },
+      { 
+        name: isAr.value ? 'قائمة الدخل والأرباح (P&L)' : 'Income Statement (P&L)', 
+        href: route('accounting.reports.income-statement'), 
+        icon: BarChart3, 
+        pattern: 'accounting.reports.income-statement*', 
+        badge: isAr.value ? 'أرباح' : 'P&L' 
       },
     ]
   },

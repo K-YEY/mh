@@ -43,11 +43,14 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
+            $arAccountId = \App\Models\Account::where('code', '11200')->value('id') ?? 2;
+            $apAccountId = \App\Models\Account::where('code', '21100')->value('id') ?? 3;
+
             if ($isCustomerInvoice) {
                 // AR Account (11200) Debit
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => 2, // Accounts Receivable
+                    'account_id' => $arAccountId, // Accounts Receivable
                     'party_id' => $invoice->party_id,
                     'description' => "AR - Invoice {$invoice->invoice_number}",
                     'currency_code' => $invoice->currency_code,
@@ -87,7 +90,7 @@ class DoubleEntryPostingService
                 // AP Account (21100) Credit
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => 3, // Accounts Payable
+                    'account_id' => $apAccountId, // Accounts Payable
                     'party_id' => $invoice->party_id,
                     'description' => "AP - Bill {$invoice->invoice_number}",
                     'currency_code' => $invoice->currency_code,
@@ -135,6 +138,9 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
+            $arAccountId = \App\Models\Account::where('code', '11200')->value('id') ?? 2;
+            $apAccountId = \App\Models\Account::where('code', '21100')->value('id') ?? 3;
+
             if ($isReceipt) {
                 // Bank/Cash Account Debit
                 JournalEntryLine::create([
@@ -151,7 +157,7 @@ class DoubleEntryPostingService
                 // AR Account Credit
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => 2, // AR
+                    'account_id' => $arAccountId, // AR
                     'party_id' => $voucher->party_id,
                     'description' => 'AR Payment received',
                     'currency_code' => $voucher->currency_code,
@@ -163,7 +169,7 @@ class DoubleEntryPostingService
                 // AP Account Debit
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => 3, // AP
+                    'account_id' => $apAccountId, // AP
                     'party_id' => $voucher->party_id,
                     'description' => 'AP Vendor payment made',
                     'currency_code' => $voucher->currency_code,

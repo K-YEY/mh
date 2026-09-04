@@ -129,12 +129,11 @@ class DatabaseSeeder extends Seeder
         DocumentType::firstOrCreate(['code' => 'COO_EUR1'], ['name_ar' => 'شهادة المنشأ اليورو 1', 'name_en' => 'Certificate of Origin EURO 1', 'requires_expiry_date' => false, 'requires_reference_no' => true]);
         DocumentType::firstOrCreate(['code' => 'COO'], ['name_ar' => 'شهادة المنشأ', 'name_en' => 'Certificate of Origin', 'requires_expiry_date' => false, 'requires_reference_no' => true]);
 
-        // 7. Chart of Accounts
-        $cBank = Account::firstOrCreate(['code' => '11100'], ['name_ar' => 'بنك مصر حساب دولار', 'name_en' => 'BM USD Bank Account', 'type' => 'ASSET']);
-        $cAR = Account::firstOrCreate(['code' => '11200'], ['name_ar' => 'حسابات العملاء المجمعة', 'name_en' => 'Accounts Receivable Control', 'type' => 'ASSET']);
-        $cAP = Account::firstOrCreate(['code' => '21100'], ['name_ar' => 'حسابات الموردين وخطوط الشحن', 'name_en' => 'Accounts Payable Control', 'type' => 'LIABILITY']);
-        $cRev = Account::firstOrCreate(['code' => '41100'], ['name_ar' => 'إيرادات نولون الشحن البحري', 'name_en' => 'Ocean Freight Revenue', 'type' => 'REVENUE']);
-        $cExp = Account::firstOrCreate(['code' => '51100'], ['name_ar' => 'تكاليف نولون خطوط الشحن', 'name_en' => 'Ocean Line Freight Expense', 'type' => 'EXPENSE']);
+        // 7. Master Chart of Accounts
+        $this->call(ChartOfAccountsSeeder::class);
+
+        $cRev = Account::where('code', '41100')->first();
+        $cExp = Account::where('code', '51100')->first();
 
         // 8. Charge Items
         $ciFreight = ChargeItem::firstOrCreate(['code' => 'OFRT'], ['name_ar' => 'نولون شحن بحري مبرد', 'name_en' => 'Ocean Freight Reefer', 'revenue_account_id' => $cRev->id, 'expense_account_id' => $cExp->id]);

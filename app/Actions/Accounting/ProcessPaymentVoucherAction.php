@@ -15,7 +15,7 @@ class ProcessPaymentVoucherAction
         protected SequenceGeneratorService $sequenceGenerator
     ) {}
 
-    public function execute(array $data): JournalEntry
+    public function execute(array $data): PaymentVoucher
     {
         $year = (int) date('Y', strtotime($data['payment_date'] ?? 'now'));
         $docType = $data['voucher_type'] === 'RECEIPT' ? 'RECEIPT_VOUCHER' : 'PAYMENT_VOUCHER';
@@ -28,6 +28,8 @@ class ProcessPaymentVoucherAction
 
         AuditLoggerService::log($voucher, 'create', "Created Treasury Voucher {$voucher->voucher_number}");
 
-        return $this->postingService->postVoucherJournal($voucher);
+        $this->postingService->postVoucherJournal($voucher);
+
+        return $voucher;
     }
 }

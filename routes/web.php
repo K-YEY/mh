@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\ExchangeRateController;
+use App\Http\Controllers\Accounting\FinancialReportController;
 use App\Http\Controllers\Accounting\InvoiceController;
 use App\Http\Controllers\Accounting\LedgerReportController;
 use App\Http\Controllers\Accounting\PaymentVoucherController;
@@ -68,7 +69,14 @@ Route::middleware('auth')->group(function () {
         Route::post('exchange-rates', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
 
         Route::get('journal-entries', [LedgerReportController::class, 'journalEntries'])->name('ledger.journals');
+        Route::get('journal-entries/create', [LedgerReportController::class, 'createJournalEntry'])->name('ledger.journals.create');
+        Route::post('journal-entries', [LedgerReportController::class, 'storeJournalEntry'])->name('ledger.journals.store');
         Route::get('sub-ledger', [LedgerReportController::class, 'subLedgerStatement'])->name('ledger.statement');
+
+        // Financial Reports
+        Route::get('reports/trial-balance', [FinancialReportController::class, 'trialBalance'])->name('accounting.reports.trial-balance');
+        Route::get('reports/income-statement', [FinancialReportController::class, 'incomeStatement'])->name('accounting.reports.income-statement');
+        Route::get('reports/general-ledger', [FinancialReportController::class, 'generalLedger'])->name('accounting.reports.general-ledger');
     });
 
     // Document Vault

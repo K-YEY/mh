@@ -45,12 +45,15 @@ const props = defineProps({
             <th class="p-4">{{ isAr ? 'حساب الخزينة / البنك' : 'GL Treasury Account' }}</th>
             <th class="p-4">{{ isAr ? 'تاريخ السداد' : 'Payment Date' }}</th>
             <th class="p-4" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'المبلغ' : 'Amount' }}</th>
+            <th class="p-4 text-center">{{ isAr ? 'إجراء' : 'Action' }}</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-zinc-200 font-sans">
           <tr v-for="v in vouchers.data" :key="v.id" class="hover:bg-zinc-50 transition-colors">
             <td class="p-4 font-mono font-bold text-zinc-950 text-sm">
-              {{ v.voucher_number }}
+              <Link :href="route('vouchers.show', v.id)" class="text-blue-700 hover:underline">
+                {{ v.voucher_number }}
+              </Link>
             </td>
             <td class="p-4">
               <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-zinc-100 text-zinc-950 border-zinc-300">
@@ -72,10 +75,18 @@ const props = defineProps({
             <td class="p-4 font-mono font-bold text-zinc-950 text-sm" :class="isAr ? 'text-left' : 'text-right'">
               ${{ v.amount }} {{ v.currency_code }}
             </td>
+            <td class="p-4 text-center">
+              <Link
+                :href="route('vouchers.show', v.id)"
+                class="px-2.5 py-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+              >
+                {{ isAr ? 'معاينة / طباعة' : 'View / Print' }}
+              </Link>
+            </td>
           </tr>
 
           <tr v-if="!vouchers.data?.length">
-            <td colspan="7" class="p-8 text-center text-zinc-500 font-mono">
+            <td colspan="8" class="p-8 text-center text-zinc-500 font-mono">
               {{ isAr ? 'لا توجد سندات قبض أو صرف مسجلة حالياً' : 'No treasury vouchers recorded yet.' }}
             </td>
           </tr>
