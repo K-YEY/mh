@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+/* Shadcn UI Kit Official Monochromatic Black & White Theme */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+
+  --accent: 214 95% 93%;
+  --accent-foreground: 222 47% 11%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 221.2 83.2% 53.3%;
+
+  --radius: 0.5rem;
+
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 240 5.9% 10%;
+  --sidebar-primary: 221.2 83.2% 53.3%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 214 95% 93%;
+  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-border: 240 5.9% 90%;
+}
+
+@theme {
+  --font-cairo: 'Cairo', sans-serif;
+  --font-sans: 'Cairo', 'Plus Jakarta Sans', 'Alexandria', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: #e4e4e7;
+  }
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Cairo', 'Plus Jakarta Sans', 'Alexandria', system-ui, -apple-system, sans-serif;
+  }
+
+  [dir="rtl"], body[dir="rtl"], html[dir="rtl"] {
+    font-family: 'Cairo', 'Alexandria', system-ui, -apple-system, sans-serif;
+  }
+
+  [dir="ltr"], body[dir="ltr"], html[dir="ltr"] {
+    font-family: 'Plus Jakarta Sans', 'Cairo', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Shadcnuikit Pure Trust Blue & Crisp Card Primitives */
+.shadcn-card {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
+}
+
+.shadcn-input {
+  display: flex;
+  height: 2.25rem;
+  width: 100%;
+  border-radius: calc(var(--radius) - 0.125rem);
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.875rem;
+  color: #0f172a;
+  transition: all 0.15s ease-in-out;
+}
+
+.shadcn-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.shadcn-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) - 0.125rem);
+  font-size: 0.875rem;
+  font-weight: 600;
+  height: 2.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: #1d4ed8;
+  color: #ffffff;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgb(29 78 216 / 0.2);
+}
+
+.shadcn-btn-primary:hover {
+  background-color: #1e40af;
+}
+
+.shadcn-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) - 0.125rem);
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 2.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: #f4f4f5;
+  color: #09090b;
+  border: 1px solid #e4e4e7;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.shadcn-btn-secondary:hover {
+  background-color: #e4e4e7;
+}
+
+.shadcn-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) - 0.125rem);
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 2.25rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: #ffffff;
+  color: #09090b;
+  border: 1px solid #e4e4e7;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.shadcn-btn-outline:hover {
+  background-color: #f4f4f5;
+  color: #000000;
+}
+
+.shadcn-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: calc(var(--radius) - 0.125rem);
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 2.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  background-color: transparent;
+  color: #52525b;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.shadcn-btn-ghost:hover {
+  background-color: #f4f4f5;
+  color: #09090b;
+}
+
+.shadcn-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #f4f4f5;
+  color: #09090b;
+  border: 1px solid #e4e4e7;
+}
+
+/* Monochromatic Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+::-webkit-scrollbar-thumb {
+  background: #a1a1aa;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}

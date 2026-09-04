@@ -1,0 +1,495 @@
+[☀️ Summer Sale: 40% off all plans for a limited time.Get the deal](https://shadcnuikit.com/pricing)
+- [Admin Dashboards](https://shadcnuikit.com/admin-dashboard)
+- Components & Blocks 
+- [Templates](https://shadcnuikit.com/templates)
+- [Theme Generator](https://shadcnuikit.com/theme-generator)
+- [Roadmap](https://shadcnuikit.com/roadmap)
+[Admin Dashboards](https://shadcnuikit.com/admin-dashboard)
+[Templates](https://shadcnuikit.com/templates)
+[Theme Generator](https://shadcnuikit.com/theme-generator)
+[Roadmap](https://shadcnuikit.com/roadmap)
+
+## Command Palette
+
+Search for a command to run...
+[Sign In](https://shadcnuikit.com/auth/login)
+[Get All Access](https://shadcnuikit.com/pricing)
+
+# 520+ Free Shadcn UI Components
+
+Browse 522 free shadcn/ui component variants covering base elements, forms, data display, navigation, feedback and charts. Preview every component live, then copy and paste the code or install it with the shadcn CLI. Built with shadcn/ui, Tailwind CSS and React.
+[Accordion12 variants](https://shadcnuikit.com/components/accordion)
+
+#### Accordion
+12 variants
+[Alert15 variants](https://shadcnuikit.com/components/alert)
+
+#### Alert
+15 variants
+[Alert Dialog16 variants](https://shadcnuikit.com/components/alert-dialog)
+
+#### Alert Dialog
+16 variants
+[Attachment5 variants](https://shadcnuikit.com/components/attachment)
+
+#### Attachment
+5 variants
+[ButtAutocomplete5 variants](https://shadcnuikit.com/components/autocomplete)
+
+#### Autocomplete
+5 variants
+[Avatar21 variants](https://shadcnuikit.com/components/avatar)
+
+#### Avatar
+21 variants
+[Badge17 variants](https://shadcnuikit.com/components/badge)
+
+#### Badge
+17 variants
+[Breadcrumb6 variants](https://shadcnuikit.com/components/breadcrumb)
+
+#### Breadcrumb
+6 variants
+[Button27 variants](https://shadcnuikit.com/components/button)
+
+#### Button
+27 variants
+[Button Group20 variants](https://shadcnuikit.com/components/button-group)
+
+#### Button Group
+20 variants
+[Bubble7 variants](https://shadcnuikit.com/components/bubble)
+
+#### Bubble
+7 variants
+[Calendar15 variants](https://shadcnuikit.com/components/calendar)
+
+#### Calendar
+15 variants
+[Card9 variants](https://shadcnuikit.com/components/card)
+
+#### Card
+9 variants
+[Carousel13 variants](https://shadcnuikit.com/components/carousel)
+
+#### Carousel
+13 variants
+[Checkbox13 variants](https://shadcnuikit.com/components/checkbox)
+
+#### Checkbox
+13 variants
+[Collapsible8 variants](https://shadcnuikit.com/components/collapsible)
+
+#### Collapsible
+8 variants
+[Combobox12 variants](https://shadcnuikit.com/components/combobox)
+
+#### Combobox
+12 variants
+[Command9 variants](https://shadcnuikit.com/components/command)
+
+#### Command
+9 variants
+[Context Menu1 variants](https://shadcnuikit.com/components/context-menu)
+
+#### Context Menu
+1 variants
+[Data Table6 variants](https://shadcnuikit.com/components/data-table)
+
+#### Data Table
+6 variants
+[Drawer6 variants](https://shadcnuikit.com/components/drawer)
+
+#### Drawer
+6 variants
+[Dropdown Menu12 variants](https://shadcnuikit.com/components/dropdown-menu)
+
+#### Dropdown Menu
+12 variants
+[Empty State8 variants](https://shadcnuikit.com/components/empty)
+
+#### Empty State
+8 variants
+[Field10 variants](https://shadcnuikit.com/components/field)
+
+#### Field
+10 variants
+[Hover Card3 variants](https://shadcnuikit.com/components/hover-card)
+
+#### Hover Card
+3 variants
+[Spinner14 variants](https://shadcnuikit.com/components/spinner)
+
+#### Spinner
+14 variants
+[Input25 variants](https://shadcnuikit.com/components/input)
+
+#### Input
+25 variants
+[Item10 variants](https://shadcnuikit.com/components/item)
+
+#### Item
+10 variants
+[Menubar1 variants](https://shadcnuikit.com/components/menubar)
+
+#### Menubar
+1 variants
+[Native Select9 variants](https://shadcnuikit.com/components/native-select)
+
+#### Native Select
+9 variants
+[Navigation Menu4 variants](https://shadcnuikit.com/components/navigation-menu)
+
+#### Navigation Menu
+4 variants
+[Pagination12 variants](https://shadcnuikit.com/components/pagination)
+
+#### Pagination
+12 variants
+[Popover6 variants](https://shadcnuikit.com/components/popover)
+
+#### Popover
+6 variants
+[Progress10 variants](https://shadcnuikit.com/components/progress)
+
+#### Progress
+10 variants
+[Radio Group15 variants](https://shadcnuikit.com/components/radio-group)
+
+#### Radio Group
+15 variants
+[Scroll Area6 variants](https://shadcnuikit.com/components/scroll-area)
+
+#### Scroll Area
+6 variants
+[Select15 variants](https://shadcnuikit.com/components/select)
+
+#### Select
+15 variants
+[Separator16 variants](https://shadcnuikit.com/components/separator)
+
+#### Separator
+16 variants
+[Sheet8 variants](https://shadcnuikit.com/components/sheet)
+
+#### Sheet
+8 variants
+[Sonner Toast12 variants](https://shadcnuikit.com/components/sonner-toast)
+
+#### Sonner Toast
+12 variants
+[Skeleton7 variants](https://shadcnuikit.com/components/skeleton)
+
+#### Skeleton
+7 variants
+[Slider13 variants](https://shadcnuikit.com/components/slider)
+
+#### Slider
+13 variants
+[Switch10 variants](https://shadcnuikit.com/components/switch)
+
+#### Switch
+10 variants
+[Table12 variants](https://shadcnuikit.com/components/table)
+
+#### Table
+12 variants
+[Tabs15 variants](https://shadcnuikit.com/components/tabs)
+
+#### Tabs
+15 variants
+
+# 520+ Free Shadcn UI Components
+
+[Textarea11 variants](https://shadcnuikit.com/components/textarea)
+
+#### Textarea
+11 variants
+[BIUToggle7 variants](https://shadcnuikit.com/components/toggle)
+
+#### Toggle
+7 variants
+[Tooltip8 variants](https://shadcnuikit.com/components/tooltip)
+
+#### Tooltip
+8 variants
+
+## Free and Premium Shadcn UI Components for Modern Apps
+
+A growing collection of beautifully designed, clean and modern [shadcn/ui](https://ui.shadcn.com) components built for [React](https://react.dev) and [Next.js](https://nextjs.org) projects. Browse 500+ free and premium component variants in 48 categories. Each component focuses on behavior, interaction and reuse, helping teams build consistent interfaces, scalable design systems and production ready applications faster. Start with the free components or unlock the whole collection with [All Access](https://shadcnuikit.com/pricing).
+
+### Why Developers Choose These Shadcn UI Components
+- Preview, copy or install: Preview every variant live, copy the code with one click or install it directly through the shadcn CLI and our registry.
+- Easy to customize: Modify layout, styles and behavior directly in code with [Tailwind CSS](https://tailwindcss.com) utilities and CSS variables, without breaking structure.
+- [Radix UI](https://www.radix-ui.com) and [Base UI](https://base-ui.com) support: Every component works with both Radix UI and Base UI primitives, so you can use the library that fits your stack.
+- 48 component categories: From [accordions](https://shadcnuikit.com/components/accordion) and [buttons](https://shadcnuikit.com/components/button) to [data tables](https://shadcnuikit.com/components/data-table) and [tooltips](https://shadcnuikit.com/components/tooltip), every category is organized for quick discovery.
+- Variants and states included: Hover, active, disabled and loading states are covered, so components behave correctly in production from day one.
+- Dark mode ready: Every component supports light and dark themes out of the box. Create your own palette with the free [Theme Generator](https://shadcnuikit.com/theme-generator).
+- Works across React frameworks: Fully compatible with Next.js and modern React setups used in SaaS products, admin dashboards and landing pages.
+- CLI and MCP integration: Browse, generate and extend components directly inside your development environment with the shadcn CLI and MCP server.
+[Tailwind CSS](https://tailwindcss.com)
+[Radix UI](https://www.radix-ui.com)
+[Base UI](https://base-ui.com)
+[accordions](https://shadcnuikit.com/components/accordion)
+[buttons](https://shadcnuikit.com/components/button)
+[data tables](https://shadcnuikit.com/components/data-table)
+[tooltips](https://shadcnuikit.com/components/tooltip)
+[Theme Generator](https://shadcnuikit.com/theme-generator)
+
+### Designed to Work Within Existing Workflows
+Shadcn UI Kit provides free and premium components, [UI blocks](https://shadcnuikit.com/blocks) and [website templates](https://shadcnuikit.com/templates) built on shadcn/ui with support for both Radix UI and Base UI primitives. The reusable patterns help developers build scalable, accessible and modern interfaces with React and Tailwind CSS.
+The library integrates seamlessly into existing design systems. Every component is fully customizable, giving you complete control over layout, styling and behavior. Install components with your favorite package manager, reuse navigation menus, forms and interactive elements, and accelerate development with production grade foundations.
+Shadcn UI Kit also includes [admin dashboard templates](https://shadcnuikit.com/admin-dashboard), [ready made examples](https://shadcnuikit.com/examples) and [illustrations](https://shadcnuikit.com/illustrations). These resources help developers move from prototype to production while maintaining consistency, performance and scalability.
+
+### Are these shadcn/ui components free?
+[All Access plan](https://shadcnuikit.com/pricing)
+
+### Do the components support dark mode?
+[Theme Generator](https://shadcnuikit.com/theme-generator)
+
+### Highlights
+
+- Preview, copy and customize with ease
+- 500+ free and premium Shadcn UI components
+- Compatible with Radix UI and Base UI primitives
+- 48 component categories for common UI patterns
+- Dark mode and TypeScript support
+- CLI and MCP tools for faster setup
+Shadcn UI Kit is a complete collection of admin dashboards, components, blocks, website templates, and a Figma design system, built to help teams save time, reduce costs, and ship faster.
+[Follow](https://x.com/tobybelhome)
+[Github](https://github.com/bundui)
+[GramotionMotion graphic design editorSponsor](https://gramotion.video/)
+[Shadcn AdminMultipurpose tailwind admin dashboard templatesSponsor](https://shadcnadmin.com/)
+- [Admin Dashboards](https://shadcnuikit.com/admin-dashboard)
+- [Components](https://shadcnuikit.com/components)
+- [Blocks](https://shadcnuikit.com/blocks)
+- [Examples](https://shadcnuikit.com/examples)
+- [Illustrations](https://shadcnuikit.com/illustrations)
+- [Templates](https://shadcnuikit.com/templates)
+- [Theme Generator Beta](https://shadcnuikit.com/theme-generator)
+- [Figma File Coming Soon](http://shadcnuikit.com/)
+- [BoilerplateComing Soon](http://shadcnuikit.com/)
+[Admin Dashboards](https://shadcnuikit.com/admin-dashboard)
+[Components](https://shadcnuikit.com/components)
+[Blocks](https://shadcnuikit.com/blocks)
+[Examples](https://shadcnuikit.com/examples)
+[Illustrations](https://shadcnuikit.com/illustrations)
+[Templates](https://shadcnuikit.com/templates)
+[Theme Generator Beta](https://shadcnuikit.com/theme-generator)
+[Figma File Coming Soon](http://shadcnuikit.com/)
+[BoilerplateComing Soon](http://shadcnuikit.com/)
+- [Waitly - Free Next.js Waitlist Template](https://shadcnuikit.com/template/waitly-free-waitlist-template)
+- [Neofolio - Next.js Portfolio Template](https://shadcnuikit.com/template/neofolio-portfolio-template)
+- [Soho - Next.js Chat App Template](https://shadcnuikit.com/template/soho-chat-app-template)
+- [Cosmic - Next.js SaaS Landing Page Template](https://shadcnuikit.com/template/cosmic-landing-page-template)
+[Waitly - Free Next.js Waitlist Template](https://shadcnuikit.com/template/waitly-free-waitlist-template)
+[Neofolio - Next.js Portfolio Template](https://shadcnuikit.com/template/neofolio-portfolio-template)
+[Soho - Next.js Chat App Template](https://shadcnuikit.com/template/soho-chat-app-template)
+[Cosmic - Next.js SaaS Landing Page Template](https://shadcnuikit.com/template/cosmic-landing-page-template)
+- [Pricing](https://shadcnuikit.com/pricing)
+- [Roadmap](https://shadcnuikit.com/roadmap)
+- [Changelog](https://shadcnuikit.com/changelog)
+- [Blog](https://shadcnuikit.com/blog)
+- [Affiliates](https://bundui.lemonsqueezy.com/affiliates)[Earn %20](https://bundui.lemonsqueezy.com/affiliates)
+- [HTMLrev](https://htmlrev.com/)
+[Pricing](https://shadcnuikit.com/pricing)
+[Roadmap](https://shadcnuikit.com/roadmap)
+[Changelog](https://shadcnuikit.com/changelog)
+[Blog](https://shadcnuikit.com/blog)
+[Affiliates](https://bundui.lemonsqueezy.com/affiliates)
+[Earn %20](https://bundui.lemonsqueezy.com/affiliates)
+[HTMLrev](https://htmlrev.com/)
+- [Base](https://shadcnuikit.com/components?category=base)
+- [Data Display](https://shadcnuikit.com/components?category=data-display)
+- [Navigation](https://shadcnuikit.com/components?category=navigation)
+- [Form](https://shadcnuikit.com/components?category=form)
+- [Feedback](https://shadcnuikit.com/components?category=feedback)
+[Base](https://shadcnuikit.com/components?category=base)
+[Data Display](https://shadcnuikit.com/components?category=data-display)
+[Navigation](https://shadcnuikit.com/components?category=navigation)
+[Form](https://shadcnuikit.com/components?category=form)
+[Feedback](https://shadcnuikit.com/components?category=feedback)
+- [Hero Section](https://shadcnuikit.com/blocks/marketing/hero-sections)
+- [Call to Action](https://shadcnuikit.com/blocks/marketing/cta-sections)
+- [Changelog Page](https://shadcnuikit.com/blocks/marketing/changelog-page)
+- [Pricing Table](https://shadcnuikit.com/blocks/marketing/pricing-tables)
+- [Feature Section](https://shadcnuikit.com/blocks/marketing/feature-sections)
+- [Testimonials](https://shadcnuikit.com/blocks/marketing/testimonials)
+- [Team Sections](https://shadcnuikit.com/blocks/marketing/team-sections)
+- [Integrations](https://shadcnuikit.com/blocks/marketing/integrations)
+- [Newsletter Sections](https://shadcnuikit.com/blocks/marketing/newsletter-sections)
+- [Contact Us](https://shadcnuikit.com/blocks/marketing/contact-us)
+
+### Highlights
+
+- [How It Works](https://shadcnuikit.com/blocks/marketing/how-it-works)
+- [Stats](https://shadcnuikit.com/blocks/marketing/stats)
+- [FAQs](https://shadcnuikit.com/blocks/marketing/faqs)
+- [Footers](https://shadcnuikit.com/blocks/marketing/footers)
+- [Navbars](https://shadcnuikit.com/blocks/marketing/navbars)
+- [Checkout Page](https://shadcnuikit.com/blocks/ecommerce/checkout-page)
+- [Product List](https://shadcnuikit.com/blocks/ecommerce/product-list)
+- [Product Category](https://shadcnuikit.com/blocks/ecommerce/product-category)
+- [Product Cards](https://shadcnuikit.com/blocks/ecommerce/product-cards)
+- [Product Details](https://shadcnuikit.com/blocks/ecommerce/product-details)
+- [Product Features](https://shadcnuikit.com/blocks/ecommerce/product-features)
+- [Shopping Cart](https://shadcnuikit.com/blocks/ecommerce/shopping-cart)
+- [Promo Sections](https://shadcnuikit.com/blocks/ecommerce/promo-sections)
+- [Store Navigation](https://shadcnuikit.com/blocks/ecommerce/store-navigation)
+- [Customer Reviews](https://shadcnuikit.com/blocks/ecommerce/customer-reviews)
+- [Product Quickviews](https://shadcnuikit.com/blocks/ecommerce/product-quickviews)
+- [Form Layouts](https://shadcnuikit.com/blocks/dashboard-ui/form-layouts)
+- [Charts](https://shadcnuikit.com/blocks/dashboard-ui/charts)
+- [Signin Forms](https://shadcnuikit.com/blocks/dashboard-ui/sign-in-forms)
+- [Stat Cards](https://shadcnuikit.com/blocks/dashboard-ui/stat-cards)
+- [Modal Dialogs](https://shadcnuikit.com/blocks/dashboard-ui/modal-dialogs)
+- [Page Layouts](https://shadcnuikit.com/blocks/dashboard-ui/page-layouts)
+- [Sidebar Layouts](https://shadcnuikit.com/blocks/dashboard-ui/sidebar-layouts)
+- [Tables](https://shadcnuikit.com/blocks/dashboard-ui/tables)
+[Hero Section](https://shadcnuikit.com/blocks/marketing/hero-sections)
+[Call to Action](https://shadcnuikit.com/blocks/marketing/cta-sections)
+[Changelog Page](https://shadcnuikit.com/blocks/marketing/changelog-page)
+[Pricing Table](https://shadcnuikit.com/blocks/marketing/pricing-tables)
+[Feature Section](https://shadcnuikit.com/blocks/marketing/feature-sections)
+[Testimonials](https://shadcnuikit.com/blocks/marketing/testimonials)
+[Team Sections](https://shadcnuikit.com/blocks/marketing/team-sections)
+[Integrations](https://shadcnuikit.com/blocks/marketing/integrations)
+[Newsletter Sections](https://shadcnuikit.com/blocks/marketing/newsletter-sections)
+[Contact Us](https://shadcnuikit.com/blocks/marketing/contact-us)
+[How It Works](https://shadcnuikit.com/blocks/marketing/how-it-works)
+[Stats](https://shadcnuikit.com/blocks/marketing/stats)
+[FAQs](https://shadcnuikit.com/blocks/marketing/faqs)
+[Footers](https://shadcnuikit.com/blocks/marketing/footers)
+[Navbars](https://shadcnuikit.com/blocks/marketing/navbars)
+[Checkout Page](https://shadcnuikit.com/blocks/ecommerce/checkout-page)
+[Product List](https://shadcnuikit.com/blocks/ecommerce/product-list)
+[Product Category](https://shadcnuikit.com/blocks/ecommerce/product-category)
+[Product Cards](https://shadcnuikit.com/blocks/ecommerce/product-cards)
+[Product Details](https://shadcnuikit.com/blocks/ecommerce/product-details)
+[Product Features](https://shadcnuikit.com/blocks/ecommerce/product-features)
+[Shopping Cart](https://shadcnuikit.com/blocks/ecommerce/shopping-cart)
+[Promo Sections](https://shadcnuikit.com/blocks/ecommerce/promo-sections)
+[Store Navigation](https://shadcnuikit.com/blocks/ecommerce/store-navigation)
+[Customer Reviews](https://shadcnuikit.com/blocks/ecommerce/customer-reviews)
+[Product Quickviews](https://shadcnuikit.com/blocks/ecommerce/product-quickviews)
+[Form Layouts](https://shadcnuikit.com/blocks/dashboard-ui/form-layouts)
+[Charts](https://shadcnuikit.com/blocks/dashboard-ui/charts)
+[Signin Forms](https://shadcnuikit.com/blocks/dashboard-ui/sign-in-forms)
+[Stat Cards](https://shadcnuikit.com/blocks/dashboard-ui/stat-cards)
+[Modal Dialogs](https://shadcnuikit.com/blocks/dashboard-ui/modal-dialogs)
+[Page Layouts](https://shadcnuikit.com/blocks/dashboard-ui/page-layouts)
+[Sidebar Layouts](https://shadcnuikit.com/blocks/dashboard-ui/sidebar-layouts)
+[Tables](https://shadcnuikit.com/blocks/dashboard-ui/tables)
+- [Blog Cards](https://shadcnuikit.com/examples/cards/blog)
+- [Chat Bubbles](https://shadcnuikit.com/examples/cards/chat-bubble)
+- [Payment Methods](https://shadcnuikit.com/examples/cards/payment-methods)
+- [Product Cards](https://shadcnuikit.com/examples/cards/product-cards)
+
+### Highlights
+
+- [Product List](https://shadcnuikit.com/examples/cards/product-list)
+- [Social Media Post](https://shadcnuikit.com/examples/cards/social-media-post)
+- [Review Cards](https://shadcnuikit.com/examples/cards/review)
+- [Stat Cards](https://shadcnuikit.com/examples/cards/stat)
+- [Task Cards](https://shadcnuikit.com/examples/cards/task)
+- [Welcome Cards](https://shadcnuikit.com/examples/cards/welcome)
+- [Ecommerce Charts](https://shadcnuikit.com/examples/charts/ecommerce)
+- [Line Charts](https://shadcnuikit.com/examples/charts/line)
+- [Project Management Charts](https://shadcnuikit.com/examples/charts/project-management)
+- [Use Cases](https://shadcnuikit.com/examples/date-picker/use-cases)
+- [User Menus](https://shadcnuikit.com/examples/dropdown-menu/user-menus)
+- [Authentication Forms](https://shadcnuikit.com/examples/form/authentication)
+- [Switch Cards](https://shadcnuikit.com/examples/switch/cards)
+- [Theme Switchers](https://shadcnuikit.com/examples/switch/theme-switcher)
+[Blog Cards](https://shadcnuikit.com/examples/cards/blog)
+[Chat Bubbles](https://shadcnuikit.com/examples/cards/chat-bubble)
+[Payment Methods](https://shadcnuikit.com/examples/cards/payment-methods)
+[Product Cards](https://shadcnuikit.com/examples/cards/product-cards)
+[Product List](https://shadcnuikit.com/examples/cards/product-list)
+[Social Media Post](https://shadcnuikit.com/examples/cards/social-media-post)
+[Review Cards](https://shadcnuikit.com/examples/cards/review)
+[Stat Cards](https://shadcnuikit.com/examples/cards/stat)
+[Task Cards](https://shadcnuikit.com/examples/cards/task)
+[Welcome Cards](https://shadcnuikit.com/examples/cards/welcome)
+[Ecommerce Charts](https://shadcnuikit.com/examples/charts/ecommerce)
+[Line Charts](https://shadcnuikit.com/examples/charts/line)
+[Project Management Charts](https://shadcnuikit.com/examples/charts/project-management)
+[Use Cases](https://shadcnuikit.com/examples/date-picker/use-cases)
+[User Menus](https://shadcnuikit.com/examples/dropdown-menu/user-menus)
+[Authentication Forms](https://shadcnuikit.com/examples/form/authentication)
+[Switch Cards](https://shadcnuikit.com/examples/switch/cards)
+[Theme Switchers](https://shadcnuikit.com/examples/switch/theme-switcher)
+- [Classic Dashboard](https://shadcnuikit.com/dashboard/default)
+- [E-commerce Dashboard](https://shadcnuikit.com/dashboard/ecommerce)
+- [Sales Dashboard](https://shadcnuikit.com/dashboard/sales)
+- [CRM Dashboard](https://shadcnuikit.com/dashboard/crm)
+- [Project Management Dashboard](https://shadcnuikit.com/dashboard/project-management)
+- [File Manager Dashboard](https://shadcnuikit.com/dashboard/file-manager)
+- [Crypto Dashboard](https://shadcnuikit.com/dashboard/crypto)
+- [Academy/School Dashboard](https://shadcnuikit.com/dashboard/academy)
+- [Hospital Management Dashboard](https://shadcnuikit.com/dashboard/hospital-management)
+- [Analytics Dashboard](https://shadcnuikit.com/dashboard/website-analytics)
+- [Finance Dashboard](https://shadcnuikit.com/dashboard/finance)
+- [Payment Dashboard](https://shadcnuikit.com/dashboard/payment)
+- [HR Dashboard](https://shadcnuikit.com/dashboard/hr)
+- [Real Estate Dashboard](https://shadcnuikit.com/dashboard/real-estate)
+- [Hotel Management Dashboard](https://shadcnuikit.com/dashboard/hotel)
+- [AI Analytics Dashboard](https://shadcnuikit.com/dashboard/ai-analytics)
+[Classic Dashboard](https://shadcnuikit.com/dashboard/default)
+[E-commerce Dashboard](https://shadcnuikit.com/dashboard/ecommerce)
+[Sales Dashboard](https://shadcnuikit.com/dashboard/sales)
+[CRM Dashboard](https://shadcnuikit.com/dashboard/crm)
+[Project Management Dashboard](https://shadcnuikit.com/dashboard/project-management)
+[File Manager Dashboard](https://shadcnuikit.com/dashboard/file-manager)
+[Crypto Dashboard](https://shadcnuikit.com/dashboard/crypto)
+[Academy/School Dashboard](https://shadcnuikit.com/dashboard/academy)
+[Hospital Management Dashboard](https://shadcnuikit.com/dashboard/hospital-management)
+[Analytics Dashboard](https://shadcnuikit.com/dashboard/website-analytics)
+[Finance Dashboard](https://shadcnuikit.com/dashboard/finance)
+[Payment Dashboard](https://shadcnuikit.com/dashboard/payment)
+[HR Dashboard](https://shadcnuikit.com/dashboard/hr)
+[Real Estate Dashboard](https://shadcnuikit.com/dashboard/real-estate)
+[Hotel Management Dashboard](https://shadcnuikit.com/dashboard/hotel)
+[AI Analytics Dashboard](https://shadcnuikit.com/dashboard/ai-analytics)
+- [Kanban Board](https://shadcnuikit.com/dashboard/apps/kanban-board)
+
+### Highlights
+
+- [Notes App](https://shadcnuikit.com/dashboard/apps/notes)
+- [Chat App](https://shadcnuikit.com/dashboard/apps/chat)
+- [Social Media App](https://shadcnuikit.com/dashboard/apps/social-media)
+- [Workflow Automation App](https://shadcnuikit.com/dashboard/workflow-automation)
+- [Mail App](https://shadcnuikit.com/dashboard/apps/mail)
+- [Todo List App](https://shadcnuikit.com/dashboard/apps/todo-list-app)
+- [Tasks](https://shadcnuikit.com/dashboard/apps/tasks)
+- [Event Calendar](https://shadcnuikit.com/dashboard/apps/calendar)
+- [File Manager](https://shadcnuikit.com/dashboard/apps/file-manager)
+- [Api Keys](https://shadcnuikit.com/dashboard/apps/api-keys)
+- [POS App](https://shadcnuikit.com/dashboard/apps/pos-system)
+- [Courses App](https://shadcnuikit.com/dashboard/apps/courses)
+[Kanban Board](https://shadcnuikit.com/dashboard/apps/kanban-board)
+[Notes App](https://shadcnuikit.com/dashboard/apps/notes)
+[Chat App](https://shadcnuikit.com/dashboard/apps/chat)
+[Social Media App](https://shadcnuikit.com/dashboard/apps/social-media)
+[Workflow Automation App](https://shadcnuikit.com/dashboard/workflow-automation)
+[Mail App](https://shadcnuikit.com/dashboard/apps/mail)
+[Todo List App](https://shadcnuikit.com/dashboard/apps/todo-list-app)
+[Tasks](https://shadcnuikit.com/dashboard/apps/tasks)
+[Event Calendar](https://shadcnuikit.com/dashboard/apps/calendar)
+[File Manager](https://shadcnuikit.com/dashboard/apps/file-manager)
+[Api Keys](https://shadcnuikit.com/dashboard/apps/api-keys)
+[POS App](https://shadcnuikit.com/dashboard/apps/pos-system)
+[Courses App](https://shadcnuikit.com/dashboard/apps/courses)
+- [AI Chat](https://shadcnuikit.com/dashboard/apps/ai-chat)
+- [AI Chat V2](https://shadcnuikit.com/dashboard/apps/ai-chat-v2)
+- [Image Generator](https://shadcnuikit.com/dashboard/apps/ai-image-generator)
+- [Text to Speech](https://shadcnuikit.com/dashboard/apps/text-to-speech)
+[AI Chat](https://shadcnuikit.com/dashboard/apps/ai-chat)
+[AI Chat V2](https://shadcnuikit.com/dashboard/apps/ai-chat-v2)
+[Image Generator](https://shadcnuikit.com/dashboard/apps/ai-image-generator)
+[Text to Speech](https://shadcnuikit.com/dashboard/apps/text-to-speech)
+[Bundui](https://bundui.io)
+- [Terms & Conditions](https://shadcnuikit.com/terms-conditions)
+- [Privacy Policy](https://shadcnuikit.com/privacy-policy)
+[Terms & Conditions](https://shadcnuikit.com/terms-conditions)
+[Privacy Policy](https://shadcnuikit.com/privacy-policy)

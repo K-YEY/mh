@@ -1,0 +1,105 @@
+- [Shadcn UI Kit](https://shadcnuikit.com/dashboard/default)
+[Shadcn UI Kit](https://shadcnuikit.com/dashboard/default)
+- Search
+
+## Command Palette
+
+Search for a command to run...
+- [Classic Dashboard](https://shadcnuikit.com/dashboard/default)
+- E-commerceE-commerce
+- Payment DashboardPayment Dashboard
+- Hotel DashboardHotel Dashboard
+- Project ManagementProject Management
+- Real EstateReal Estate
+- [Sales](https://shadcnuikit.com/dashboard/sales)
+- [HR](https://shadcnuikit.com/dashboard/hr)New
+- [CRM](https://shadcnuikit.com/dashboard/crm)
+- [Website Analytics](https://shadcnuikit.com/dashboard/website-analytics)
+- [AI Analytics](https://shadcnuikit.com/dashboard/ai-analytics)New
+- [File Manager](https://shadcnuikit.com/dashboard/file-manager)
+- [Crypto](https://shadcnuikit.com/dashboard/crypto)
+- Academy/SchoolAcademy/School
+- [Hospital Management](https://shadcnuikit.com/dashboard/hospital-management)
+- [Finance Dashboard](https://shadcnuikit.com/dashboard/finance)
+[Classic Dashboard](https://shadcnuikit.com/dashboard/default)
+[Sales](https://shadcnuikit.com/dashboard/sales)
+[HR](https://shadcnuikit.com/dashboard/hr)
+[CRM](https://shadcnuikit.com/dashboard/crm)
+[Website Analytics](https://shadcnuikit.com/dashboard/website-analytics)
+[AI Analytics](https://shadcnuikit.com/dashboard/ai-analytics)
+[File Manager](https://shadcnuikit.com/dashboard/file-manager)
+[Crypto](https://shadcnuikit.com/dashboard/crypto)
+[Hospital Management](https://shadcnuikit.com/dashboard/hospital-management)
+[Finance Dashboard](https://shadcnuikit.com/dashboard/finance)
+- [Kanban](https://shadcnuikit.com/dashboard/apps/kanban)
+- [Notes](https://shadcnuikit.com/dashboard/apps/notes)8
+- [Chats](https://shadcnuikit.com/dashboard/apps/chat)5
+- [Social Media](https://shadcnuikit.com/dashboard/apps/social-media)
+- [Workflow Automation](https://shadcnuikit.com/dashboard/workflow-automation)New
+- [Mail](https://shadcnuikit.com/dashboard/apps/mail)
+- [Todo List App](https://shadcnuikit.com/dashboard/apps/todo-list-app)
+- [Tasks](https://shadcnuikit.com/dashboard/apps/tasks)
+- [Calendar](https://shadcnuikit.com/dashboard/apps/calendar)
+- [File Manager](https://shadcnuikit.com/dashboard/apps/file-manager)
+- [Api Keys](https://shadcnuikit.com/dashboard/apps/api-keys)
+- POS AppPOS App
+[Kanban](https://shadcnuikit.com/dashboard/apps/kanban)
+[Notes](https://shadcnuikit.com/dashboard/apps/notes)
+[Chats](https://shadcnuikit.com/dashboard/apps/chat)
+[Social Media](https://shadcnuikit.com/dashboard/apps/social-media)
+[Workflow Automation](https://shadcnuikit.com/dashboard/workflow-automation)
+[Mail](https://shadcnuikit.com/dashboard/apps/mail)
+[Todo List App](https://shadcnuikit.com/dashboard/apps/todo-list-app)
+[Tasks](https://shadcnuikit.com/dashboard/apps/tasks)
+[Calendar](https://shadcnuikit.com/dashboard/apps/calendar)
+[File Manager](https://shadcnuikit.com/dashboard/apps/file-manager)
+[Api Keys](https://shadcnuikit.com/dashboard/apps/api-keys)
+- [AI Chat](https://shadcnuikit.com/dashboard/apps/ai-chat)
+- [AI Chat V2](https://shadcnuikit.com/dashboard/apps/ai-chat-v2)
+- [Image Generator](https://shadcnuikit.com/dashboard/apps/ai-image-generator)
+- [Text to Speech](https://shadcnuikit.com/dashboard/apps/text-to-speech)New
+[AI Chat](https://shadcnuikit.com/dashboard/apps/ai-chat)
+[AI Chat V2](https://shadcnuikit.com/dashboard/apps/ai-chat-v2)
+[Image Generator](https://shadcnuikit.com/dashboard/apps/ai-image-generator)
+[Text to Speech](https://shadcnuikit.com/dashboard/apps/text-to-speech)
+- [Users List](https://shadcnuikit.com/dashboard/pages/users)
+- [Profile V1](https://shadcnuikit.com/dashboard/pages/profile)
+- [Profile V2](https://shadcnuikit.com/dashboard/pages/user-profile)
+- [Onboarding Flow](https://shadcnuikit.com/dashboard/pages/onboarding-flow)
+- Empty StatesEmpty States
+- SettingsSettings
+- PricingPricing
+- AuthenticationAuthentication
+- [Notifications Page](https://shadcnuikit.com/dashboard/pages/notifications)
+- Error PagesError Pages
+[Users List](https://shadcnuikit.com/dashboard/pages/users)
+[Profile V1](https://shadcnuikit.com/dashboard/pages/profile)
+[Profile V2](https://shadcnuikit.com/dashboard/pages/user-profile)
+[Onboarding Flow](https://shadcnuikit.com/dashboard/pages/onboarding-flow)
+[Notifications Page](https://shadcnuikit.com/dashboard/pages/notifications)
+- WidgetsWidgets
+- [Download Templates](https://shadcnuikit.com/pricing)
+- [Components](https://shadcnuikit.com/components)
+- [Blocks](https://shadcnuikit.com/blocks)
+- [Examples](https://shadcnuikit.com/examples)
+- [WebsiteTemplates](https://shadcnuikit.com/templates)
+
+## Command Palette
+
+- [Illustrations](https://shadcnuikit.com/illustrations)
+- [Github](https://github.com/bundui)
+[Download Templates](https://shadcnuikit.com/pricing)
+[Components](https://shadcnuikit.com/components)
+[Blocks](https://shadcnuikit.com/blocks)
+[Examples](https://shadcnuikit.com/examples)
+[WebsiteTemplates](https://shadcnuikit.com/templates)
+[Illustrations](https://shadcnuikit.com/illustrations)
+[Github](https://github.com/bundui)
+[Download Template](https://shadcnuikit.com/pricing)
+[Download](https://shadcnuikit.com/pricing)
+
+# Finance Dashboard
+
+compared to last month
+compared to last month
+compared to last month
