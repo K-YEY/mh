@@ -2,7 +2,6 @@
 
 namespace App\Actions\Accounting;
 
-use App\Models\JournalEntry;
 use App\Models\PaymentVoucher;
 use App\Services\Audit\AuditLoggerService;
 use App\Services\Financial\DoubleEntryPostingService;
