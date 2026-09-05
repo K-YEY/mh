@@ -80,7 +80,7 @@ const isDebitNature = computed(() => {
     </div>
 
     <!-- Filter Form -->
-    <UiCard >
+    <div class="shadcn-card p-4 bg-white border border-zinc-200 print:hidden">
       <form @submit.prevent="applyFilter" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
         <div class="md:col-span-2">
           <label class="block text-xs font-bold text-zinc-700 mb-1">
@@ -94,7 +94,7 @@ const isDebitNature = computed(() => {
             <option v-for="acc in accounts" :key="acc.id" :value="acc.id">
               {{ acc.code }} - {{ isAr ? acc.name_ar : acc.name_en }} ({{ acc.type }})
             </option>
-          </UiSelect>
+          </select>
         </div>
 
         <div>
@@ -143,7 +143,7 @@ const isDebitNature = computed(() => {
     <!-- Account Details Summary -->
     <div v-if="selectedAccount" class="grid grid-cols-2 md:grid-cols-5 gap-3 print:grid-cols-5 print:gap-2">
       <!-- Account Info -->
-      <UiCard >
+      <div class="shadcn-card p-3 bg-white border border-zinc-200 col-span-2 md:col-span-1">
         <div class="text-[10px] font-bold text-zinc-500 uppercase">{{ isAr ? 'طبيعة الحساب' : 'Account Nature' }}</div>
         <div class="text-sm font-extrabold text-blue-950 mt-1">{{ selectedAccount.code }}</div>
         <div class="text-[11px] font-medium text-zinc-700 truncate">
@@ -155,7 +155,7 @@ const isDebitNature = computed(() => {
       </div>
 
       <!-- Opening Balance -->
-      <UiCard >
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
         <div class="text-[10px] font-bold text-zinc-500 uppercase">{{ isAr ? 'الرصيد الافتتاحي' : 'Opening Balance' }}</div>
         <div class="text-base font-extrabold font-mono text-zinc-900 mt-1">
           {{ formatMoney(openingBalance) }}
@@ -164,7 +164,7 @@ const isDebitNature = computed(() => {
       </div>
 
       <!-- Period Debit -->
-      <UiCard >
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
         <div class="text-[10px] font-bold text-blue-600 uppercase">{{ isAr ? 'مجموع المدين (الفترة)' : 'Period Debits' }}</div>
         <div class="text-base font-extrabold font-mono text-blue-900 mt-1">
           {{ formatMoney(totalPeriodDebit) }}
@@ -173,7 +173,7 @@ const isDebitNature = computed(() => {
       </div>
 
       <!-- Period Credit -->
-      <UiCard >
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
         <div class="text-[10px] font-bold text-blue-600 uppercase">{{ isAr ? 'مجموع الدائن (الفترة)' : 'Period Credits' }}</div>
         <div class="text-base font-extrabold font-mono text-blue-900 mt-1">
           {{ formatMoney(totalPeriodCredit) }}
@@ -182,7 +182,7 @@ const isDebitNature = computed(() => {
       </div>
 
       <!-- Closing Balance -->
-      <UiCard >
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
         <div class="text-[10px] font-bold text-emerald-700 uppercase">{{ isAr ? 'الرصيد الختامي' : 'Closing Balance' }}</div>
         <div class="text-base font-extrabold font-mono text-emerald-950 mt-1">
           {{ formatMoney(closingBalance) }}
@@ -194,7 +194,7 @@ const isDebitNature = computed(() => {
     </div>
 
     <!-- Ledger Lines Table -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden bg-white border border-zinc-200 shadow-xs">
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">

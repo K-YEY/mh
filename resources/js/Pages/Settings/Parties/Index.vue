@@ -132,18 +132,18 @@ const submitCreate = () => {
           <Truck class="w-4 h-4 text-zinc-950" />
           <span>{{ isAr ? 'شركات النقل' : 'Truckers' }}</span>
         </Link>
-        <UiButton 
+        <button 
           @click="showCreateModal = true"
-           variant="primary"
+          class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
         >
           <Plus class="w-4 h-4 font-bold" />
           <span>{{ isAr ? 'إضافة جهة جديدة' : 'Add Party' }}</span>
-        </UiButton>
+        </button>
       </div>
     </div>
 
     <!-- Search & Filters Card -->
-    <UiCard >
+    <div class="shadcn-card p-4 space-y-3">
       <!-- Role Tabs -->
       <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
         <button
@@ -164,17 +164,17 @@ const submitCreate = () => {
       <!-- Search Input -->
       <div class="relative">
         <Search class="w-4 h-4 text-zinc-400 absolute start-3 top-1/2 -translate-y-1/2" />
-        <UiInput
+        <input
           v-model="searchQuery"
           type="text"
           :placeholder="isAr ? 'البحث بالاسم، الكود، الرقم الضريبي، أو الهاتف...' : 'Search by name, code, tax ID, phone...'"
-          
-        / />
+          class="shadcn-input ps-9 pe-3"
+        />
       </div>
     </div>
 
     <!-- Parties Grid -->
-    <UiCard v-if="filteredParties.length === 0" >
+    <div v-if="filteredParties.length === 0" class="shadcn-card p-12 text-center text-zinc-500">
       <Users class="w-8 h-8 text-zinc-300 mx-auto mb-2" />
       <div class="text-xs font-semibold text-zinc-700">
         {{ isAr ? 'لا توجد جهات مطابقة للبحث' : 'No parties found matching criteria' }}
@@ -182,10 +182,10 @@ const submitCreate = () => {
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <UiCard 
+      <div 
         v-for="party in filteredParties" 
         :key="party.id"
-        
+        class="shadcn-card p-4 flex flex-col justify-between space-y-3 hover:border-zinc-400 transition-colors"
       >
         <div>
           <!-- Code & Roles -->
@@ -237,7 +237,7 @@ const submitCreate = () => {
 
     <!-- Create Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
-      <UiCard >
+      <div class="shadcn-card max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
         <button 
           @click="showCreateModal = false"
           class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
@@ -256,14 +256,14 @@ const submitCreate = () => {
               {{ isAr ? 'كود الجهة' : 'Party Code' }}
               <span class="text-red-500">*</span>
             </label>
-            <UiInput 
+            <input 
               v-model="form.code"
               type="text" 
               required 
               placeholder="e.g. CB-009, TRK-009" 
-              
+              class="shadcn-input font-mono uppercase"
               dir="ltr"
-            / />
+            />
           </div>
 
           <div>
@@ -271,13 +271,13 @@ const submitCreate = () => {
               {{ isAr ? 'الاسم التجاري / القانوني' : 'Legal Name' }}
               <span class="text-red-500">*</span>
             </label>
-            <UiInput 
+            <input 
               v-model="form.legal_name"
               type="text" 
               required 
               placeholder="اسم المؤسسة أو الشركة" 
-              
-            / />
+              class="shadcn-input"
+            />
           </div>
 
           <div>
@@ -285,10 +285,10 @@ const submitCreate = () => {
               {{ isAr ? 'نوع الدور الرئيسي' : 'Primary Role' }}
               <span class="text-red-500">*</span>
             </label>
-            <UiSelect 
+            <select 
               v-model="form.role"
               required 
-              
+              class="shadcn-input"
             >
               <option value="CUSTOMS_BROKER">{{ isAr ? 'مخلص جمركي' : 'Customs Broker' }}</option>
               <option value="TRUCKER">{{ isAr ? 'شركة نقل بري' : 'Inland Trucker' }}</option>
@@ -296,7 +296,7 @@ const submitCreate = () => {
               <option value="CUSTOMER">{{ isAr ? 'عميل / شاحن / مستورد' : 'Customer / Shipper' }}</option>
               <option value="PACKHOUSE">{{ isAr ? 'محطة تعبئة زراعية' : 'Packhouse' }}</option>
               <option value="OVERSEAS_AGENT">{{ isAr ? 'وكيل خارجي' : 'Overseas Agent' }}</option>
-            </UiSelect>
+            </select>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -304,25 +304,25 @@ const submitCreate = () => {
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'الرقم الضريبي' : 'Tax ID' }}
               </label>
-              <UiInput 
+              <input 
                 v-model="form.tax_number"
                 type="text" 
                 placeholder="123-456-789" 
-                
+                class="shadcn-input font-mono"
                 dir="ltr"
-              / />
+              />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'السجل التجاري' : 'CR Number' }}
               </label>
-              <UiInput 
+              <input 
                 v-model="form.commercial_registry"
                 type="text" 
                 placeholder="رقم السجل" 
-                
+                class="shadcn-input font-mono"
                 dir="ltr"
-              / />
+              />
             </div>
           </div>
 
@@ -331,43 +331,43 @@ const submitCreate = () => {
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'رقم الهاتف' : 'Phone' }}
               </label>
-              <UiInput 
+              <input 
                 v-model="form.phone"
                 type="text" 
                 placeholder="010XXXXXXXX" 
-                
+                class="shadcn-input font-mono"
                 dir="ltr"
-              / />
+              />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'البريد الإلكتروني' : 'Email' }}
               </label>
-              <UiInput 
+              <input 
                 v-model="form.email"
                 type="email" 
                 placeholder="info@company.com" 
-                
+                class="shadcn-input font-mono"
                 dir="ltr"
-              / />
+              />
             </div>
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-            <UiButton 
+            <button 
               type="button"
               @click="showCreateModal = false"
-               variant="ghost"
+              class="shadcn-btn-ghost text-xs cursor-pointer"
             >
               {{ isAr ? 'إلغاء' : 'Cancel' }}
-            </UiButton>
-            <UiButton 
+            </button>
+            <button 
               type="submit"
               :disabled="form.processing"
-               variant="primary"
+              class="shadcn-btn-primary text-xs cursor-pointer disabled:opacity-50"
             >
               {{ form.processing ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ الجهة' : 'Save Party') }}
-            </UiButton>
+            </button>
           </div>
         </form>
       </div>

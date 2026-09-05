@@ -41,44 +41,44 @@ const searchTariffs = () => {
     </div>
 
     <!-- Filter Form Bar Card -->
-    <UiCard >
+    <div class="shadcn-card p-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
       <div>
         <label class="block text-xs font-bold text-zinc-700 mb-1">{{ isAr ? 'ميناء الشحن (POL)' : 'Port of Loading (POL)' }}</label>
-        <UiSelect v-model="polId" >
+        <select v-model="polId" class="shadcn-input">
           <option value="">{{ isAr ? 'كل موانئ القيام...' : 'All Origin Ports...' }}</option>
           <option v-for="p in ports" :key="p.id" :value="p.id">{{ p.name }} ({{ p.code }})</option>
-        </UiSelect>
+        </select>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-zinc-700 mb-1">{{ isAr ? 'ميناء التفريغ (POD)' : 'Port of Discharge (POD)' }}</label>
-        <UiSelect v-model="podId" >
+        <select v-model="podId" class="shadcn-input">
           <option value="">{{ isAr ? 'كل موانئ الوصول...' : 'All Destination Ports...' }}</option>
           <option v-for="p in ports" :key="p.id" :value="p.id">{{ p.name }} ({{ p.code }})</option>
-        </UiSelect>
+        </select>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-zinc-700 mb-1">{{ isAr ? 'نوع الحاوية' : 'Equipment Type' }}</label>
-        <UiSelect v-model="containerType" >
+        <select v-model="containerType" class="shadcn-input">
           <option value="40HR">40' High Reefer (40HR)</option>
           <option value="40RF">40' Standard Reefer (40RF)</option>
           <option value="20RF">20' Reefer (20RF)</option>
           <option value="40HC">40' High Cube Dry (40HC)</option>
-        </UiSelect>
+        </select>
       </div>
 
-      <UiButton
+      <button
         @click="searchTariffs"
-         variant="primary"
+        class="shadcn-btn-primary w-full gap-2 cursor-pointer"
       >
         <Search class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'تقييم ومقارنة الأسعار' : 'Evaluate Rates' }}</span>
-      </UiButton>
+      </button>
     </div>
 
     <!-- Rate Comparison Grid Card -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden">
       <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
         <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
           <tr>

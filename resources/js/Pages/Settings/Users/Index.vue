@@ -42,17 +42,17 @@ const submit = () => {
         </p>
       </div>
 
-      <UiButton
+      <button
         @click="showCreateModal = true"
-         variant="primary"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة مستخدم جديد' : 'Provision User' }}</span>
-      </UiButton>
+      </button>
     </div>
 
     <!-- Users Table Card -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden">
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div class="flex items-center gap-2">
           <UserCheck class="w-4 h-4 text-zinc-950" />
@@ -113,7 +113,7 @@ const submit = () => {
 
     <!-- Create Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <UiCard >
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'إضافة مستخدم جديد للنظام' : 'Provision System User' }}</h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
@@ -122,22 +122,22 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم الموظف / المستخدم' : 'Employee Full Name' }}</label>
-            <UiInput v-model="form.name" type="text" placeholder="e.g. Ahmed Hassan" required  / />
+            <input v-model="form.name" type="text" placeholder="e.g. Ahmed Hassan" required class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني للشركة' : 'Corporate Email Address' }}</label>
-            <UiInput v-model="form.email" type="email" placeholder="ahmed@agrierp.com" required  dir="ltr" / />
+            <input v-model="form.email" type="email" placeholder="ahmed@agrierp.com" required class="shadcn-input font-mono" dir="ltr" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'كلمة المرور الافتراضية' : 'Default Password' }}</label>
-            <UiInput v-model="form.password" type="password" required  dir="ltr" / />
+            <input v-model="form.password" type="password" required class="shadcn-input font-mono" dir="ltr" />
           </div>
 
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
-            <UiButton type="button" @click="showCreateModal = false"  variant="secondary">{{ isAr ? 'إلغاء' : 'Cancel' }}</UiButton>
-            <UiButton type="submit" :disabled="form.processing"  variant="primary">{{ isAr ? 'حفظ المستخدم' : 'Save User' }}</UiButton>
+            <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
+            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ المستخدم' : 'Save User' }}</button>
           </div>
         </form>
       </div>

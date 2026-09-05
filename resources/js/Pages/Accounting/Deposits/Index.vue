@@ -49,7 +49,7 @@ const refund = (depositId) => {
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Data Table Card -->
-      <UiCard >
+      <div class="lg:col-span-2 shadcn-card overflow-hidden">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
             <tr>
@@ -88,13 +88,13 @@ const refund = (depositId) => {
                 </span>
               </td>
               <td class="p-4" :class="isAr ? 'text-left' : 'text-right'">
-                <UiButton
+                <button
                   v-if="d.status !== 'REFUNDED_FULL'"
                   @click="refund(d.id)"
-                   variant="secondary"
+                  class="shadcn-btn-secondary text-[11px] h-7 px-2.5 cursor-pointer"
                 >
                   {{ isAr ? 'تأكيد الاسترداد' : 'Mark Refunded' }}
-                </UiButton>
+                </button>
               </td>
             </tr>
 
@@ -108,7 +108,7 @@ const refund = (depositId) => {
       </div>
 
       <!-- Add Deposit Form Card -->
-      <UiCard >
+      <div class="shadcn-card p-5 space-y-4 h-fit">
         <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
           <Plus class="w-4 h-4 text-zinc-950" />
           <span>{{ isAr ? 'تسجيل تأمين حاوية جديد' : 'Register Container Guarantee' }}</span>
@@ -117,52 +117,52 @@ const refund = (depositId) => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'الحاوية المستهدفة' : 'Target Container' }}</label>
-            <UiSelect v-model="form.master_container_id"  required>
+            <select v-model="form.master_container_id" class="shadcn-input" required>
               <option value="" disabled>{{ isAr ? 'اختر وحدة الحاوية...' : 'Select Container Unit...' }}</option>
               <option v-for="c in containers" :key="c.id" :value="c.id">{{ c.container_number }} ({{ c.master_shipment?.file_number }})</option>
-            </UiSelect>
+            </select>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع التأمين' : 'Deposit Type' }}</label>
-            <UiSelect v-model="form.deposit_type" >
+            <select v-model="form.deposit_type" class="shadcn-input">
               <option value="PAID_TO_LINE">{{ isAr ? 'مدفوع لخط الشحن البحري' : 'Paid to Ocean Carrier Line' }}</option>
               <option value="COLLECTED_FROM_CUSTOMER">{{ isAr ? 'مستلم من المصدر / العميل' : 'Collected from Shipper/Customer' }}</option>
-            </UiSelect>
+            </select>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'الطرف' : 'Party' }}</label>
-            <UiSelect v-model="form.party_id"  required>
+            <select v-model="form.party_id" class="shadcn-input" required>
               <option value="" disabled>{{ isAr ? 'اختر الطرف...' : 'Select Party...' }}</option>
               <option v-for="p in parties" :key="p.id" :value="p.id">{{ p.legal_name }} ({{ p.code }})</option>
-            </UiSelect>
+            </select>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'المبلغ' : 'Amount' }}</label>
-              <UiInput v-model="form.amount" type="number" step="0.01"  required dir="ltr" / />
+              <input v-model="form.amount" type="number" step="0.01" class="shadcn-input font-mono font-bold" required dir="ltr" />
             </div>
 
             <div>
               <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'العملة' : 'Currency' }}</label>
-              <UiSelect v-model="form.currency_code" >
+              <select v-model="form.currency_code" class="shadcn-input">
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
                 <option value="EGP">EGP (E£)</option>
-              </UiSelect>
+              </select>
             </div>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'ملاحظات / حالة المعدات' : 'Notes / Equipment Condition' }}</label>
-            <UiInput v-model="form.notes" type="text"  / />
+            <input v-model="form.notes" type="text" class="shadcn-input" />
           </div>
 
-          <UiButton type="submit"  variant="primary">
+          <button type="submit" class="shadcn-btn-primary w-full mt-2 cursor-pointer">
             {{ isAr ? 'تسجيل تأمين الحاوية' : 'Record Guarantee Deposit' }}
-          </UiButton>
+          </button>
         </form>
       </div>
     </div>

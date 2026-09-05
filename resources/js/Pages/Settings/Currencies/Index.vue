@@ -43,17 +43,17 @@ const submit = () => {
         </p>
       </div>
 
-      <UiButton
+      <button
         @click="showCreateModal = true"
-         variant="primary"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة عملة جديدة' : 'Add Currency' }}</span>
-      </UiButton>
+      </button>
     </div>
 
     <!-- Currencies Table Card -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden">
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div class="flex items-center gap-2">
           <DollarSign class="w-4 h-4 text-zinc-950" />
@@ -117,7 +117,7 @@ const submit = () => {
 
     <!-- Create Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <UiCard >
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'إضافة عملة نظام جديدة' : 'Add System Currency' }}</h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
@@ -126,27 +126,27 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">Currency Code (3 Chars)</label>
-            <UiInput v-model="form.code" type="text" placeholder="e.g. EUR" required  dir="ltr" / />
+            <input v-model="form.code" type="text" placeholder="e.g. EUR" required class="shadcn-input font-mono uppercase" dir="ltr" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم العملة' : 'Currency Name' }}</label>
-            <UiInput v-model="form.name" type="text" placeholder="e.g. Euro (يورو)" required  / />
+            <input v-model="form.name" type="text" placeholder="e.g. Euro (يورو)" required class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رمز العملة' : 'Currency Symbol' }}</label>
-            <UiInput v-model="form.symbol" type="text" placeholder="e.g. €" required  dir="ltr" / />
+            <input v-model="form.symbol" type="text" placeholder="e.g. €" required class="shadcn-input font-mono" dir="ltr" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'عدد الخانات العشرية' : 'Decimal Places' }}</label>
-            <UiInput v-model="form.decimal_places" type="number" min="0" max="4" required  dir="ltr" / />
+            <input v-model="form.decimal_places" type="number" min="0" max="4" required class="shadcn-input font-mono" dir="ltr" />
           </div>
 
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
-            <UiButton type="button" @click="showCreateModal = false"  variant="secondary">{{ isAr ? 'إلغاء' : 'Cancel' }}</UiButton>
-            <UiButton type="submit" :disabled="form.processing"  variant="primary">{{ isAr ? 'حفظ العملة' : 'Save Currency' }}</UiButton>
+            <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
+            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ العملة' : 'Save Currency' }}</button>
           </div>
         </form>
       </div>

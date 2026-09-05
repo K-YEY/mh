@@ -88,18 +88,18 @@ const filteredTruckers = computed(() => {
         </p>
       </div>
 
-      <UiButton
+      <button
         @click="showCreateModal = true"
-         variant="primary"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة شركة نقل بري' : 'Add Trucking Company' }}</span>
-      </UiButton>
+      </button>
     </div>
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <UiCard >
+      <div class="shadcn-card p-4 flex items-center justify-between">
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'إجمالي شركات النقل' : 'Trucking Carriers' }}</div>
           <div class="text-2xl font-bold text-zinc-950 font-mono mt-0.5">{{ truckers?.length || 0 }}</div>
@@ -109,7 +109,7 @@ const filteredTruckers = computed(() => {
         </div>
       </div>
 
-      <UiCard >
+      <div class="shadcn-card p-4 flex items-center justify-between">
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'إجمالي أسطول الشاحنات المتاحة' : 'Total Fleet Size' }}</div>
           <div class="text-2xl font-bold text-zinc-950 font-mono mt-0.5">
@@ -121,7 +121,7 @@ const filteredTruckers = computed(() => {
         </div>
       </div>
 
-      <UiCard >
+      <div class="shadcn-card p-4 flex items-center justify-between">
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'تجهيزات النقل المبرد' : 'Reefer Equipment' }}</div>
           <div class="text-sm font-bold text-zinc-950 mt-1 font-sans">
@@ -138,12 +138,12 @@ const filteredTruckers = computed(() => {
     <div class="flex items-center justify-between gap-4">
       <div class="relative max-w-sm w-full">
         <Search class="w-4 h-4 text-zinc-400 absolute right-3 top-1/2 -translate-y-1/2" />
-        <UiInput 
+        <input 
           v-model="searchQuery" 
           type="text" 
           :placeholder="isAr ? 'البحث بالاسم، الكود، نوع الشاحنات، نطاق العمل، أو الديسباتش...' : 'Search by name, code, truck type, coverage, dispatcher...'" 
-           
-        / />
+          class="shadcn-input pr-9 text-xs" 
+        />
       </div>
 
       <div class="text-xs text-zinc-500 font-mono">
@@ -152,7 +152,7 @@ const filteredTruckers = computed(() => {
     </div>
 
     <!-- Truckers Table -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
@@ -242,72 +242,72 @@ const filteredTruckers = computed(() => {
                 {{ isAr ? 'كود شركة النقل' : 'Haulier Code' }}
                 <span class="text-red-500">*</span>
               </label>
-              <UiInput v-model="form.code" type="text" placeholder="e.g. TRK-DELTA"  required dir="ltr" / />
+              <input v-model="form.code" type="text" placeholder="e.g. TRK-DELTA" class="shadcn-input font-mono uppercase" required dir="ltr" />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'اسم شركة النقل' : 'Company Name' }}
                 <span class="text-red-500">*</span>
               </label>
-              <UiInput v-model="form.name" type="text" placeholder="e.g. دلتا لوجيستكس للنقل المبرد"  required / />
+              <input v-model="form.name" type="text" placeholder="e.g. دلتا لوجيستكس للنقل المبرد" class="shadcn-input" required />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'حجم الأسطول (عدد الشاحنات)' : 'Fleet Size' }}</label>
-              <UiInput v-model="form.fleet_size" type="number" min="1"  dir="ltr" / />
+              <input v-model="form.fleet_size" type="number" min="1" class="shadcn-input font-mono" dir="ltr" />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم ترخيص النقل' : 'Transport License #' }}</label>
-              <UiInput v-model="form.license_number" type="text" placeholder="e.g. TRK-MOT-1029"  dir="ltr" / />
+              <input v-model="form.license_number" type="text" placeholder="e.g. TRK-MOT-1029" class="shadcn-input font-mono" dir="ltr" />
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'أنواع الشاحنات والتجهيزات' : 'Truck Types / Gensets' }}</label>
-            <UiInput v-model="form.truck_types" type="text" placeholder="e.g. تريلات مبردة 40HR + مولدات جينست Genset"  / />
+            <input v-model="form.truck_types" type="text" placeholder="e.g. تريلات مبردة 40HR + مولدات جينست Genset" class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نطاق التغطية ومناطق التحميل' : 'Operating Coverage' }}</label>
-            <UiInput v-model="form.coverage_areas" type="text" placeholder="e.g. مزارع النوبارية، السادات، ميناء الإسكندرية، دمياط"  / />
+            <input v-model="form.coverage_areas" type="text" placeholder="e.g. مزارع النوبارية، السادات، ميناء الإسكندرية، دمياط" class="shadcn-input" />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'مسؤول الحركة والديسباتش' : 'Dispatcher Name' }}</label>
-              <UiInput v-model="form.dispatch_contact" type="text" placeholder="e.g. كابتن / أحمد سمير"  / />
+              <input v-model="form.dispatch_contact" type="text" placeholder="e.g. كابتن / أحمد سمير" class="shadcn-input" />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف غرفة الحركة' : 'Dispatch Phone' }}</label>
-              <UiInput v-model="form.dispatch_phone" type="text" placeholder="+20 101 ..."  dir="ltr" / />
+              <input v-model="form.dispatch_phone" type="text" placeholder="+20 101 ..." class="shadcn-input font-mono" dir="ltr" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الرقم الضريبي' : 'Tax Number' }}</label>
-              <UiInput v-model="form.tax_number" type="text" placeholder="e.g. 100-881-229"  dir="ltr" / />
+              <input v-model="form.tax_number" type="text" placeholder="e.g. 100-881-229" class="shadcn-input font-mono" dir="ltr" />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني' : 'Email' }}</label>
-              <UiInput v-model="form.email" type="email" placeholder="ops@deltahaul.com"  dir="ltr" / />
+              <input v-model="form.email" type="email" placeholder="ops@deltahaul.com" class="shadcn-input font-mono" dir="ltr" />
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'مقر الشركة / الجراج الرئيسي' : 'Yard / Office Address' }}</label>
-            <UiInput v-model="form.address" type="text" placeholder="طريق الإسكندرية الصحراوي كم 70"  / />
+            <input v-model="form.address" type="text" placeholder="طريق الإسكندرية الصحراوي كم 70" class="shadcn-input" />
           </div>
 
           <div class="flex justify-end gap-2 pt-4 border-t border-zinc-200">
             <button type="button" @click="showCreateModal = false" class="px-4 py-2 rounded-lg text-xs font-bold text-zinc-600 hover:bg-zinc-100">
               {{ isAr ? 'إلغاء' : 'Cancel' }}
             </button>
-            <UiButton type="submit" :disabled="form.processing"  variant="primary">
+            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs">
               {{ isAr ? 'حفظ شركة النقل' : 'Save Carrier' }}
-            </UiButton>
+            </button>
           </div>
         </form>
       </div>

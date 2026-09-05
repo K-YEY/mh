@@ -177,7 +177,7 @@ const isMilestoneCompleted = (code) => {
     </div>
 
     <!-- Search Box & Mode Switcher Card -->
-    <UiCard >
+    <div class="shadcn-card p-6 space-y-4">
       <!-- Mode Tabs Switcher -->
       <div class="flex items-center gap-2 border-b border-zinc-200 pb-3">
         <button
@@ -213,7 +213,7 @@ const isMilestoneCompleted = (code) => {
       <div class="flex flex-col md:flex-row items-center gap-3">
         <div class="relative flex-1 w-full">
           <Search class="absolute top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" :class="isAr ? 'right-3.5' : 'left-3.5'" />
-          <UiInput
+          <input
             v-model="query"
             @keyup.enter="handleSearch"
             type="text"
@@ -221,16 +221,16 @@ const isMilestoneCompleted = (code) => {
               ? (isAr ? 'اكتب اسم السفينة بالإنجليزية أو رقم IMO (مثال: EVER GIVEN أو MAERSK MC-KINNEY MOLLER أو 9811000)...' : 'Enter Vessel name or IMO (e.g. EVER GIVEN, MAERSK MC-KINNEY MOLLER, 9811000)...')
               : (isAr ? 'اكتب رقم الحاوية هنا (مثال: MSKU8801923 أو CMAU... أو رقم البوليصة)...' : 'Enter container # (e.g. MSKU8801923, CMAU...), or Master B/L...')"
             :style="isAr ? 'padding-right: 2.75rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.75rem !important; padding-right: 0.75rem !important;'"
-            
-          / />
+            class="shadcn-input h-12 text-sm font-mono uppercase font-bold"
+          />
         </div>
-        <UiButton
+        <button
           @click="handleSearch"
-           variant="primary"
+          class="shadcn-btn-primary h-12 px-6 gap-2 w-full md:w-auto text-sm cursor-pointer shadow-xs"
         >
           <Search class="w-4 h-4 font-bold" />
           <span>{{ activeTab === 'vessel' ? (isAr ? 'اسكرابنج وتتبع السفينة' : 'Scrape Vessel AIS') : (isAr ? 'تتبع الحاوية الآن' : 'Track Container') }}</span>
-        </UiButton>
+        </button>
       </div>
 
       <!-- Quick Suggested Containers Chips -->
@@ -263,7 +263,7 @@ const isMilestoneCompleted = (code) => {
 
     <!-- Active Vessel AIS Tracking Result Card -->
     <div v-if="vessel" class="space-y-6">
-      <UiCard >
+      <div class="shadcn-card p-5 space-y-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
           <div class="flex items-center gap-3.5">
             <div class="w-12 h-12 rounded-lg bg-blue-900 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-900/30">
@@ -458,7 +458,7 @@ const isMilestoneCompleted = (code) => {
     <!-- Active Container Tracking Result Display ("يقولي حصل فيها ايه") -->
     <div v-if="container" class="space-y-6">
       <!-- Container Overview Banner Card -->
-      <UiCard >
+      <div class="shadcn-card p-5 space-y-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
           <div class="flex items-center gap-3.5">
             <div class="w-12 h-12 rounded-lg bg-blue-900 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-900/30 font-bold">
@@ -508,22 +508,22 @@ const isMilestoneCompleted = (code) => {
               <span>{{ carrier_scraper.carrier_name || (isAr ? 'موقع الناقل' : 'Carrier Link') }}</span>
             </a>
 
-            <UiButton
+            <button
               v-if="container.id"
               @click="showAddEventModal = true"
-               variant="secondary"
+              class="shadcn-btn-secondary gap-1.5 text-xs cursor-pointer hover:border-blue-300 hover:text-blue-900"
             >
               <Plus class="w-4 h-4 text-blue-900" />
               <span>{{ isAr ? 'تسجيل حركة يدوياً' : 'Log Movement' }}</span>
-            </UiButton>
-            <UiButton
+            </button>
+            <button
               @click="handleSearch"
-               variant="outline"
+              class="shadcn-btn-outline gap-1.5 text-xs cursor-pointer hover:border-blue-300 hover:text-blue-900"
               title="تحديث البيانات"
             >
               <RefreshCw class="w-4 h-4 text-blue-900" />
               <span>{{ isAr ? 'تحديث' : 'Refresh' }}</span>
-            </UiButton>
+            </button>
           </div>
         </div>
 
@@ -581,7 +581,7 @@ const isMilestoneCompleted = (code) => {
       </div>
 
       <!-- Visual Milestones Progress Journey -->
-      <UiCard >
+      <div class="shadcn-card p-5 space-y-4">
         <h3 class="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center gap-2">
           <Anchor class="w-4 h-4 text-blue-700" />
           <span>{{ isAr ? 'مسار رحلة الحاوية الملاحي (Milestones Journey)' : 'Container Transport Milestones' }}</span>
@@ -617,7 +617,7 @@ const isMilestoneCompleted = (code) => {
       </div>
 
       <!-- Detailed Timestamped Tracking Events Log -->
-      <UiCard >
+      <div class="shadcn-card overflow-hidden">
         <div class="p-4 border-b border-zinc-200 flex items-center justify-between">
           <div>
             <h3 class="text-sm font-bold text-blue-950 uppercase tracking-wide flex items-center gap-2">
@@ -676,7 +676,7 @@ const isMilestoneCompleted = (code) => {
     </div>
 
     <!-- Tracking Search History Section ("ويكون في هوستري عشان اجيب الحاويات ل اتركتتها") -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden">
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <History class="w-4 h-4 text-blue-700" />
@@ -803,20 +803,20 @@ const isMilestoneCompleted = (code) => {
               <!-- Action -->
               <td class="px-5 py-3.5" :class="isAr ? 'text-left' : 'text-right'">
                 <div class="flex items-center gap-1.5 justify-end">
-                  <UiButton
+                  <button
                     v-if="item.tracking_type === 'vessel'"
                     @click="trackSpecificVessel(item.vessel_name)"
-                     variant="secondary"
+                    class="shadcn-btn-secondary h-7 px-2.5 text-[11px] cursor-pointer hover:border-blue-300 hover:text-blue-900"
                   >
                     <span>{{ isAr ? 'تتبع السفينة' : 'Track Ship' }}</span>
-                  </UiButton>
-                  <UiButton
+                  </button>
+                  <button
                     v-else
                     @click="trackSpecificContainer(item.container_number)"
-                     variant="secondary"
+                    class="shadcn-btn-secondary h-7 px-2.5 text-[11px] cursor-pointer hover:border-blue-300 hover:text-blue-900"
                   >
                     <span>{{ isAr ? 'عرض الحاوية' : 'View' }}</span>
-                  </UiButton>
+                  </button>
 
                   <button
                     @click="deleteHistoryItem(item.id)"
@@ -835,7 +835,7 @@ const isMilestoneCompleted = (code) => {
 
     <!-- Manual Event Modal -->
     <div v-if="showAddEventModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
-      <UiCard >
+      <div class="shadcn-card max-w-md w-full p-6 space-y-4 shadow-2xl relative">
         <button 
           @click="showAddEventModal = false"
           class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
@@ -853,7 +853,7 @@ const isMilestoneCompleted = (code) => {
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'نوع وكود الحركة' : 'Event Milestone' }}
             </label>
-            <UiSelect v-model="eventForm.event_code" >
+            <select v-model="eventForm.event_code" class="shadcn-input">
               <option value="GATE_IN">{{ isAr ? 'GATE_IN - دخول ساحة الميناء' : 'GATE_IN - Port Gate In' }}</option>
               <option value="CUSTOMS_CLEARED">{{ isAr ? 'CUSTOMS_CLEARED - إنهاء الإفراج الجمركي' : 'CUSTOMS_CLEARED - Customs Cleared' }}</option>
               <option value="LOADED">{{ isAr ? 'LOADED - التحميل على ظهر السفينة' : 'LOADED - Loaded On-Board' }}</option>
@@ -861,45 +861,45 @@ const isMilestoneCompleted = (code) => {
               <option value="ARRIVED">{{ isAr ? 'ARRIVED - وصول ميناء المقصد' : 'ARRIVED - Vessel Arrived' }}</option>
               <option value="DISCHARGED">{{ isAr ? 'DISCHARGED - تفريغ الحاوية' : 'DISCHARGED - Discharged' }}</option>
               <option value="EMPTY_RETURN">{{ isAr ? 'EMPTY_RETURN - تسليم الحاوية الفارغة' : 'EMPTY_RETURN - Returned Empty' }}</option>
-            </UiSelect>
+            </select>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'وصف وتفاصيل الحركة' : 'Event Description' }}
             </label>
-            <UiInput v-model="eventForm.event_name" type="text" required  / />
+            <input v-model="eventForm.event_name" type="text" required class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'الموقع / الميناء / الساحة' : 'Location / Terminal' }}
             </label>
-            <UiInput v-model="eventForm.location_name" type="text" required  / />
+            <input v-model="eventForm.location_name" type="text" required class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'تاريخ ووقت الحركة' : 'Date & Time' }}
             </label>
-            <UiInput v-model="eventForm.occurred_at" type="text" required  / />
+            <input v-model="eventForm.occurred_at" type="text" required class="shadcn-input font-mono" />
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-            <UiButton 
+            <button 
               type="button" 
               @click="showAddEventModal = false" 
-               variant="ghost"
+              class="shadcn-btn-ghost text-xs cursor-pointer"
             >
               {{ isAr ? 'إلغاء' : 'Cancel' }}
-            </UiButton>
-            <UiButton 
+            </button>
+            <button 
               type="submit" 
               :disabled="eventForm.processing" 
-               variant="primary"
+              class="shadcn-btn-primary text-xs cursor-pointer"
             >
               {{ isAr ? 'حفظ الحركة' : 'Save Event' }}
-            </UiButton>
+            </button>
           </div>
         </form>
       </div>

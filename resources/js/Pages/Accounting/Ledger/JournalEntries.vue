@@ -33,7 +33,7 @@ const props = defineProps({
           <span>{{ isAr ? 'إنشاء قيد يدوي / تسوية' : 'New Journal Entry' }}</span>
         </Link>
 
-        <UiCard >
+        <div class="shadcn-card px-3 py-2 flex items-center gap-2 bg-zinc-900 text-white border-zinc-900">
           <Scale class="w-4 h-4 text-emerald-400" />
           <span class="text-xs font-bold text-white">{{ isAr ? 'توازن صارم مفعل' : 'Balanced Double-Entry' }}</span>
         </div>
@@ -42,7 +42,7 @@ const props = defineProps({
 
     <!-- Journal Entries List -->
     <div class="space-y-4">
-      <UiCard v-for="jv in entries.data" :key="jv.id" >
+      <div v-for="jv in entries.data" :key="jv.id" class="shadcn-card p-5 space-y-3">
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <div>
             <div class="font-mono font-bold text-zinc-950 text-sm flex items-center gap-2">
@@ -97,7 +97,7 @@ const props = defineProps({
         </div>
       </div>
 
-      <UiCard v-if="!entries.data?.length" >
+      <div v-if="!entries.data?.length" class="shadcn-card p-8 text-center text-zinc-500 font-mono">
         {{ isAr ? 'لا توجد قيود يومية مسجلة حالياً' : 'No journal entries recorded yet.' }}
       </div>
     </div>

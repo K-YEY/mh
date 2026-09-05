@@ -37,7 +37,7 @@ const props = defineProps({
     </div>
 
     <!-- Data Table Card -->
-    <UiCard >
+    <div class="shadcn-card overflow-hidden bg-white border-slate-200">
       <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
         <thead class="bg-slate-50 text-slate-700 uppercase text-[10px] tracking-wider border-b border-slate-200 font-mono">
           <tr>
