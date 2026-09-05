@@ -28,7 +28,7 @@ const handleSearch = () => {
           <span>{{ isAr ? 'الشحنات البحرية الماستر (MBL)' : 'Master Ocean Shipments (MBL Level)' }}</span>
         </h1>
         <p class="text-xs text-zinc-500">
-          {{ isAr ? 'إدارة رحلات الشحن البحري الزراعية FCL/LCL وحجوزات الخطوط والحاويات' : 'Manage FCL/LCL Agricultural Export Voyages, Line Bookings, & Containers' }}
+          {{ isAr ? 'إدارة رحلات الشحن البحري الزراعية FCL وحجوزات الخطوط والحاويات' : 'Manage FCL Agricultural Export Voyages, Line Bookings, & Containers' }}
         </p>
       </div>
 
@@ -49,7 +49,7 @@ const handleSearch = () => {
           v-model="search"
           @keyup.enter="handleSearch"
           type="text"
-          :placeholder="isAr ? 'تصفية برقم الملف، الحجز، اسم السفينة، أو البوليصة...' : 'Filter by File #, Booking Ref, Vessel Name, or MBL #...'"
+          :placeholder="isAr ? 'تصفية برقم الملف، الحجز، أو اسم السفينة...' : 'Filter by File #, Booking Ref, or Vessel Name...'"
           :style="isAr ? 'padding-right: 2.5rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.5rem !important; padding-right: 0.75rem !important;'"
           class="shadcn-input"
         />

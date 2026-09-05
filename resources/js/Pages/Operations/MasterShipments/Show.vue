@@ -351,9 +351,8 @@ const complianceBadge = computed(() => {
         <div class="text-sm font-bold text-zinc-950">
           {{ shipment.shipping_line?.legal_name || '—' }}
         </div>
-        <div class="text-xs text-zinc-500 font-mono space-y-1">
+          <div class="text-xs text-zinc-500 font-mono space-y-1">
           <div>{{ isAr ? 'رقم الحجز:' : 'Booking Ref:' }} <span class="text-zinc-950 font-semibold">{{ shipment.booking_reference || '—' }}</span></div>
-          <div>{{ isAr ? 'بوليصة الماستر:' : 'Master B/L:' }} <span class="text-zinc-950 font-semibold">{{ shipment.master_bl_number || '—' }}</span></div>
         </div>
       </div>
 

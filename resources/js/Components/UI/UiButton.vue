@@ -13,7 +13,7 @@ import { computed } from 'vue'
 const props = defineProps({ variant: { type: String, default: 'primary' }, size: { type: String, default: 'md' } })
 
 const computedClass = computed(() => {
-  const base = 'inline-flex items-center justify-center rounded-md font-medium transition-colors'
+  const base = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors'
   const variants = {
     primary: 'shadcn-btn-primary',
     secondary: 'shadcn-btn-secondary',

@@ -66,9 +66,9 @@ const props = defineProps({
         </div>
         <div>
           <div class="text-2xl font-bold text-zinc-950 font-mono tracking-tight">{{ metrics.active_shipments }}</div>
-          <p class="text-[11px] text-zinc-700 mt-1 flex items-center gap-1 font-medium">
+            <p class="text-[11px] text-zinc-700 mt-1 flex items-center gap-1 font-medium">
             <ArrowUpRight class="w-3.5 h-3.5" />
-            <span>{{ isAr ? 'رحلات ماستر FCL و LCL' : 'Master FCL & LCL Voyages' }}</span>
+            <span>{{ isAr ? 'رحلات ماستر FCL' : 'Master FCL Voyages' }}</span>
           </p>
         </div>
       </div>
@@ -203,7 +203,7 @@ const props = defineProps({
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
             <tr>
-              <th class="px-4 py-3">{{ isAr ? 'رقم الملف والبيليسية' : 'File & MBL #' }}</th>
+              <th class="px-4 py-3">{{ isAr ? 'رقم الملف والمرجع' : 'File & Booking Ref' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الناقل والسفينة' : 'Carrier & Vessel' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'مسار الشحن (شحن -> تفريغ)' : 'Route (POL -> POD)' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'التغادر / الوصول' : 'ETD / ETA' }}</th>
@@ -216,7 +216,7 @@ const props = defineProps({
             <tr v-for="job in recent_shipments" :key="job.id" class="hover:bg-zinc-50 transition-colors">
               <td class="px-4 py-3 font-mono">
                 <div class="font-bold text-zinc-950">{{ job.file_number }}</div>
-                <div class="text-[10px] text-zinc-500">{{ job.master_bl_number || (isAr ? 'في الانتظار' : 'Pending MBL') }}</div>
+                <div class="text-[10px] text-zinc-500">{{ job.booking_reference || '—' }}</div>
               </td>
               <td class="px-4 py-3">
                 <div class="font-semibold text-zinc-900">{{ job.shipping_line?.legal_name }}</div>

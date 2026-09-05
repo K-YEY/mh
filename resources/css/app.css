@@ -209,3 +209,40 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #71717a;
 }
+
+/* Comfortable theme overrides (higher radius, softer palette, larger touch targets) */
+:root {
+  /* subtle override values to keep compatibility */
+  --comfort-radius: 0.9rem;
+  --comfort-primary: 210 75% 46%;
+  --comfort-primary-foreground: 0 0% 100%;
+  --comfort-card-bg: 0 0% 100%;
+}
+
+/* Larger, more accessible button styles */
+.shadcn-btn-primary {
+  border-radius: var(--comfort-radius) !important;
+  height: 3rem !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  font-size: 1rem !important;
+}
+
+.shadcn-btn-secondary, .shadcn-btn-outline, .shadcn-btn-ghost {
+  border-radius: calc(var(--comfort-radius) - 0.15rem) !important;
+  height: 2.75rem !important;
+}
+
+/* Softer card shadow and spacing for dashboard comfort */
+.shadcn-card {
+  box-shadow: 0 12px 30px -14px rgba(2,6,23,0.08) !important;
+  padding: 1rem !important;
+}
+
+/* Dashboard helpers */
+.ui-dashboard { padding: 1.25rem; background-color: #f7fafc; }
+.ui-section { background: #ffffff; border-radius: 0.8rem; padding: 1rem; box-shadow: 0 8px 24px -12px rgba(2,6,23,0.06); }
+
+/* Focus-visible improvements */
+.shadcn-btn-primary:focus, .shadcn-input:focus { box-shadow: 0 6px 20px -8px rgba(37,99,235,0.18); }
+

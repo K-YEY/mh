@@ -271,10 +271,7 @@ const numberToWordsEn = (amount, currency = 'USD') => {
                     <span class="text-slate-500 text-[10px]">{{ isArabicDoc ? 'السفينة / الرحلة:' : 'Vessel/Voy:' }}</span>
                     <strong class="text-slate-900">{{ invoice.master_shipment.vessel_name }} ({{ invoice.master_shipment.voyage_number || 'Voy' }})</strong>
                   </div>
-                  <div v-if="invoice.master_shipment?.master_bl_number" class="flex justify-between font-mono">
-                    <span class="text-slate-500 text-[10px]">{{ isArabicDoc ? 'بوليصة الشحن (B/L):' : 'B/L No:' }}</span>
-                    <strong class="text-slate-900">{{ invoice.master_shipment.master_bl_number }}</strong>
-                  </div>
+                  <!-- Master B/L removed from invoice view -->
                   <div class="flex justify-between text-[10px]">
                     <span class="text-slate-500">{{ isArabicDoc ? 'خط السير:' : 'Route:' }}</span>
                     <span class="font-bold text-slate-800 truncate">

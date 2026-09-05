@@ -35,7 +35,6 @@ const form = useForm({
   customs_broker_id: '',
   trucker_id: '',
   booking_reference: '',
-  master_bl_number: '',
   vessel_name: '',
   voyage_number: '',
   pol_id: '',
@@ -204,13 +203,14 @@ const submit = () => {
             </select>
           </div>
 
-          <!-- Mode -->
+          <!-- Mode (fixed to FCL) -->
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع نمط الشحن' : 'Shipment Mode' }}</label>
-            <select v-model="form.shipment_mode" class="shadcn-input">
-              <option value="FCL">{{ isAr ? 'FCL (حاوية كاملة مبردة / جافة)' : 'FCL (Full Container Load)' }}</option>
-              <option value="LCL">{{ isAr ? 'LCL (مجمع جزئي)' : 'LCL (Consolidated Groupage)' }}</option>
-            </select>
+            <div class="shadcn-input flex items-center justify-between">
+              <span class="text-sm font-semibold">{{ isAr ? 'FCL (حاوية كاملة)' : 'FCL (Full Container Load)' }}</span>
+              <span class="text-xs text-zinc-500">{{ isAr ? 'ثابته' : 'Fixed' }}</span>
+            </div>
+            <input type="hidden" v-model="form.shipment_mode" />
           </div>
 
           <!-- Shipping Line -->
@@ -280,10 +280,7 @@ const submit = () => {
           </div>
 
           <!-- Master B/L (Optional at booking) -->
-          <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم بوليصة الشحن الماستر (MBL #)' : 'Master B/L #' }}</label>
-            <input v-model="form.master_bl_number" type="text" placeholder="e.g. MAEU9812903" class="shadcn-input font-mono" dir="ltr" />
-          </div>
+          <!-- Master B/L removed per product decision -->
 
           <!-- ETD -->
           <div>
