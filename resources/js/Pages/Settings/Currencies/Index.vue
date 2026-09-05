@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { Inertia } from '@inertiajs/inertia'
 import { useI18n } from '@/Composables/useI18n'
 import { DollarSign, Plus, Coins } from 'lucide-vue-next'
 
@@ -29,11 +28,13 @@ const submit = () => {
   })
 }
 
+const baseForm = useForm({})
+
 const setBase = (code) => {
   const confirmMsg = isAr.value ? 'هل تريد تعيين هذه العملة كعملة أساسية للنظام؟' : 'Set this currency as the base system currency?'
   if (!confirm(confirmMsg)) return
 
-  Inertia.post(route('currencies.set-base', code))
+  baseForm.post(route('currencies.set-base', code))
 }
 </script>
 
