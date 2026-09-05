@@ -82,18 +82,18 @@ const filteredBrokers = computed(() => {
         </p>
       </div>
 
-      <button
+      <UiButton
         @click="showCreateModal = true"
-        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
+         variant="primary"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة مخلص جمركي جديد' : 'Add Customs Broker' }}</span>
-      </button>
+      </UiButton>
     </div>
 
     <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="shadcn-card p-4 flex items-center justify-between">
+      <UiCard >
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'إجمالي المخلصين' : 'Total Brokers' }}</div>
           <div class="text-2xl font-bold text-zinc-950 font-mono mt-0.5">{{ brokers?.length || 0 }}</div>
@@ -103,7 +103,7 @@ const filteredBrokers = computed(() => {
         </div>
       </div>
 
-      <div class="shadcn-card p-4 flex items-center justify-between">
+      <UiCard >
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'المخلصين النشطين' : 'Active Brokers' }}</div>
           <div class="text-2xl font-bold text-emerald-600 font-mono mt-0.5">
@@ -115,7 +115,7 @@ const filteredBrokers = computed(() => {
         </div>
       </div>
 
-      <div class="shadcn-card p-4 flex items-center justify-between">
+      <UiCard >
         <div>
           <div class="text-[10px] text-zinc-500 uppercase font-bold">{{ isAr ? 'الموانئ البحرية المعتمدة' : 'Operational Ports' }}</div>
           <div class="text-sm font-bold text-zinc-950 mt-1 font-sans">
@@ -132,12 +132,12 @@ const filteredBrokers = computed(() => {
     <div class="flex items-center justify-between gap-4">
       <div class="relative max-w-sm w-full">
         <Search class="w-4 h-4 text-zinc-400 absolute right-3 top-1/2 -translate-y-1/2" />
-        <input 
+        <UiInput 
           v-model="searchQuery" 
           type="text" 
           :placeholder="isAr ? 'البحث بالاسم، الكود، رقم الرخصة، الميناء، أو المندوب...' : 'Search by name, code, license, port, agent...'" 
-          class="shadcn-input pr-9 text-xs" 
-        />
+           
+        / />
       </div>
 
       <div class="text-xs text-zinc-500 font-mono">
@@ -146,7 +146,7 @@ const filteredBrokers = computed(() => {
     </div>
 
     <!-- Customs Brokers Table -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
@@ -232,67 +232,67 @@ const filteredBrokers = computed(() => {
                 {{ isAr ? 'كود المخلص' : 'Broker Code' }}
                 <span class="text-red-500">*</span>
               </label>
-              <input v-model="form.code" type="text" placeholder="e.g. CBRK-ALEX" class="shadcn-input font-mono uppercase" required dir="ltr" />
+              <UiInput v-model="form.code" type="text" placeholder="e.g. CBRK-ALEX"  required dir="ltr" / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'اسم مكتب / شركة التخليص' : 'Broker Legal Name' }}
                 <span class="text-red-500">*</span>
               </label>
-              <input v-model="form.name" type="text" placeholder="e.g. الأهرام للخدمات الجمركية" class="shadcn-input" required />
+              <UiInput v-model="form.name" type="text" placeholder="e.g. الأهرام للخدمات الجمركية"  required / />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم رخصة التخليص' : 'License #' }}</label>
-              <input v-model="form.license_number" type="text" placeholder="e.g. LIC-8890" class="shadcn-input font-mono" dir="ltr" />
+              <UiInput v-model="form.license_number" type="text" placeholder="e.g. LIC-8890"  dir="ltr" / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الرقم الضريبي' : 'Tax Number' }}</label>
-              <input v-model="form.tax_number" type="text" placeholder="e.g. 100-290-881" class="shadcn-input font-mono" dir="ltr" />
+              <UiInput v-model="form.tax_number" type="text" placeholder="e.g. 100-290-881"  dir="ltr" / />
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الموانئ والمنافذ المعتمد بها' : 'Operating Ports' }}</label>
-            <input v-model="form.operating_ports" type="text" placeholder="e.g. ميناء الإسكندرية / ميناء الدخيلة / ميناء دمياط" class="shadcn-input" />
+            <UiInput v-model="form.operating_ports" type="text" placeholder="e.g. ميناء الإسكندرية / ميناء الدخيلة / ميناء دمياط"  / />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم مندوب / مسؤول الميناء' : 'Port Agent Name' }}</label>
-              <input v-model="form.contact_person" type="text" placeholder="e.g. أ / محمد محمود" class="shadcn-input" />
+              <UiInput v-model="form.contact_person" type="text" placeholder="e.g. أ / محمد محمود"  / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف مندوب الميناء' : 'Agent Phone' }}</label>
-              <input v-model="form.contact_phone" type="text" placeholder="+20 122 ..." class="shadcn-input font-mono" dir="ltr" />
+              <UiInput v-model="form.contact_phone" type="text" placeholder="+20 122 ..."  dir="ltr" / />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني' : 'Email' }}</label>
-              <input v-model="form.email" type="email" placeholder="broker@company.com" class="shadcn-input font-mono" dir="ltr" />
+              <UiInput v-model="form.email" type="email" placeholder="broker@company.com"  dir="ltr" / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف المكتب الرئيسي' : 'Office Phone' }}</label>
-              <input v-model="form.phone" type="text" placeholder="+20 3 ..." class="shadcn-input font-mono" dir="ltr" />
+              <UiInput v-model="form.phone" type="text" placeholder="+20 3 ..."  dir="ltr" / />
             </div>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'العنوان' : 'Office Address' }}</label>
-            <input v-model="form.address" type="text" placeholder="ميناء الدخيلة - مجمع مكاتب المخلصين" class="shadcn-input" />
+            <UiInput v-model="form.address" type="text" placeholder="ميناء الدخيلة - مجمع مكاتب المخلصين"  / />
           </div>
 
           <div class="flex justify-end gap-2 pt-4 border-t border-zinc-200">
             <button type="button" @click="showCreateModal = false" class="px-4 py-2 rounded-lg text-xs font-bold text-zinc-600 hover:bg-zinc-100">
               {{ isAr ? 'إلغاء' : 'Cancel' }}
             </button>
-            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs">
+            <UiButton type="submit" :disabled="form.processing"  variant="primary">
               {{ isAr ? 'حفظ المخلص' : 'Save Broker' }}
-            </button>
+            </UiButton>
           </div>
         </form>
       </div>

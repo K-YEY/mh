@@ -46,7 +46,7 @@ const formatMoney = (val, currency) => {
     </div>
 
     <!-- Official Voucher Document Card -->
-    <div class="shadcn-card bg-white border border-zinc-300 p-8 sm:p-10 shadow-sm print:border-0 print:shadow-none print:p-6 space-y-6">
+    <UiCard >
       <!-- Document Header -->
       <div class="flex items-start justify-between border-b-2 border-blue-900 pb-5">
         <div>

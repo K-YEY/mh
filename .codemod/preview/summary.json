@@ -1,0 +1,155 @@
+{
+  "date": "2026-09-05T12:32:37.742Z",
+  "results": [
+    {
+      "file": "resources/js/Pages/Accounting/Accounts/Index.vue",
+      "changes": 10,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Accounts\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Deposits/Index.vue",
+      "changes": 10,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Deposits\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/ExchangeRates/Index.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\ExchangeRates\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Invoices/Create.vue",
+      "changes": 12,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Invoices\\Create.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Invoices/Index.vue",
+      "changes": 1,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Invoices\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Ledger/CreateJournal.vue",
+      "changes": 3,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Ledger\\CreateJournal.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Ledger/JournalEntries.vue",
+      "changes": 3,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Ledger\\JournalEntries.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Ledger/Statement.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Ledger\\Statement.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Reports/GeneralLedger.vue",
+      "changes": 7,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Reports\\GeneralLedger.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Reports/IncomeStatement.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Reports\\IncomeStatement.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Reports/TrialBalance.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Reports\\TrialBalance.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Vouchers/Create.vue",
+      "changes": 9,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Vouchers\\Create.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Vouchers/Index.vue",
+      "changes": 1,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Vouchers\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Accounting/Vouchers/Show.vue",
+      "changes": 1,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Accounting\\Vouchers\\Show.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Admin/AuditLogs/Index.vue",
+      "changes": 7,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Admin\\AuditLogs\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Admin/Settings/Integrations.vue",
+      "changes": 26,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Admin\\Settings\\Integrations.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Auth/Login.vue",
+      "changes": 3,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Auth\\Login.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Dashboard/Index.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Dashboard\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Documents/VerificationVault.vue",
+      "changes": 4,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Documents\\VerificationVault.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/CustomsBrokers/Index.vue",
+      "changes": 17,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\CustomsBrokers\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/MasterShipments/Create.vue",
+      "changes": 21,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\MasterShipments\\Create.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/MasterShipments/Index.vue",
+      "changes": 4,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\MasterShipments\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/MasterShipments/Show.vue",
+      "changes": 33,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\MasterShipments\\Show.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/Tariffs/Index.vue",
+      "changes": 6,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\Tariffs\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/Tracking/Index.vue",
+      "changes": 19,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\Tracking\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Operations/Truckers/Index.vue",
+      "changes": 18,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Operations\\Truckers\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Settings/Currencies/Index.vue",
+      "changes": 9,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Settings\\Currencies\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Settings/Parties/Index.vue",
+      "changes": 15,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Settings\\Parties\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Settings/Ports/Index.vue",
+      "changes": 8,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Settings\\Ports\\Index.vue.patch"
+    },
+    {
+      "file": "resources/js/Pages/Settings/Users/Index.vue",
+      "changes": 8,
+      "patch": "K:\\websites\\mh\\.codemod\\preview\\resources\\js\\Pages\\Settings\\Users\\Index.vue.patch"
+    }
+  ]
+}

@@ -15,10 +15,22 @@ createInertiaApp({
     return page
   },
   setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
+    const app = createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(ZiggyVue)
-      .mount(el)
+
+    // register shadcn-style UI wrappers (lightweight)
+    try {
+      // eslint-disable-next-line global-require, import/no-unresolved
+      const UI = require('./Components/UI').default
+      app.use(UI)
+    } catch (e) {
+      // noop if components not present or require fails
+      // eslint-disable-next-line no-console
+      console.warn('UI wrappers not registered:', e && e.message)
+    }
+
+    app.mount(el)
   },
   progress: {
     color: '#09090b',

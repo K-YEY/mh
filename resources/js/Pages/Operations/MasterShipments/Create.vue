@@ -186,7 +186,7 @@ const submit = () => {
 
     <form @submit.prevent="submit" class="space-y-6">
       <!-- 1. الأساسيات والخط الملاحي -->
-      <div class="shadcn-card p-6 space-y-4">
+      <UiCard >
         <div class="flex items-center gap-2 border-b border-zinc-100 pb-3">
           <Ship class="w-4 h-4 text-zinc-950" />
           <h2 class="text-sm font-bold text-zinc-950 uppercase tracking-wide">
@@ -198,19 +198,19 @@ const submit = () => {
           <!-- Direction -->
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اتجاه الشحن' : 'Trade Direction' }}</label>
-            <select v-model="form.direction" class="shadcn-input">
+            <UiSelect v-model="form.direction" >
               <option value="EXPORT">{{ isAr ? 'صادر حاصلات زراعية (EXPORT)' : 'Agri Export' }}</option>
               <option value="IMPORT">{{ isAr ? 'وارد (IMPORT)' : 'Import' }}</option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- Mode -->
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع نمط الشحن' : 'Shipment Mode' }}</label>
-            <select v-model="form.shipment_mode" class="shadcn-input">
+            <UiSelect v-model="form.shipment_mode" >
               <option value="FCL">{{ isAr ? 'FCL (حاوية كاملة مبردة / جافة)' : 'FCL (Full Container Load)' }}</option>
               <option value="LCL">{{ isAr ? 'LCL (مجمع جزئي)' : 'LCL (Consolidated Groupage)' }}</option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- Shipping Line -->
@@ -219,18 +219,18 @@ const submit = () => {
               {{ isAr ? 'الناقل البحري / الخط الملاحي' : 'Ocean Carrier / Line' }}
               <span class="text-red-500">*</span>
             </label>
-            <select v-model="form.shipping_line_id" class="shadcn-input" required>
+            <UiSelect v-model="form.shipping_line_id"  required>
               <option value="" disabled>{{ isAr ? 'اختر الخط الملاحي...' : 'Select Carrier Line...' }}</option>
               <option v-for="line in shipping_lines" :key="line.id" :value="line.id">
                 {{ line.legal_name }} ({{ line.code }})
               </option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- Booking Ref -->
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم مرجع الحجز (Booking Ref)' : 'Booking Reference #' }}</label>
-            <input v-model="form.booking_reference" type="text" placeholder="e.g. MSK-8890123" class="shadcn-input font-mono" dir="ltr" />
+            <UiInput v-model="form.booking_reference" type="text" placeholder="e.g. MSK-8890123"  dir="ltr" / />
           </div>
 
           <!-- Vessel Name -->
@@ -239,7 +239,7 @@ const submit = () => {
               {{ isAr ? 'اسم السفينة' : 'Vessel Name' }}
               <span class="text-red-500">*</span>
             </label>
-            <input v-model="form.vessel_name" type="text" placeholder="e.g. MAERSK MC-KINNEY" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="form.vessel_name" type="text" placeholder="e.g. MAERSK MC-KINNEY"  required dir="ltr" / />
           </div>
 
           <!-- Voyage # -->
@@ -248,7 +248,7 @@ const submit = () => {
               {{ isAr ? 'رقم الرحلة البحرية' : 'Voyage Number' }}
               <span class="text-red-500">*</span>
             </label>
-            <input v-model="form.voyage_number" type="text" placeholder="e.g. 2604-W" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="form.voyage_number" type="text" placeholder="e.g. 2604-W"  required dir="ltr" / />
           </div>
 
           <!-- POL -->
@@ -257,12 +257,12 @@ const submit = () => {
               {{ isAr ? 'ميناء القيام / الشحن (POL)' : 'Port of Loading (POL)' }}
               <span class="text-red-500">*</span>
             </label>
-            <select v-model="form.pol_id" class="shadcn-input" required>
+            <UiSelect v-model="form.pol_id"  required>
               <option value="" disabled>{{ isAr ? 'اختر ميناء الشحن...' : 'Select POL...' }}</option>
               <option v-for="p in ports" :key="p.id" :value="p.id">
                 {{ p.name }} ({{ p.code }})
               </option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- POD -->
@@ -271,18 +271,18 @@ const submit = () => {
               {{ isAr ? 'ميناء الوصول / التفريغ (POD)' : 'Port of Discharge (POD)' }}
               <span class="text-red-500">*</span>
             </label>
-            <select v-model="form.pod_id" class="shadcn-input" required>
+            <UiSelect v-model="form.pod_id"  required>
               <option value="" disabled>{{ isAr ? 'اختر ميناء الوصول...' : 'Select POD...' }}</option>
               <option v-for="p in ports" :key="p.id" :value="p.id">
                 {{ p.name }} ({{ p.code }})
               </option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- Master B/L (Optional at booking) -->
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم بوليصة الشحن الماستر (MBL #)' : 'Master B/L #' }}</label>
-            <input v-model="form.master_bl_number" type="text" placeholder="e.g. MAEU9812903" class="shadcn-input font-mono" dir="ltr" />
+            <UiInput v-model="form.master_bl_number" type="text" placeholder="e.g. MAEU9812903"  dir="ltr" / />
           </div>
 
           <!-- ETD -->
@@ -291,7 +291,7 @@ const submit = () => {
               {{ isAr ? 'التاريخ المتوقع للمغادرة (ETD)' : 'Estimated Departure (ETD)' }}
               <span class="text-red-500">*</span>
             </label>
-            <input v-model="form.etd" type="date" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="form.etd" type="date"  required dir="ltr" / />
           </div>
 
           <!-- ETA -->
@@ -300,13 +300,13 @@ const submit = () => {
               {{ isAr ? 'التاريخ المتوقع للوصول (ETA)' : 'Estimated Arrival (ETA)' }}
               <span class="text-red-500">*</span>
             </label>
-            <input v-model="form.eta" type="date" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="form.eta" type="date"  required dir="ltr" / />
           </div>
         </div>
       </div>
 
       <!-- 2. المخلص الجمركي وشركة النقل البري (Customs Broker & Inland Haulage) -->
-      <div class="shadcn-card p-6 space-y-4">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
           <div class="flex items-center gap-2">
             <Building2 class="w-4 h-4 text-zinc-950" />
@@ -330,12 +330,12 @@ const submit = () => {
               <span>{{ isAr ? 'المخلص الجمركي (البروكر المعتمد للملف)' : 'Customs Broker' }}</span>
               <span class="text-[10px] text-zinc-500">{{ isAr ? '(اختياري)' : '(Optional)' }}</span>
             </label>
-            <select v-model="form.customs_broker_id" class="shadcn-input">
+            <UiSelect v-model="form.customs_broker_id" >
               <option value="">{{ isAr ? '-- بدون مخلص جمركي محدد حالياً --' : '-- No Customs Broker Assigned --' }}</option>
               <option v-for="b in customs_brokers" :key="b.id" :value="b.id">
                 {{ b.legal_name }} ({{ b.code }}) {{ b.tax_number ? ` - ضريبي: ${b.tax_number}` : '' }}
               </option>
-            </select>
+            </UiSelect>
             <p class="text-[10px] text-zinc-500 mt-1">
               {{ isAr ? 'يمكنك اختيار المخلص الجمركي المسؤول عن إنهاء إجراءات الفحص والإفراج بالميناء' : 'Select customs broker handling port inspection and clearance.' }}
             </p>
@@ -347,12 +347,12 @@ const submit = () => {
               <span>{{ isAr ? 'شركة النقل البري / المبرد (Trucker Carrier)' : 'Inland Trucker / Reefer Haulier' }}</span>
               <span class="text-[10px] text-zinc-500">{{ isAr ? '(اختياري)' : '(Optional)' }}</span>
             </label>
-            <select v-model="form.trucker_id" class="shadcn-input">
+            <UiSelect v-model="form.trucker_id" >
               <option value="">{{ isAr ? '-- بدون ناقل بري محدد حالياً --' : '-- No Trucking Company Assigned --' }}</option>
               <option v-for="t in truckers" :key="t.id" :value="t.id">
                 {{ t.legal_name }} ({{ t.code }}) {{ t.phone ? ` - هاتف: ${t.phone}` : '' }}
               </option>
-            </select>
+            </UiSelect>
             <p class="text-[10px] text-zinc-500 mt-1">
               {{ isAr ? 'شركة النقل المسؤولة عن نقل الحاويات المبردة من محطة التعبئة إلى رصيف الميناء' : 'Carrier responsible for transporting reefers from packhouse to ocean terminal.' }}
             </p>
@@ -361,7 +361,7 @@ const submit = () => {
       </div>
 
       <!-- 3. شهادة المنشأ الرسمية وأداة المسح الضوئي (Mandatory Certificate of Origin & Scanner) -->
-      <div class="shadcn-card p-6 space-y-4 border-2 border-zinc-950/20 bg-zinc-50/50">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <div class="flex items-center gap-2">
             <ShieldCheck class="w-5 h-5 text-zinc-950" />
@@ -386,13 +386,13 @@ const submit = () => {
               {{ isAr ? 'نوع شهادة المنشأ' : 'Origin Cert Type' }}
               <span class="text-red-500">*</span>
             </label>
-            <select v-model="form.coo_type" class="shadcn-input font-bold" required>
+            <UiSelect v-model="form.coo_type"  required>
               <option value="EUR.1">{{ isAr ? 'يورو 1 (EUR.1 - الاتحاد الأوروبي)' : 'EUR.1 (European Union)' }}</option>
               <option value="AGADIR">{{ isAr ? 'اتفاقية أغادير (Agadir Agreement)' : 'Agadir Agreement' }}</option>
               <option value="GAFTA">{{ isAr ? 'اتفاقية التيسير العربية (GAFTA)' : 'GAFTA (Arab Trade)' }}</option>
               <option value="COMESA">{{ isAr ? 'الكوميسا (COMESA - السوق الأفريقي)' : 'COMESA' }}</option>
               <option value="GENERAL">{{ isAr ? 'شهادة منشأ عامة (General COO)' : 'General Certificate' }}</option>
-            </select>
+            </UiSelect>
           </div>
 
           <!-- Reference Number -->
@@ -401,14 +401,14 @@ const submit = () => {
               {{ isAr ? 'رقم اعتماد / مسلسل الشهادة' : 'COO Reference #' }}
               <span class="text-red-500">*</span>
             </label>
-            <input 
+            <UiInput 
               v-model="form.coo_reference_number" 
               type="text" 
               placeholder="e.g. EG-COO-2026-9901" 
-              class="shadcn-input font-mono" 
+               
               required 
               dir="ltr" 
-            />
+            / />
           </div>
 
           <!-- Chamber of Commerce -->
@@ -416,12 +416,12 @@ const submit = () => {
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'الغرفة التجارية المصدرة' : 'Chamber of Commerce' }}
             </label>
-            <input 
+            <UiInput 
               v-model="form.chamber_of_commerce" 
               type="text" 
               placeholder="e.g. الغرفة التجارية بالإسكندرية" 
-              class="shadcn-input" 
-            />
+               
+            / />
           </div>
 
           <!-- Issue Date -->
@@ -429,12 +429,12 @@ const submit = () => {
             <label class="block text-xs font-bold text-zinc-800 mb-1">
               {{ isAr ? 'تاريخ الإصدار' : 'Issue Date' }}
             </label>
-            <input 
+            <UiInput 
               v-model="form.coo_issue_date" 
               type="date" 
-              class="shadcn-input font-mono" 
+               
               dir="ltr" 
-            />
+            / />
           </div>
         </div>
 
@@ -528,14 +528,14 @@ const submit = () => {
           {{ isAr ? '* الحقول المؤشرة بعلامة حمراء وشهادة المنشأ إلزامية لتأسيس الشحنة الماستر.' : '* Marked fields and Certificate of Origin are required.' }}
         </div>
 
-        <button 
+        <UiButton 
           type="submit" 
           :disabled="form.processing" 
-          class="shadcn-btn-primary px-8 py-2.5 font-bold cursor-pointer flex items-center gap-2 text-sm shadow-sm"
+           variant="primary"
         >
           <Ship class="w-4 h-4" />
           <span>{{ isAr ? 'تأسيس وحفظ ملف الشحنة الماستر' : 'Initialize Ocean Master File' }}</span>
-        </button>
+        </UiButton>
       </div>
     </form>
 

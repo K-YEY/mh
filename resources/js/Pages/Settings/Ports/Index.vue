@@ -42,17 +42,17 @@ const submit = () => {
         </p>
       </div>
 
-      <button
+      <UiButton
         @click="showCreateModal = true"
-        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+         variant="primary"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة ميناء جديد' : 'Add Seaport' }}</span>
-      </button>
+      </UiButton>
     </div>
 
     <!-- Ports Table Card -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div class="flex items-center gap-2">
           <Globe class="w-4 h-4 text-zinc-950" />
@@ -102,7 +102,7 @@ const submit = () => {
 
     <!-- Create Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'تسجيل ميناء بحري جديد' : 'Add UN/LOCODE Ocean Seaport' }}</h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
@@ -111,22 +111,22 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">UN/LOCODE (كود 5 أحرف)</label>
-            <input v-model="form.code" type="text" placeholder="e.g. EGALY" required class="shadcn-input font-mono uppercase" dir="ltr" />
+            <UiInput v-model="form.code" type="text" placeholder="e.g. EGALY" required  dir="ltr" / />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم الميناء البحرى' : 'Port Name' }}</label>
-            <input v-model="form.name" type="text" placeholder="e.g. Alexandria Port (ميناء الإسكندرية)" required class="shadcn-input" />
+            <UiInput v-model="form.name" type="text" placeholder="e.g. Alexandria Port (ميناء الإسكندرية)" required  / />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'كود الدولة (ISO-2)' : 'Country Code (ISO-2)' }}</label>
-            <input v-model="form.country_code" type="text" placeholder="e.g. EG" required class="shadcn-input font-mono uppercase" dir="ltr" />
+            <UiInput v-model="form.country_code" type="text" placeholder="e.g. EG" required  dir="ltr" / />
           </div>
 
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
-            <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
-            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ الميناء' : 'Save Seaport' }}</button>
+            <UiButton type="button" @click="showCreateModal = false"  variant="secondary">{{ isAr ? 'إلغاء' : 'Cancel' }}</UiButton>
+            <UiButton type="submit" :disabled="form.processing"  variant="primary">{{ isAr ? 'حفظ الميناء' : 'Save Seaport' }}</UiButton>
           </div>
         </form>
       </div>

@@ -113,8 +113,8 @@ const submit = () => {
       </div>
 
       <!-- Real-time Balancing Indicator -->
-      <div 
-        class="shadcn-card px-4 py-3 flex items-center gap-3 border shadow-xs transition-all"
+      <UiCard 
+        
         :class="isBalanced ? 'bg-emerald-50 border-emerald-300 text-emerald-950' : 'bg-amber-50 border-amber-300 text-amber-950'"
       >
         <component :is="isBalanced ? CheckCircle2 : AlertTriangle" class="w-5 h-5 flex-shrink-0" :class="isBalanced ? 'text-emerald-600' : 'text-amber-600'" />
@@ -135,7 +135,7 @@ const submit = () => {
     <!-- Main Entry Form -->
     <form @submit.prevent="submit" class="space-y-6">
       <!-- General Entry Details Card -->
-      <div class="shadcn-card p-6 bg-white border border-zinc-200 space-y-4">
+      <UiCard >
         <h2 class="text-sm font-bold text-zinc-900 border-b border-zinc-200 pb-2 flex items-center gap-2">
           <span>{{ isAr ? 'بيانات القيد الأساسية' : 'Header Information' }}</span>
         </h2>
@@ -184,7 +184,7 @@ const submit = () => {
       </div>
 
       <!-- Journal Lines Table Card -->
-      <div class="shadcn-card p-6 bg-white border border-zinc-200 space-y-4">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <div>
             <h2 class="text-sm font-bold text-zinc-900 flex items-center gap-2">
@@ -241,7 +241,7 @@ const submit = () => {
                     <option v-for="acc in accounts" :key="acc.id" :value="acc.id">
                       {{ acc.code }} - {{ isAr ? acc.name_ar : acc.name_en }} ({{ acc.type }})
                     </option>
-                  </select>
+                  </UiSelect>
                 </td>
 
                 <!-- Party Picker -->
@@ -254,7 +254,7 @@ const submit = () => {
                     <option v-for="p in parties" :key="p.id" :value="p.id">
                       {{ p.legal_name }} ({{ p.party_type }})
                     </option>
-                  </select>
+                  </UiSelect>
                 </td>
 
                 <!-- Line Description -->
@@ -276,7 +276,7 @@ const submit = () => {
                     <option value="USD">USD</option>
                     <option value="EGP">EGP</option>
                     <option value="EUR">EUR</option>
-                  </select>
+                  </UiSelect>
                 </td>
 
                 <!-- Exchange Rate -->

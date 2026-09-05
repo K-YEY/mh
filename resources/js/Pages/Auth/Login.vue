@@ -187,16 +187,16 @@ const submit = () => {
                 class="absolute w-4 h-4 text-slate-400 pointer-events-none z-10"
                 :class="isAr ? 'right-3.5' : 'left-3.5'"
               />
-              <input
+              <UiInput
                 id="email-input"
                 v-model="form.email"
                 type="email"
                 required
                 placeholder="admin@agrierp.com"
                 :style="isAr ? 'padding-right: 2.6rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.6rem !important; padding-right: 0.75rem !important;'"
-                class="shadcn-input font-medium focus:ring-1 focus:ring-blue-600 transition-all"
+                
                 dir="ltr"
-              />
+              / />
             </div>
           </div>
 
@@ -215,16 +215,16 @@ const submit = () => {
                 class="absolute w-4 h-4 text-slate-400 pointer-events-none z-10"
                 :class="isAr ? 'right-3.5' : 'left-3.5'"
               />
-              <input
+              <UiInput
                 id="password-input"
                 v-model="form.password"
                 type="password"
                 required
                 placeholder="••••••••"
                 :style="isAr ? 'padding-right: 2.6rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.6rem !important; padding-right: 0.75rem !important;'"
-                class="shadcn-input font-mono focus:ring-1 focus:ring-blue-600 transition-all"
+                
                 dir="ltr"
-              />
+              / />
             </div>
           </div>
 
@@ -244,10 +244,10 @@ const submit = () => {
           </div>
 
           <!-- Submit Button -->
-          <button
+          <UiButton
             type="submit"
             :disabled="form.processing"
-            class="shadcn-btn-primary w-full gap-2 mt-2 h-10 text-xs font-bold hover:bg-blue-700 active:scale-[0.99] transition-all shadow-md cursor-pointer"
+             variant="primary"
           >
             <span>{{ isAr ? 'تسجيل الدخول للنظام' : 'Sign In to MH For Export Portal' }}</span>
             <component 
@@ -255,7 +255,7 @@ const submit = () => {
               class="w-4 h-4 transition-transform"
               :class="isAr ? 'group-hover:-translate-x-1' : 'group-hover:translate-x-1'"
             />
-          </button>
+          </UiButton>
         </form>
 
         <div class="text-center text-[11px] text-slate-500 font-mono">

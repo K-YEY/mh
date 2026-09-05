@@ -1,0 +1,234 @@
+--- a/resources/js/Pages/Accounting/ExchangeRates/Index.vue
++++ b/resources/js/Pages/Accounting/ExchangeRates/Index.vue
+@@
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Plus, TrendingUp, RefreshCw } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  currencies: Array,
+  rates: Object,
+})
+
+const form = useForm({
+  currency_code: 'EUR',
+  rate_to_base: 1.0850,
+  effective_date: new Date().toISOString().split('T')[0],
+})
+
+const submit = () => {
+  form.post(route('exchange-rates.store'), {
+    onSuccess: () => form.reset(),
+  })
+}
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <TrendingUp class="w-6 h-6 text-zinc-950" />
+          <span>{{ isAr ? 'أسعار صرف العملات الأجنبية (FX Matrix)' : 'Foreign Exchange Rates' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500">
+          {{ isAr ? 'إدارة أسعار صرف العملات مقابل الدولار الأساسي للفواتير البحرية وتكاليف الشحنات' : 'Manage Base Currency (USD) Exchange Rates for Multi-Currency Ocean Billing & Job Costing' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Active Rates Table Card -->
+      <div class="lg:col-span-2 shadcn-card overflow-hidden">
+        <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+          <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+            <tr>
+              <th class="p-4">{{ isAr ? 'كود العملة' : 'Currency Code' }}</th>
+              <th class="p-4">{{ isAr ? 'سعر الصرف مقابل الأساس (1 USD)' : 'Rate to Base (1 USD)' }}</th>
+              <th class="p-4">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</th>
+              <th class="p-4">{{ isAr ? 'الحالة' : 'Status' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 font-mono">
+            <tr v-for="r in rates.data" :key="r.id" class="hover:bg-zinc-50 transition-colors">
+              <td class="p-4 text-zinc-950 font-bold text-sm">
+                {{ r.currency_code }}
+              </td>
+              <td class="p-4 text-zinc-950 font-bold">
+                {{ Number(r.rate_to_base).toFixed(6) }}
+              </td>
+              <td class="p-4 text-zinc-700 font-sans">
+                {{ r.effective_date }}
+              </td>
+              <td class="p-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950">
+                  {{ isAr ? 'نشط' : 'ACTIVE' }}
+                </span>
+              </td>
+            </tr>
+
+            <tr v-if="!rates.data?.length">
+              <td colspan="4" class="p-8 text-center text-zinc-500 font-mono">
+                {{ isAr ? 'لا توجد أسعار صرف مسجلة حالياً' : 'No exchange rates recorded yet.' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Update Exchange Rate Form Card -->
+      <div class="shadcn-card p-5 space-y-4 h-fit">
+        <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+          <Plus class="w-4 h-4 text-zinc-950" />
+          <span>{{ isAr ? 'تحديث سعر صرف جديد' : 'Update FX Spot Rate' }}</span>
+        </h3>
+
+        <form @submit.prevent="submit" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'العملة المستهدفة' : 'Target Currency' }}</label>
+            <select v-model="form.currency_code" class="shadcn-input">
+              <option v-for="c in currencies" :key="c.code" :value="c.code">{{ c.code }} - {{ c.name }} ({{ c.symbol }})</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'سعر الصرف مقابل الدولار (USD)' : 'Exchange Rate to Base (USD)' }}</label>
+            <input v-model="form.rate_to_base" type="number" step="0.000001" class="shadcn-input font-mono font-bold" required dir="ltr" />
+            <p class="text-[10px] text-zinc-500 mt-1">مثال: 1 EUR = 1.085000 USD | 1 EGP = 0.020500 USD</p>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</label>
+            <input v-model="form.effective_date" type="date" class="shadcn-input font-mono" required dir="ltr" />
+          </div>
+
+          <button type="submit" class="shadcn-btn-primary w-full gap-1 mt-2 cursor-pointer">
+            <RefreshCw class="w-3.5 h-3.5" />
+            <span>{{ isAr ? 'حفظ وتحديث سعر الصرف' : 'Post FX Rate Update' }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+
+---
++++
+<script setup>
+import { useForm } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Plus, TrendingUp, RefreshCw } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  currencies: Array,
+  rates: Object,
+})
+
+const form = useForm({
+  currency_code: 'EUR',
+  rate_to_base: 1.0850,
+  effective_date: new Date().toISOString().split('T')[0],
+})
+
+const submit = () => {
+  form.post(route('exchange-rates.store'), {
+    onSuccess: () => form.reset(),
+  })
+}
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <TrendingUp class="w-6 h-6 text-zinc-950" />
+          <span>{{ isAr ? 'أسعار صرف العملات الأجنبية (FX Matrix)' : 'Foreign Exchange Rates' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500">
+          {{ isAr ? 'إدارة أسعار صرف العملات مقابل الدولار الأساسي للفواتير البحرية وتكاليف الشحنات' : 'Manage Base Currency (USD) Exchange Rates for Multi-Currency Ocean Billing & Job Costing' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Active Rates Table Card -->
+      <UiCard >
+        <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+          <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+            <tr>
+              <th class="p-4">{{ isAr ? 'كود العملة' : 'Currency Code' }}</th>
+              <th class="p-4">{{ isAr ? 'سعر الصرف مقابل الأساس (1 USD)' : 'Rate to Base (1 USD)' }}</th>
+              <th class="p-4">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</th>
+              <th class="p-4">{{ isAr ? 'الحالة' : 'Status' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 font-mono">
+            <tr v-for="r in rates.data" :key="r.id" class="hover:bg-zinc-50 transition-colors">
+              <td class="p-4 text-zinc-950 font-bold text-sm">
+                {{ r.currency_code }}
+              </td>
+              <td class="p-4 text-zinc-950 font-bold">
+                {{ Number(r.rate_to_base).toFixed(6) }}
+              </td>
+              <td class="p-4 text-zinc-700 font-sans">
+                {{ r.effective_date }}
+              </td>
+              <td class="p-4">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950">
+                  {{ isAr ? 'نشط' : 'ACTIVE' }}
+                </span>
+              </td>
+            </tr>
+
+            <tr v-if="!rates.data?.length">
+              <td colspan="4" class="p-8 text-center text-zinc-500 font-mono">
+                {{ isAr ? 'لا توجد أسعار صرف مسجلة حالياً' : 'No exchange rates recorded yet.' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Update Exchange Rate Form Card -->
+      <UiCard >
+        <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+          <Plus class="w-4 h-4 text-zinc-950" />
+          <span>{{ isAr ? 'تحديث سعر صرف جديد' : 'Update FX Spot Rate' }}</span>
+        </h3>
+
+        <form @submit.prevent="submit" class="space-y-3">
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'العملة المستهدفة' : 'Target Currency' }}</label>
+            <UiSelect v-model="form.currency_code" >
+              <option v-for="c in currencies" :key="c.code" :value="c.code">{{ c.code }} - {{ c.name }} ({{ c.symbol }})</option>
+            </UiSelect>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'سعر الصرف مقابل الدولار (USD)' : 'Exchange Rate to Base (USD)' }}</label>
+            <UiInput v-model="form.rate_to_base" type="number" step="0.000001"  required dir="ltr" / />
+            <p class="text-[10px] text-zinc-500 mt-1">مثال: 1 EUR = 1.085000 USD | 1 EGP = 0.020500 USD</p>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</label>
+            <UiInput v-model="form.effective_date" type="date"  required dir="ltr" / />
+          </div>
+
+          <UiButton type="submit"  variant="primary">
+            <RefreshCw class="w-3.5 h-3.5" />
+            <span>{{ isAr ? 'حفظ وتحديث سعر الصرف' : 'Post FX Rate Update' }}</span>
+          </UiButton>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

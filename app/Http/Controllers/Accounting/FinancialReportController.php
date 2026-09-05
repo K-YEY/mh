@@ -24,6 +24,8 @@ class FinancialReportController extends Controller
             ->get();
 
         $trialData = [];
+        $totalOpeningDebit = 0.00;
+        $totalOpeningCredit = 0.00;
         $totalPeriodDebit = 0.00;
         $totalPeriodCredit = 0.00;
         $totalEndingDebit = 0.00;
@@ -79,12 +81,16 @@ class FinancialReportController extends Controller
                     'name_en' => $acc->name_en,
                     'type' => $acc->type,
                     'parent_id' => $acc->parent_id,
+                    'opening_debit' => round($openingDebit, 2),
+                    'opening_credit' => round($openingCredit, 2),
                     'period_debit' => round($periodDebit, 2),
                     'period_credit' => round($periodCredit, 2),
                     'ending_debit' => round($endingDebit, 2),
                     'ending_credit' => round($endingCredit, 2),
                 ];
 
+                $totalOpeningDebit += $openingDebit;
+                $totalOpeningCredit += $openingCredit;
                 $totalPeriodDebit += $periodDebit;
                 $totalPeriodCredit += $periodCredit;
                 $totalEndingDebit += $endingDebit;
@@ -93,17 +99,22 @@ class FinancialReportController extends Controller
         }
 
         return Inertia::render('Accounting/Reports/TrialBalance', [
+            'report' => $trialData,
             'accounts_data' => $trialData,
             'filters' => [
                 'from_date' => $fromDate,
+                'as_of_date' => $toDate,
                 'to_date' => $toDate,
             ],
             'totals' => [
+                'opening_debit' => round($totalOpeningDebit, 2),
+                'opening_credit' => round($totalOpeningCredit, 2),
                 'period_debit' => round($totalPeriodDebit, 2),
                 'period_credit' => round($totalPeriodCredit, 2),
                 'ending_debit' => round($totalEndingDebit, 2),
                 'ending_credit' => round($totalEndingCredit, 2),
                 'is_balanced' => abs($totalPeriodDebit - $totalPeriodCredit) < 0.01,
+                'difference' => round(abs($totalPeriodDebit - $totalPeriodCredit), 2),
             ],
         ]);
     }
@@ -221,14 +232,29 @@ class FinancialReportController extends Controller
         $netIncome = $grossProfit - $totalAdminExpenses;
 
         return Inertia::render('Accounting/Reports/IncomeStatement', [
-            'revenues' => $revenues,
-            'total_revenue' => round($totalRevenue, 2),
-            'direct_costs' => $directCosts,
-            'total_direct_costs' => round($totalDirectCosts, 2),
+            'revenues' => [
+                'items' => $revenues,
+                'total' => round($totalRevenue, 2),
+            ],
+            'direct_costs' => [
+                'items' => $directCosts,
+                'total' => round($totalDirectCosts, 2),
+            ],
             'gross_profit' => round($grossProfit, 2),
+            'expenses' => [
+                'items' => $adminExpenses,
+                'total' => round($totalAdminExpenses, 2),
+            ],
+            'total_revenue' => round($totalRevenue, 2),
+            'total_direct_costs' => round($totalDirectCosts, 2),
             'admin_expenses' => $adminExpenses,
             'total_admin_expenses' => round($totalAdminExpenses, 2),
+            'net_profit' => round($netIncome, 2),
             'net_income' => round($netIncome, 2),
+            'period' => [
+                'start_date' => $fromDate,
+                'end_date' => $toDate,
+            ],
             'filters' => [
                 'from_date' => $fromDate,
                 'to_date' => $toDate,
@@ -297,6 +323,7 @@ class FinancialReportController extends Controller
                     'entry_date' => $l->journalEntry->entry_date,
                     'entry_number' => $l->journalEntry->entry_number,
                     'narration' => $l->journalEntry->narration,
+                    'line_description' => $l->description,
                     'description' => $l->description,
                     'party_name' => $l->party?->legal_name,
                     'currency_code' => $l->currency_code,
@@ -309,18 +336,25 @@ class FinancialReportController extends Controller
             }
         }
 
+        $closingBalance = isset($runningBalance) ? round($runningBalance, 2) : round($openingBalance, 2);
+
         return Inertia::render('Accounting/Reports/GeneralLedger', [
             'accounts' => $accounts,
+            'selectedAccount' => $selectedAccount,
             'selected_account' => $selectedAccount,
             'lines' => $lines,
+            'openingBalance' => round($openingBalance, 2),
             'opening_balance' => round($openingBalance, 2),
+            'closingBalance' => $closingBalance,
             'totals' => [
                 'debit' => round($totalDebit, 2),
                 'credit' => round($totalCredit, 2),
-                'closing_balance' => isset($runningBalance) ? round($runningBalance, 2) : round($openingBalance, 2),
+                'closing_balance' => $closingBalance,
             ],
             'filters' => [
                 'account_id' => (int) $accountId,
+                'start_date' => $fromDate,
+                'end_date' => $toDate,
                 'from_date' => $fromDate,
                 'to_date' => $toDate,
             ],

@@ -40,7 +40,7 @@ const submit = () => {
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Active Rates Table Card -->
-      <div class="lg:col-span-2 shadcn-card overflow-hidden">
+      <UiCard >
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
             <tr>
@@ -78,7 +78,7 @@ const submit = () => {
       </div>
 
       <!-- Update Exchange Rate Form Card -->
-      <div class="shadcn-card p-5 space-y-4 h-fit">
+      <UiCard >
         <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
           <Plus class="w-4 h-4 text-zinc-950" />
           <span>{{ isAr ? 'تحديث سعر صرف جديد' : 'Update FX Spot Rate' }}</span>
@@ -87,26 +87,26 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'العملة المستهدفة' : 'Target Currency' }}</label>
-            <select v-model="form.currency_code" class="shadcn-input">
+            <UiSelect v-model="form.currency_code" >
               <option v-for="c in currencies" :key="c.code" :value="c.code">{{ c.code }} - {{ c.name }} ({{ c.symbol }})</option>
-            </select>
+            </UiSelect>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'سعر الصرف مقابل الدولار (USD)' : 'Exchange Rate to Base (USD)' }}</label>
-            <input v-model="form.rate_to_base" type="number" step="0.000001" class="shadcn-input font-mono font-bold" required dir="ltr" />
+            <UiInput v-model="form.rate_to_base" type="number" step="0.000001"  required dir="ltr" / />
             <p class="text-[10px] text-zinc-500 mt-1">مثال: 1 EUR = 1.085000 USD | 1 EGP = 0.020500 USD</p>
           </div>
 
           <div>
             <label class="block text-[11px] font-bold text-zinc-800 mb-1">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</label>
-            <input v-model="form.effective_date" type="date" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="form.effective_date" type="date"  required dir="ltr" / />
           </div>
 
-          <button type="submit" class="shadcn-btn-primary w-full gap-1 mt-2 cursor-pointer">
+          <UiButton type="submit"  variant="primary">
             <RefreshCw class="w-3.5 h-3.5" />
             <span>{{ isAr ? 'حفظ وتحديث سعر الصرف' : 'Post FX Rate Update' }}</span>
-          </button>
+          </UiButton>
         </form>
       </div>
     </div>

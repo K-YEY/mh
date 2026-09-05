@@ -258,25 +258,25 @@ const complianceBadge = computed(() => {
       </div>
 
       <div class="flex items-center gap-2">
-        <button 
+        <UiButton 
           @click="openUploadModalFor(null)"
-          class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
+           variant="primary"
         >
           <UploadCloud class="w-4 h-4 font-bold" />
           <span>{{ isAr ? 'رفع / مسح مستند جديد' : 'Upload / Scan Doc' }}</span>
-        </button>
-        <button 
+        </UiButton>
+        <UiButton 
           @click="showAddContainerModal = true"
-          class="shadcn-btn-secondary gap-1.5 cursor-pointer text-xs"
+           variant="secondary"
         >
           <Box class="w-4 h-4 text-zinc-950" />
           <span>{{ isAr ? 'إضافة حاوية' : 'Add Container' }}</span>
-        </button>
+        </UiButton>
       </div>
     </div>
 
     <!-- Compliance Readiness Card -->
-    <div class="shadcn-card p-5 space-y-4">
+    <UiCard >
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-lg bg-zinc-950 text-white flex items-center justify-center shrink-0 shadow-xs">
@@ -328,14 +328,14 @@ const complianceBadge = computed(() => {
           </span>
         </div>
         <div class="flex items-center gap-1.5 flex-wrap">
-          <button 
+          <UiButton 
             v-for="missing in compliance.missing_mandatory_documents"
             :key="missing.code"
             @click="openUploadModalFor(missing.code)"
-            class="shadcn-btn-secondary h-7 px-2.5 text-[11px] font-mono cursor-pointer"
+             variant="secondary"
           >
             + {{ isAr ? 'رفع' : 'Upload' }} {{ missing.code }}
-          </button>
+          </UiButton>
         </div>
       </div>
     </div>
@@ -343,7 +343,7 @@ const complianceBadge = computed(() => {
     <!-- Logistics Partners & Key Details Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <!-- Shipping Line -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between text-zinc-400 border-b border-zinc-100 pb-2">
           <span class="text-[10px] font-bold uppercase tracking-wider font-mono">{{ isAr ? 'الخط الملاحي والناقل' : 'Shipping Line / Carrier' }}</span>
           <Ship class="w-4 h-4 text-zinc-950" />
@@ -358,7 +358,7 @@ const complianceBadge = computed(() => {
       </div>
 
       <!-- Customs Broker -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between text-zinc-400 border-b border-zinc-100 pb-2">
           <span class="text-[10px] font-bold uppercase tracking-wider font-mono">{{ isAr ? 'المخلص الجمركي المعتمد' : 'Customs Broker' }}</span>
           <ShieldCheck class="w-4 h-4 text-zinc-950" />
@@ -373,7 +373,7 @@ const complianceBadge = computed(() => {
       </div>
 
       <!-- Trucker -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between text-zinc-400 border-b border-zinc-100 pb-2">
           <span class="text-[10px] font-bold uppercase tracking-wider font-mono">{{ isAr ? 'شركة النقل البري والمبرد' : 'Inland Trucking Carrier' }}</span>
           <Truck class="w-4 h-4 text-zinc-950" />
@@ -389,7 +389,7 @@ const complianceBadge = computed(() => {
     </div>
 
     <!-- Documents & Compliance Hub -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <!-- Title & Header Bar -->
       <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-200">
         <div>
@@ -402,13 +402,13 @@ const complianceBadge = computed(() => {
           </p>
         </div>
 
-        <button 
+        <UiButton 
           @click="openUploadModalFor(null)"
-          class="shadcn-btn-primary gap-1.5 h-8 text-xs cursor-pointer"
+           variant="primary"
         >
           <Plus class="w-3.5 h-3.5 font-bold" />
           <span>{{ isAr ? 'إضافة مستند' : 'Add Document' }}</span>
-        </button>
+        </UiButton>
       </div>
 
       <!-- Categories Filter Tabs -->
@@ -503,7 +503,7 @@ const complianceBadge = computed(() => {
     </div>
 
     <!-- Containers & Reefer Telemetry Grid -->
-    <div class="shadcn-card p-5 space-y-4">
+    <UiCard >
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
         <h3 class="text-sm font-bold text-zinc-950 uppercase tracking-wide flex items-center gap-2">
           <Box class="w-4 h-4 text-zinc-950" />
@@ -551,7 +551,7 @@ const complianceBadge = computed(() => {
     </div>
 
     <!-- House Shipments List -->
-    <div class="shadcn-card p-5 space-y-4">
+    <UiCard >
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
         <h3 class="text-sm font-bold text-zinc-950 uppercase tracking-wide flex items-center gap-2">
           <Layers class="w-4 h-4 text-zinc-950" />
@@ -602,7 +602,7 @@ const complianceBadge = computed(() => {
     </div>
 
     <!-- Profitability & Cost Breakdown (if available) -->
-    <div v-if="profitability" class="shadcn-card p-5 space-y-4">
+    <UiCard v-if="profitability" >
       <div class="flex items-center justify-between border-b border-zinc-100 pb-3">
         <h3 class="text-sm font-bold text-zinc-950 uppercase tracking-wide flex items-center gap-2">
           <DollarSign class="w-4 h-4 text-zinc-950" />
@@ -633,7 +633,7 @@ const complianceBadge = computed(() => {
 
     <!-- Upload & Camera Scanner Modal -->
     <div v-if="showUploadModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
-      <div class="shadcn-card max-w-lg w-full p-6 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <UiCard >
         <button 
           @click="showUploadModal = false"
           class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
@@ -652,16 +652,16 @@ const complianceBadge = computed(() => {
               {{ isAr ? 'نوع المستند والشهادة' : 'Document Type' }}
               <span class="text-red-500">*</span>
             </label>
-            <select 
+            <UiSelect 
               v-model="docForm.document_type_id"
               required
-              class="shadcn-input"
+              
             >
               <option value="" disabled>{{ isAr ? 'اختر نوع المستند...' : 'Select document type...' }}</option>
               <option v-for="dt in document_types" :key="dt.id" :value="dt.id">
                 {{ dt.code }} - {{ isAr ? dt.name_ar : dt.name_en }}
               </option>
-            </select>
+            </UiSelect>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -669,24 +669,24 @@ const complianceBadge = computed(() => {
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'الرقم المرجعي / رقم الشهادة' : 'Reference Number' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="docForm.reference_number"
                 type="text"
                 placeholder="e.g. PHYTO-EG-2026-99"
-                class="shadcn-input font-mono"
+                
                 dir="ltr"
-              />
+              / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'جهة الإصدار' : 'Issuing Authority' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="docForm.issuing_authority"
                 type="text"
                 placeholder="الحجر الزراعي / المعمل / الغرفة"
-                class="shadcn-input"
-              />
+                
+              / />
             </div>
           </div>
 
@@ -695,21 +695,21 @@ const complianceBadge = computed(() => {
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'تاريخ الإصدار' : 'Issue Date' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="docForm.issue_date"
                 type="date"
-                class="shadcn-input font-mono"
-              />
+                
+              / />
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'تاريخ الانتهاء (إن وجد)' : 'Expiry Date' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="docForm.expiry_date"
                 type="date"
-                class="shadcn-input font-mono"
-              />
+                
+              / />
             </div>
           </div>
 
@@ -720,23 +720,23 @@ const complianceBadge = computed(() => {
             </label>
 
             <div class="flex items-center gap-3">
-              <button 
+              <UiButton 
                 type="button"
                 @click="fileInput.click()"
-                class="flex-1 shadcn-btn-secondary gap-2 text-xs py-2 h-auto cursor-pointer"
+                 variant="secondary"
               >
                 <UploadCloud class="w-4 h-4 text-zinc-950" />
                 <span>{{ isAr ? 'ملف PDF / صورة' : 'Upload File' }}</span>
-              </button>
+              </UiButton>
 
-              <button 
+              <UiButton 
                 type="button"
                 @click="startCamera"
-                class="flex-1 shadcn-btn-secondary gap-2 text-xs py-2 h-auto cursor-pointer"
+                 variant="secondary"
               >
                 <Camera class="w-4 h-4 text-zinc-950" />
                 <span>{{ isAr ? 'مسح بالكاميرا' : 'Camera Scan' }}</span>
-              </button>
+              </UiButton>
 
               <input 
                 ref="fileInput"
@@ -768,20 +768,20 @@ const complianceBadge = computed(() => {
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-            <button 
+            <UiButton 
               type="button"
               @click="showUploadModal = false"
-              class="shadcn-btn-ghost text-xs cursor-pointer"
+               variant="ghost"
             >
               {{ isAr ? 'إلغاء' : 'Cancel' }}
-            </button>
-            <button 
+            </UiButton>
+            <UiButton 
               type="submit"
               :disabled="docForm.processing || (!docForm.document_file && !docForm.scanned_image)"
-              class="shadcn-btn-primary text-xs cursor-pointer disabled:opacity-50"
+               variant="primary"
             >
               {{ docForm.processing ? (isAr ? 'جاري الحفظ...' : 'Uploading...') : (isAr ? 'حفظ واعتماد المستند' : 'Save Document') }}
-            </button>
+            </UiButton>
           </div>
         </form>
       </div>
@@ -789,7 +789,7 @@ const complianceBadge = computed(() => {
 
     <!-- Live Camera Scanner Overlay Modal -->
     <div v-if="isScannerOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md">
-      <div class="shadcn-card max-w-lg w-full p-5 space-y-3 shadow-2xl relative bg-zinc-950 text-white border-zinc-800">
+      <UiCard >
         <button 
           @click="stopCamera"
           class="absolute top-4 end-4 text-zinc-400 hover:text-white cursor-pointer"
@@ -825,21 +825,21 @@ const complianceBadge = computed(() => {
           >
             {{ isAr ? 'إلغاء' : 'Cancel' }}
           </button>
-          <button 
+          <UiButton 
             type="button"
             @click="captureScan"
-            class="shadcn-btn-primary bg-white text-zinc-950 hover:bg-zinc-200 text-xs font-bold gap-1.5 cursor-pointer"
+             variant="primary"
           >
             <Camera class="w-4 h-4" />
             <span>{{ isAr ? 'التقاط وحفظ الصورة' : 'Capture Document' }}</span>
-          </button>
+          </UiButton>
         </div>
       </div>
     </div>
 
     <!-- Add Container Modal -->
     <div v-if="showAddContainerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
-      <div class="shadcn-card max-w-md w-full p-6 space-y-4 shadow-2xl relative">
+      <UiCard >
         <button 
           @click="showAddContainerModal = false"
           class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
@@ -858,14 +858,14 @@ const complianceBadge = computed(() => {
               {{ isAr ? 'رقم الحاوية (ISO Container No)' : 'Container Number' }}
               <span class="text-red-500">*</span>
             </label>
-            <input 
+            <UiInput 
               v-model="containerForm.container_number"
               type="text" 
               required 
               placeholder="e.g. MSKU9876543" 
-              class="shadcn-input font-mono uppercase"
+              
               dir="ltr"
-            />
+            / />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
@@ -873,27 +873,27 @@ const complianceBadge = computed(() => {
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'نوع الحاوية' : 'Type' }}
               </label>
-              <select 
+              <UiSelect 
                 v-model="containerForm.container_type"
-                class="shadcn-input font-mono"
+                
               >
                 <option value="40RH">40' Reefer High Cube (40RH)</option>
                 <option value="20RF">20' Reefer Standard (20RF)</option>
                 <option value="40HC">40' High Cube Dry (40HC)</option>
                 <option value="20GP">20' General Purpose (20GP)</option>
-              </select>
+              </UiSelect>
             </div>
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'رقم الرصاص (Seal No)' : 'Seal Number' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="containerForm.seal_number"
                 type="text" 
                 placeholder="e.g. ML-EG-998811" 
-                class="shadcn-input font-mono"
+                
                 dir="ltr"
-              />
+              / />
             </div>
           </div>
 
@@ -902,50 +902,50 @@ const complianceBadge = computed(() => {
               <label class="block text-[10px] font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'الحرارة (°C)' : 'Temp (°C)' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="containerForm.set_temperature_c"
                 type="number" 
                 step="0.1" 
-                class="shadcn-input font-mono text-xs"
-              />
+                
+              / />
             </div>
             <div>
               <label class="block text-[10px] font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'الرطوبة (%)' : 'Humidity (%)' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="containerForm.humidity_percentage"
                 type="number" 
-                class="shadcn-input font-mono text-xs"
-              />
+                
+              / />
             </div>
             <div>
               <label class="block text-[10px] font-bold text-zinc-800 mb-1">
                 {{ isAr ? 'التهوية (m³/h)' : 'Vent (m³/h)' }}
               </label>
-              <input 
+              <UiInput 
                 v-model="containerForm.ventilation_cbm_hr"
                 type="number" 
-                class="shadcn-input font-mono text-xs"
-              />
+                
+              / />
             </div>
           </div>
 
           <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-            <button 
+            <UiButton 
               type="button"
               @click="showAddContainerModal = false"
-              class="shadcn-btn-ghost text-xs cursor-pointer"
+               variant="ghost"
             >
               {{ isAr ? 'إلغاء' : 'Cancel' }}
-            </button>
-            <button 
+            </UiButton>
+            <UiButton 
               type="submit"
               :disabled="containerForm.processing"
-              class="shadcn-btn-primary text-xs cursor-pointer"
+               variant="primary"
             >
               {{ isAr ? 'حفظ الحاوية' : 'Save Container' }}
-            </button>
+            </UiButton>
           </div>
         </form>
       </div>

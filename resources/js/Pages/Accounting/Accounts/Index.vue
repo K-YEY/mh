@@ -45,17 +45,17 @@ const submit = () => {
         </p>
       </div>
 
-      <button
+      <UiButton
         @click="showCreateModal = true"
-        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+         variant="primary"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة حساب جديد' : 'New Account' }}</span>
-      </button>
+      </UiButton>
     </div>
 
     <!-- Accounts Table Card -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div class="flex items-center gap-2">
           <FolderTree class="w-4 h-4 text-zinc-950" />
@@ -117,7 +117,7 @@ const submit = () => {
 
     <!-- Create Account Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'إضافة حساب مالى جديد' : 'Create Financial Account' }}</h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
@@ -126,41 +126,41 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-3">
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رمز الحساب' : 'Account Code' }}</label>
-            <input v-model="form.code" type="text" placeholder="e.g. 11050" required class="shadcn-input font-mono" dir="ltr" />
+            <UiInput v-model="form.code" type="text" placeholder="e.g. 11050" required  dir="ltr" / />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الاسم بالإنجليزية' : 'Name (English)' }}</label>
-            <input v-model="form.name_en" type="text" placeholder="e.g. Reefer Freight Revenue" required class="shadcn-input" dir="ltr" />
+            <UiInput v-model="form.name_en" type="text" placeholder="e.g. Reefer Freight Revenue" required  dir="ltr" / />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الاسم بالعربية' : 'Name (Arabic)' }}</label>
-            <input v-model="form.name_ar" type="text" placeholder="مثال: إيرادات النوالين البحرية" required class="shadcn-input" />
+            <UiInput v-model="form.name_ar" type="text" placeholder="مثال: إيرادات النوالين البحرية" required  / />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع الحساب' : 'Account Type' }}</label>
-            <select v-model="form.type" class="shadcn-input">
+            <UiSelect v-model="form.type" >
               <option value="ASSET">{{ isAr ? 'أصول (ASSET)' : 'ASSET' }}</option>
               <option value="LIABILITY">{{ isAr ? 'التزامات (LIABILITY)' : 'LIABILITY' }}</option>
               <option value="EQUITY">{{ isAr ? 'حقوق ملكية (EQUITY)' : 'EQUITY' }}</option>
               <option value="REVENUE">{{ isAr ? 'إيرادات (REVENUE)' : 'REVENUE' }}</option>
               <option value="EXPENSE">{{ isAr ? 'مصروفات (EXPENSE)' : 'EXPENSE' }}</option>
-            </select>
+            </UiSelect>
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الحساب الأب (اختياري)' : 'Parent Account (Optional)' }}</label>
-            <select v-model="form.parent_id" class="shadcn-input">
+            <UiSelect v-model="form.parent_id" >
               <option value="">{{ isAr ? 'بدون (حساب رئيسي)' : 'None (Top Level)' }}</option>
               <option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.code }} - {{ isAr ? a.name_ar : a.name_en }}</option>
-            </select>
+            </UiSelect>
           </div>
 
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
-            <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
-            <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ الحساب' : 'Save Account' }}</button>
+            <UiButton type="button" @click="showCreateModal = false"  variant="secondary">{{ isAr ? 'إلغاء' : 'Cancel' }}</UiButton>
+            <UiButton type="submit" :disabled="form.processing"  variant="primary">{{ isAr ? 'حفظ الحساب' : 'Save Account' }}</UiButton>
           </div>
         </form>
       </div>

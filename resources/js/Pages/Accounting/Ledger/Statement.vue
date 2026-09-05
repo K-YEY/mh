@@ -36,13 +36,13 @@ const loadStatement = () => {
     </div>
 
     <!-- Filter Bar Card -->
-    <div class="shadcn-card p-4 flex items-center gap-4">
+    <UiCard >
       <div class="flex-1">
         <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اختر الطرف / العميل / الخط الملاحي' : 'Select Party / Customer / Line' }}</label>
-        <select v-model="selectedPartyId" @change="loadStatement" class="shadcn-input cursor-pointer">
+        <UiSelect v-model="selectedPartyId" @change="loadStatement" >
           <option value="" disabled>{{ isAr ? 'اختر الطرف لاستخراج كشف الحساب...' : 'Choose Party for Ledger Extract...' }}</option>
           <option v-for="p in parties" :key="p.id" :value="p.id">{{ p.legal_name }} ({{ p.code }})</option>
-        </select>
+        </UiSelect>
       </div>
     </div>
 
@@ -50,22 +50,22 @@ const loadStatement = () => {
     <div v-if="selected_party" class="space-y-6">
       <!-- Summary Box Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="shadcn-card p-4 text-center">
+        <UiCard >
           <div class="text-xs text-zinc-500 uppercase font-bold">{{ isAr ? 'إجمالي المدين' : 'Total Debits' }}</div>
           <div class="text-xl font-bold text-zinc-950 mt-1 font-mono">${{ totals.debit.toLocaleString() }}</div>
         </div>
-        <div class="shadcn-card p-4 text-center">
+        <UiCard >
           <div class="text-xs text-zinc-500 uppercase font-bold">{{ isAr ? 'إجمالي الدائن' : 'Total Credits' }}</div>
           <div class="text-xl font-bold text-zinc-950 mt-1 font-mono">${{ totals.credit.toLocaleString() }}</div>
         </div>
-        <div class="shadcn-card p-4 bg-zinc-950 text-white border-zinc-950 text-center">
+        <UiCard >
           <div class="text-xs text-zinc-300 uppercase font-bold">{{ isAr ? 'الرصيد المتبقي المستحق' : 'Outstanding Balance' }}</div>
           <div class="text-xl font-bold text-white mt-1 font-mono">${{ totals.balance.toLocaleString() }}</div>
         </div>
       </div>
 
       <!-- Ledger Lines Grid Card -->
-      <div class="shadcn-card overflow-hidden">
+      <UiCard >
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
             <tr>

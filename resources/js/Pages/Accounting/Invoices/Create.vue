@@ -61,45 +61,45 @@ const submit = () => {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع المستند / الفاتورة' : 'Invoice Document Type' }}</label>
-          <select v-model="form.invoice_type" class="shadcn-input">
+          <UiSelect v-model="form.invoice_type" >
             <option value="CUSTOMER_INVOICE">{{ isAr ? 'فاتورة مبيعات عميل (CUSTOMER INVOICE)' : 'Customer Sales Invoice' }}</option>
             <option value="VENDOR_BILL">{{ isAr ? 'مطالبة تكلفة مورد (VENDOR BILL)' : 'Vendor Cost Bill' }}</option>
-          </select>
+          </UiSelect>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الطرف (العميل / المورد)' : 'Party (Customer / Vendor)' }}</label>
-          <select v-model="form.party_id" class="shadcn-input" required>
+          <UiSelect v-model="form.party_id"  required>
             <option value="" disabled>{{ isAr ? 'اختر الطرف...' : 'Select Party...' }}</option>
             <option v-for="p in parties" :key="p.id" :value="p.id">{{ p.legal_name }} ({{ p.code }})</option>
-          </select>
+          </UiSelect>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الربط بشحنة ماستر' : 'Link to Master Shipment' }}</label>
-          <select v-model="form.master_shipment_id" class="shadcn-input">
+          <UiSelect v-model="form.master_shipment_id" >
             <option value="">{{ isAr ? 'بدون ربط (مصروفات عامة)' : 'None (General Overhead)' }}</option>
             <option v-for="s in shipments" :key="s.id" :value="s.id">{{ s.file_number }} - {{ s.vessel_name }}</option>
-          </select>
+          </UiSelect>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'عملة الفاتورة' : 'Invoice Currency' }}</label>
-          <select v-model="form.currency_code" class="shadcn-input">
+          <UiSelect v-model="form.currency_code" >
             <option value="USD">USD ($)</option>
             <option value="EUR">EUR (€)</option>
             <option value="EGP">EGP (E£)</option>
-          </select>
+          </UiSelect>
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'سعر الصرف للدولار الأساسي' : 'FX Rate to Base USD' }}</label>
-          <input v-model="form.exchange_rate" type="number" step="0.0001" class="shadcn-input font-mono" required dir="ltr" />
+          <UiInput v-model="form.exchange_rate" type="number" step="0.0001"  required dir="ltr" / />
         </div>
 
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'تاريخ الإصدار' : 'Issue Date' }}</label>
-          <input v-model="form.issue_date" type="date" class="shadcn-input font-mono" required dir="ltr" />
+          <UiInput v-model="form.issue_date" type="date"  required dir="ltr" / />
         </div>
       </div>
 
@@ -107,34 +107,34 @@ const submit = () => {
       <div class="space-y-3 pt-4 border-t border-zinc-200">
         <div class="flex items-center justify-between">
           <h3 class="text-xs font-bold text-zinc-950 uppercase tracking-wider">{{ isAr ? 'بنود الفاتورة والخدمات' : 'Invoice Charge Line Items' }}</h3>
-          <button type="button" @click="addItem" class="shadcn-btn-secondary text-xs h-8 px-3 gap-1 cursor-pointer">
+          <UiButton type="button" @click="addItem"  variant="secondary">
             <Plus class="w-3.5 h-3.5" />
             <span>{{ isAr ? 'إضافة بند جديد' : 'Add Line Item' }}</span>
-          </button>
+          </UiButton>
         </div>
 
         <div v-for="(item, idx) in form.items" :key="idx" class="grid grid-cols-12 gap-2 items-center bg-zinc-50 p-3 rounded-lg border border-zinc-200">
           <div class="col-span-4">
             <label class="text-[10px] text-zinc-500 font-bold uppercase">{{ isAr ? 'نوع البند' : 'Charge Type' }}</label>
-            <select v-model="item.charge_item_id" class="shadcn-input" required>
+            <UiSelect v-model="item.charge_item_id"  required>
               <option value="" disabled>{{ isAr ? 'اختر البند...' : 'Select Charge Item...' }}</option>
               <option v-for="ci in charge_items" :key="ci.id" :value="ci.id">{{ isAr ? ci.name_ar : ci.name_en }} ({{ ci.code }})</option>
-            </select>
+            </UiSelect>
           </div>
 
           <div class="col-span-4">
             <label class="text-[10px] text-zinc-500 font-bold uppercase">{{ isAr ? 'الوصف والتفاصيل' : 'Description' }}</label>
-            <input v-model="item.description" type="text" placeholder="التفاصيل..." class="shadcn-input" />
+            <UiInput v-model="item.description" type="text" placeholder="التفاصيل..."  / />
           </div>
 
           <div class="col-span-1">
             <label class="text-[10px] text-zinc-500 font-bold uppercase">{{ isAr ? 'الكمية' : 'Qty' }}</label>
-            <input v-model="item.quantity" type="number" step="0.1" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="item.quantity" type="number" step="0.1"  required dir="ltr" / />
           </div>
 
           <div class="col-span-2">
             <label class="text-[10px] text-zinc-500 font-bold uppercase">{{ isAr ? 'السعر' : 'Price' }}</label>
-            <input v-model="item.unit_price" type="number" step="0.01" class="shadcn-input font-mono" required dir="ltr" />
+            <UiInput v-model="item.unit_price" type="number" step="0.01"  required dir="ltr" / />
           </div>
 
           <div class="col-span-1 text-right pt-4">
@@ -146,9 +146,9 @@ const submit = () => {
       </div>
 
       <div class="flex justify-end gap-3 pt-4 border-t border-zinc-200">
-        <button type="submit" :disabled="form.processing" class="shadcn-btn-primary px-6 cursor-pointer">
+        <UiButton type="submit" :disabled="form.processing"  variant="primary">
           {{ isAr ? 'ترحيل الفاتورة وإنشاء القيد' : 'Post Invoice & Create Journal Entry' }}
-        </button>
+        </UiButton>
       </div>
     </form>
   </div>

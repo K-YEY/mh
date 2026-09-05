@@ -57,7 +57,7 @@ const props = defineProps({
     <!-- Monochromatic Shadcn Metric Cards Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Active Shipments Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
             {{ isAr ? 'الحجوزات النشطة' : 'Active Bookings' }}
@@ -74,7 +74,7 @@ const props = defineProps({
       </div>
 
       <!-- Active Containers Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
             {{ isAr ? 'الحاوية المبردة المفتوحة' : 'Active Reefer Units' }}
@@ -91,7 +91,7 @@ const props = defineProps({
       </div>
 
       <!-- Invoiced Revenue Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <UiCard >
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
             {{ isAr ? 'إجمالي مبيعات الفواتير' : 'Invoiced Sales' }}
@@ -107,7 +107,7 @@ const props = defineProps({
       </div>
 
       <!-- Net Margin Card -->
-      <div class="shadcn-card p-4 space-y-2 bg-zinc-900 text-white">
+      <UiCard >
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-zinc-300 uppercase tracking-wider">
             {{ isAr ? 'صافي أرباح العمليات' : 'Net Job Margin' }}
@@ -124,7 +124,7 @@ const props = defineProps({
     </div>
 
     <!-- Cold Treatment Probes Section Card -->
-    <div class="shadcn-card p-5 space-y-4">
+    <UiCard >
       <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
         <div class="flex items-center gap-2.5">
           <ThermometerSnowflake class="w-5 h-5 text-zinc-950" />
@@ -182,7 +182,7 @@ const props = defineProps({
     </div>
 
     <!-- Recent Master Ocean Shipments Table Card -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
         <div>
           <h2 class="text-sm font-bold text-zinc-950 flex items-center gap-2">

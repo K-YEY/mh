@@ -77,7 +77,7 @@ const netMarginPct = computed(() => {
     </div>
 
     <!-- Filter Bar (Hidden on print) -->
-    <div class="shadcn-card p-4 bg-white border border-zinc-200 print:hidden">
+    <UiCard >
       <form @submit.prevent="applyFilter" class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-xs font-bold text-zinc-700 mb-1">
@@ -125,29 +125,29 @@ const netMarginPct = computed(() => {
     <!-- Executive Summary Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 print:grid-cols-4 print:gap-2">
       <!-- Total Revenue -->
-      <div class="shadcn-card p-4 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-emerald-700 uppercase">{{ isAr ? 'إجمالي الإيرادات التشغيلية' : 'Operating Revenue' }}</div>
         <div class="text-xl font-extrabold font-mono text-emerald-950 mt-1">{{ formatMoney(revenues?.total) }}</div>
         <div class="text-[10px] text-zinc-500 mt-0.5">{{ isAr ? 'شحن وتخليص ونولون' : 'Ocean Freight & Logistics' }}</div>
       </div>
 
       <!-- Direct Freight Costs -->
-      <div class="shadcn-card p-4 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-amber-700 uppercase">{{ isAr ? 'تكاليف الشحن المباشرة' : 'Direct Freight Costs' }}</div>
         <div class="text-xl font-extrabold font-mono text-amber-950 mt-1">{{ formatMoney(direct_costs?.total) }}</div>
         <div class="text-[10px] text-zinc-500 mt-0.5">{{ isAr ? 'خطوط ملاحية ومقاولين' : 'Carrier slots & Haulers' }}</div>
       </div>
 
       <!-- Gross Profit -->
-      <div class="shadcn-card p-4 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-blue-700 uppercase">{{ isAr ? 'مجمل الربح (الهامش)' : 'Gross Profit' }}</div>
         <div class="text-xl font-extrabold font-mono text-blue-950 mt-1">{{ formatMoney(gross_profit) }}</div>
         <div class="text-[10px] font-bold text-blue-700 mt-0.5">{{ grossMarginPct }}% {{ isAr ? 'هامش مجمل الربح' : 'Margin' }}</div>
       </div>
 
       <!-- Net Profit -->
-      <div 
-        class="shadcn-card p-4 border"
+      <UiCard 
+        
         :class="net_profit >= 0 ? 'bg-emerald-50/60 border-emerald-300' : 'bg-rose-50/60 border-rose-300'"
       >
         <div class="text-[11px] font-bold uppercase" :class="net_profit >= 0 ? 'text-emerald-700' : 'text-rose-700'">
@@ -163,7 +163,7 @@ const netMarginPct = computed(() => {
     </div>
 
     <!-- Formal Corporate Statement Card -->
-    <div class="shadcn-card bg-white border border-zinc-200 overflow-hidden shadow-xs">
+    <UiCard >
       <div class="p-4 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between">
         <span class="font-bold text-xs text-zinc-800 uppercase tracking-wider">
           {{ isAr ? 'تفاصيل بنود قائمة الدخل (عملة الأساس USD)' : 'Income Statement Breakdown (Base Currency USD)' }}

@@ -67,26 +67,26 @@ const getEventBadgeClass = (event) => {
     </div>
 
     <!-- Filters Bar -->
-    <div class="shadcn-card p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <UiCard >
       <div class="relative w-full sm:w-80">
         <Search class="w-4 h-4 text-zinc-400 absolute top-2.5" :class="isAr ? 'right-3' : 'left-3'" />
-        <input 
+        <UiInput 
           v-model="search"
           @keyup.enter="doSearch"
           type="text" 
           :placeholder="isAr ? 'بحث بالحركة، العنصر، أو الوصف...' : 'Search by event, subject, or description...'"
           :style="isAr ? 'padding-right: 2.5rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.5rem !important; padding-right: 0.75rem !important;'"
-          class="shadcn-input"
-        />
+          
+        / />
       </div>
 
-      <button @click="doSearch" class="shadcn-btn-secondary w-full sm:w-auto text-xs cursor-pointer">
+      <UiButton @click="doSearch"  variant="secondary">
         {{ isAr ? 'تصفية سجل الحركات' : 'Filter Audit Logs' }}
-      </button>
+      </UiButton>
     </div>
 
     <!-- Data Table -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
         <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
           <tr>
@@ -128,13 +128,13 @@ const getEventBadgeClass = (event) => {
               {{ log.description }}
             </td>
             <td class="p-4" :class="isAr ? 'text-left' : 'text-right'">
-              <button 
+              <UiButton 
                 @click="openDiffModal(log.properties)" 
-                class="shadcn-btn-outline text-xs h-7 px-2.5 font-mono cursor-pointer"
+                 variant="outline"
               >
                 <Eye class="w-3.5 h-3.5 inline" :class="isAr ? 'ml-1' : 'mr-1'" />
                 <span>{{ isAr ? 'فحص الفرق' : 'Inspect Diff' }}</span>
-              </button>
+              </UiButton>
             </td>
           </tr>
 
@@ -169,7 +169,7 @@ const getEventBadgeClass = (event) => {
 
     <!-- JSON Properties Diff Inspector Modal -->
     <div v-if="isModalOpen" class="fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-xs flex items-center justify-center p-4">
-      <div class="shadcn-card w-full max-w-2xl bg-white p-6 space-y-4 max-h-[85vh] flex flex-col">
+      <UiCard >
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
             <Code2 class="w-4 h-4 text-zinc-950" />
@@ -185,9 +185,9 @@ const getEventBadgeClass = (event) => {
         </div>
 
         <div class="flex justify-end pt-2 border-t border-zinc-200">
-          <button @click="isModalOpen = false" class="shadcn-btn-primary text-xs cursor-pointer">
+          <UiButton @click="isModalOpen = false"  variant="primary">
             {{ isAr ? 'إغلاق الفاحص' : 'Close Inspector' }}
-          </button>
+          </UiButton>
         </div>
       </div>
     </div>

@@ -36,14 +36,14 @@ const rejectDoc = (docId) => {
         </p>
       </div>
 
-      <div class="shadcn-card px-4 py-2 flex items-center gap-2 bg-zinc-950 text-white border-zinc-950">
+      <UiCard >
         <ShieldCheck class="w-4 h-4 text-white" />
         <span class="text-xs font-bold text-white">{{ isAr ? 'خزنة الامتثال الزراعي USDA مفعّلة' : 'USDA & GOEIC Compliance Vault Active' }}</span>
       </div>
     </div>
 
     <!-- Data Table Card -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
         <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
           <tr>
@@ -81,23 +81,23 @@ const rejectDoc = (docId) => {
               </span>
             </td>
             <td class="p-4" :class="isAr ? 'text-left space-x-reverse space-x-2' : 'text-right space-x-2'">
-              <button
+              <UiButton
                 v-if="doc.status !== 'VERIFIED'"
                 @click="verifyDoc(doc.id)"
-                class="shadcn-btn-primary text-xs h-7 px-2.5 gap-1 cursor-pointer"
+                 variant="primary"
               >
                 <CheckCircle class="w-3.5 h-3.5" />
                 <span>{{ isAr ? 'اعتماد وتوثيق' : 'Verify & Approve' }}</span>
-              </button>
+              </UiButton>
 
-              <button
+              <UiButton
                 v-if="doc.status !== 'REJECTED'"
                 @click="rejectDoc(doc.id)"
-                class="shadcn-btn-secondary text-xs h-7 px-2.5 gap-1 cursor-pointer"
+                 variant="secondary"
               >
                 <XCircle class="w-3.5 h-3.5" />
                 <span>{{ isAr ? 'رفض المستند' : 'Reject Document' }}</span>
-              </button>
+              </UiButton>
             </td>
           </tr>
 

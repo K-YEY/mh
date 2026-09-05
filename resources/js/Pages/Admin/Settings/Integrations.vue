@@ -139,18 +139,18 @@ const testConnection = async (provider) => {
         </p>
       </div>
 
-      <button
+      <UiButton
         @click="saveSettings"
         :disabled="form.processing"
-        class="shadcn-btn-primary gap-2 shadow-xs cursor-pointer self-start sm:self-auto"
+         variant="primary"
       >
         <ShieldCheck class="w-4 h-4" />
         <span>{{ form.processing ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ إعدادات الربط' : 'Save Integration Settings') }}</span>
-      </button>
+      </UiButton>
     </div>
 
     <!-- Main Container Card with Tabs -->
-    <div class="shadcn-card bg-white border border-zinc-200 shadow-xs rounded-xl overflow-hidden">
+    <UiCard >
       <!-- Tabs Header -->
       <div class="border-b border-zinc-200 bg-zinc-50/80 px-4 pt-3 flex items-center gap-2 overflow-x-auto">
         <button
@@ -257,13 +257,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'مفتاح API الخاص بـ ShipsGo' : 'ShipsGo API Key' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.shipsgo_api_key ? 'text' : 'password'"
                   v-model="form.shipsgo.api_key"
                   placeholder="e.g. sg_live_79a8f..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.shipsgo_api_key = !showSecrets.shipsgo_api_key"
@@ -278,13 +278,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'مفتاح التحقق من الويب هوك (Webhook Secret)' : 'Webhook Verification Secret' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.shipsgo_webhook_secret ? 'text' : 'password'"
                   v-model="form.shipsgo.webhook_secret"
                   placeholder="e.g. whsec_908f2..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.shipsgo_webhook_secret = !showSecrets.shipsgo_webhook_secret"
@@ -298,31 +298,31 @@ const testConnection = async (provider) => {
             <!-- Environment Mode -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'بيئة التشغيل' : 'Environment Mode' }}</label>
-              <select v-model="form.shipsgo.environment" class="shadcn-input text-xs font-mono">
+              <UiSelect v-model="form.shipsgo.environment" >
                 <option value="sandbox">Sandbox (تجريبي)</option>
                 <option value="live">Live (إنتاج لايف)</option>
-              </select>
+              </UiSelect>
             </div>
 
             <!-- Webhook URL Display -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رابط الويب هوك الخاص بنظامك' : 'Webhook Ingestion Endpoint' }}</label>
               <div class="flex items-center gap-1.5">
-                <input
+                <UiInput
                   type="text"
                   readonly
                   :value="webhookUrls.shipsgo"
-                  class="shadcn-input font-mono text-[11px] bg-zinc-50 text-zinc-600 select-all"
+                  
                   dir="ltr"
-                />
-                <button
+                / />
+                <UiButton
                   type="button"
                   @click="copyToClipboard(webhookUrls.shipsgo, 'shipsgo')"
-                  class="shadcn-btn-secondary text-xs shrink-0 cursor-pointer gap-1"
+                   variant="secondary"
                 >
                   <component :is="copiedWebhook === 'shipsgo' ? Check : Copy" class="w-3.5 h-3.5" />
                   <span>{{ copiedWebhook === 'shipsgo' ? (isAr ? 'تم النسخ' : 'Copied') : (isAr ? 'نسخ' : 'Copy') }}</span>
-                </button>
+                </UiButton>
               </div>
             </div>
           </div>
@@ -353,15 +353,15 @@ const testConnection = async (provider) => {
               </span>
             </div>
 
-            <button
+            <UiButton
               type="button"
               @click="testConnection('shipsgo')"
               :disabled="testingProvider === 'shipsgo'"
-              class="shadcn-btn-secondary text-xs gap-1.5 cursor-pointer self-start sm:self-auto"
+               variant="secondary"
             >
               <RefreshCw :class="{ 'animate-spin': testingProvider === 'shipsgo' }" class="w-3.5 h-3.5" />
               <span>{{ testingProvider === 'shipsgo' ? (isAr ? 'جاري الفحص...' : 'Testing...') : (isAr ? 'اختبار مفتاح الاتصال' : 'Test Connection') }}</span>
-            </button>
+            </UiButton>
           </div>
 
           <div v-if="testResults.shipsgo?.message" :class="testResults.shipsgo.success ? 'bg-zinc-950 text-white' : 'bg-red-50 text-red-900 border-red-200'" class="p-3 rounded-lg text-xs font-mono border">
@@ -393,13 +393,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'مفتاح SeaRates API Key' : 'SeaRates API Key' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.searates_api_key ? 'text' : 'password'"
                   v-model="form.searates.api_key"
                   placeholder="e.g. sr_key_8819x..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.searates_api_key = !showSecrets.searates_api_key"
@@ -414,13 +414,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'معرف العميل (Customer ID)' : 'Customer ID' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.searates_customer_id ? 'text' : 'password'"
                   v-model="form.searates.customer_id"
                   placeholder="e.g. CUST-90123"
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.searates_customer_id = !showSecrets.searates_customer_id"
@@ -434,31 +434,31 @@ const testConnection = async (provider) => {
             <!-- Environment Mode -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'بيئة التشغيل' : 'Environment Mode' }}</label>
-              <select v-model="form.searates.environment" class="shadcn-input text-xs font-mono">
+              <UiSelect v-model="form.searates.environment" >
                 <option value="sandbox">Sandbox (تجريبي)</option>
                 <option value="live">Live (إنتاج لايف)</option>
-              </select>
+              </UiSelect>
             </div>
 
             <!-- Webhook URL Display -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رابط الويب هوك' : 'Webhook Ingestion Endpoint' }}</label>
               <div class="flex items-center gap-1.5">
-                <input
+                <UiInput
                   type="text"
                   readonly
                   :value="webhookUrls.searates"
-                  class="shadcn-input font-mono text-[11px] bg-zinc-50 text-zinc-600 select-all"
+                  
                   dir="ltr"
-                />
-                <button
+                / />
+                <UiButton
                   type="button"
                   @click="copyToClipboard(webhookUrls.searates, 'searates')"
-                  class="shadcn-btn-secondary text-xs shrink-0 cursor-pointer gap-1"
+                   variant="secondary"
                 >
                   <component :is="copiedWebhook === 'searates' ? Check : Copy" class="w-3.5 h-3.5" />
                   <span>{{ copiedWebhook === 'searates' ? (isAr ? 'تم النسخ' : 'Copied') : (isAr ? 'نسخ' : 'Copy') }}</span>
-                </button>
+                </UiButton>
               </div>
             </div>
           </div>
@@ -489,15 +489,15 @@ const testConnection = async (provider) => {
               </span>
             </div>
 
-            <button
+            <UiButton
               type="button"
               @click="testConnection('searates')"
               :disabled="testingProvider === 'searates'"
-              class="shadcn-btn-secondary text-xs gap-1.5 cursor-pointer self-start sm:self-auto"
+               variant="secondary"
             >
               <RefreshCw :class="{ 'animate-spin': testingProvider === 'searates' }" class="w-3.5 h-3.5" />
               <span>{{ testingProvider === 'searates' ? (isAr ? 'جاري الفحص...' : 'Testing...') : (isAr ? 'اختبار مفتاح الاتصال' : 'Test Connection') }}</span>
-            </button>
+            </UiButton>
           </div>
 
           <div v-if="testResults.searates?.message" :class="testResults.searates.success ? 'bg-zinc-950 text-white' : 'bg-red-50 text-red-900 border-red-200'" class="p-3 rounded-lg text-xs font-mono border">
@@ -529,13 +529,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'مفتاح Vizion API Key (X-API-Key)' : 'Vizion X-API-Key' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.vizion_api_key ? 'text' : 'password'"
                   v-model="form.vizion.api_key"
                   placeholder="e.g. vz_key_9012..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.vizion_api_key = !showSecrets.vizion_api_key"
@@ -550,13 +550,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رمز تشفير الويب هوك (Webhook Secret)' : 'Webhook Signing Secret' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.vizion_webhook_secret ? 'text' : 'password'"
                   v-model="form.vizion.webhook_secret"
                   placeholder="e.g. vz_sec_8819..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.vizion_webhook_secret = !showSecrets.vizion_webhook_secret"
@@ -570,31 +570,31 @@ const testConnection = async (provider) => {
             <!-- Environment Mode -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'بيئة التشغيل' : 'Environment Mode' }}</label>
-              <select v-model="form.vizion.environment" class="shadcn-input text-xs font-mono">
+              <UiSelect v-model="form.vizion.environment" >
                 <option value="sandbox">Sandbox (تجريبي)</option>
                 <option value="live">Live (إنتاج لايف)</option>
-              </select>
+              </UiSelect>
             </div>
 
             <!-- Webhook URL Display -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رابط الويب هوك للربط التلقائي' : 'Webhook Ingestion Endpoint' }}</label>
               <div class="flex items-center gap-1.5">
-                <input
+                <UiInput
                   type="text"
                   readonly
                   :value="webhookUrls.vizion"
-                  class="shadcn-input font-mono text-[11px] bg-zinc-50 text-zinc-600 select-all"
+                  
                   dir="ltr"
-                />
-                <button
+                / />
+                <UiButton
                   type="button"
                   @click="copyToClipboard(webhookUrls.vizion, 'vizion')"
-                  class="shadcn-btn-secondary text-xs shrink-0 cursor-pointer gap-1"
+                   variant="secondary"
                 >
                   <component :is="copiedWebhook === 'vizion' ? Check : Copy" class="w-3.5 h-3.5" />
                   <span>{{ copiedWebhook === 'vizion' ? (isAr ? 'تم النسخ' : 'Copied') : (isAr ? 'نسخ' : 'Copy') }}</span>
-                </button>
+                </UiButton>
               </div>
             </div>
           </div>
@@ -625,15 +625,15 @@ const testConnection = async (provider) => {
               </span>
             </div>
 
-            <button
+            <UiButton
               type="button"
               @click="testConnection('vizion')"
               :disabled="testingProvider === 'vizion'"
-              class="shadcn-btn-secondary text-xs gap-1.5 cursor-pointer self-start sm:self-auto"
+               variant="secondary"
             >
               <RefreshCw :class="{ 'animate-spin': testingProvider === 'vizion' }" class="w-3.5 h-3.5" />
               <span>{{ testingProvider === 'vizion' ? (isAr ? 'جاري الفحص...' : 'Testing...') : (isAr ? 'اختبار مفتاح الاتصال' : 'Test Connection') }}</span>
-            </button>
+            </UiButton>
           </div>
 
           <div v-if="testResults.vizion?.message" :class="testResults.vizion.success ? 'bg-zinc-950 text-white' : 'bg-red-50 text-red-900 border-red-200'" class="p-3 rounded-lg text-xs font-mono border">
@@ -665,13 +665,13 @@ const testConnection = async (provider) => {
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رمز FindTEU API Token' : 'FindTEU API Token' }}</label>
               <div class="relative">
-                <input
+                <UiInput
                   :type="showSecrets.findteu_api_token ? 'text' : 'password'"
                   v-model="form.findteu.api_token"
                   placeholder="e.g. ft_tok_1092..."
-                  class="shadcn-input font-mono pr-10 text-xs"
+                  
                   dir="ltr"
-                />
+                / />
                 <button
                   type="button"
                   @click="showSecrets.findteu_api_token = !showSecrets.findteu_api_token"
@@ -685,31 +685,31 @@ const testConnection = async (provider) => {
             <!-- Environment Mode -->
             <div class="space-y-1.5">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'بيئة التشغيل' : 'Environment Mode' }}</label>
-              <select v-model="form.findteu.environment" class="shadcn-input text-xs font-mono">
+              <UiSelect v-model="form.findteu.environment" >
                 <option value="sandbox">Sandbox (تجريبي)</option>
                 <option value="live">Live (إنتاج لايف)</option>
-              </select>
+              </UiSelect>
             </div>
 
             <!-- Webhook URL Display -->
             <div class="space-y-1.5 md:col-span-2">
               <label class="block text-xs font-bold text-zinc-800">{{ isAr ? 'رابط الويب هوك الخاص بنظامك' : 'Webhook Ingestion Endpoint' }}</label>
               <div class="flex items-center gap-1.5">
-                <input
+                <UiInput
                   type="text"
                   readonly
                   :value="webhookUrls.findteu"
-                  class="shadcn-input font-mono text-[11px] bg-zinc-50 text-zinc-600 select-all"
+                  
                   dir="ltr"
-                />
-                <button
+                / />
+                <UiButton
                   type="button"
                   @click="copyToClipboard(webhookUrls.findteu, 'findteu')"
-                  class="shadcn-btn-secondary text-xs shrink-0 cursor-pointer gap-1"
+                   variant="secondary"
                 >
                   <component :is="copiedWebhook === 'findteu' ? Check : Copy" class="w-3.5 h-3.5" />
                   <span>{{ copiedWebhook === 'findteu' ? (isAr ? 'تم النسخ' : 'Copied') : (isAr ? 'نسخ' : 'Copy') }}</span>
-                </button>
+                </UiButton>
               </div>
             </div>
           </div>
@@ -740,15 +740,15 @@ const testConnection = async (provider) => {
               </span>
             </div>
 
-            <button
+            <UiButton
               type="button"
               @click="testConnection('findteu')"
               :disabled="testingProvider === 'findteu'"
-              class="shadcn-btn-secondary text-xs gap-1.5 cursor-pointer self-start sm:self-auto"
+               variant="secondary"
             >
               <RefreshCw :class="{ 'animate-spin': testingProvider === 'findteu' }" class="w-3.5 h-3.5" />
               <span>{{ testingProvider === 'findteu' ? (isAr ? 'جاري الفحص...' : 'Testing...') : (isAr ? 'اختبار مفتاح الاتصال' : 'Test Connection') }}</span>
-            </button>
+            </UiButton>
           </div>
 
           <div v-if="testResults.findteu?.message" :class="testResults.findteu.success ? 'bg-zinc-950 text-white' : 'bg-red-50 text-red-900 border-red-200'" class="p-3 rounded-lg text-xs font-mono border">
@@ -765,15 +765,15 @@ const testConnection = async (provider) => {
           <span>{{ isAr ? 'يتم تشفير جميع بيانات الاعتماد ومفاتيح API في قاعدة البيانات تلقائياً.' : 'All credentials & API tokens are automatically encrypted at rest.' }}</span>
         </div>
 
-        <button
+        <UiButton
           type="button"
           @click="saveSettings"
           :disabled="form.processing"
-          class="shadcn-btn-primary gap-2 shadow-xs cursor-pointer"
+           variant="primary"
         >
           <ShieldCheck class="w-4 h-4" />
           <span>{{ form.processing ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ إعدادات الربط' : 'Save Integration Settings') }}</span>
-        </button>
+        </UiButton>
       </div>
     </div>
   </div>

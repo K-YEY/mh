@@ -42,28 +42,28 @@ const handleSearch = () => {
     </div>
 
     <!-- Search & Filter Bar Card -->
-    <div class="shadcn-card p-4 flex items-center gap-4">
+    <UiCard >
       <div class="relative flex-1">
         <Search class="absolute top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" :class="isAr ? 'right-3' : 'left-3'" />
-        <input
+        <UiInput
           v-model="search"
           @keyup.enter="handleSearch"
           type="text"
           :placeholder="isAr ? 'تصفية برقم الملف، الحجز، اسم السفينة، أو البوليصة...' : 'Filter by File #, Booking Ref, Vessel Name, or MBL #...'"
           :style="isAr ? 'padding-right: 2.5rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.5rem !important; padding-right: 0.75rem !important;'"
-          class="shadcn-input"
-        />
+          
+        / />
       </div>
-      <button
+      <UiButton
         @click="handleSearch"
-        class="shadcn-btn-secondary cursor-pointer"
+         variant="secondary"
       >
         {{ isAr ? 'تصفية النتائج' : 'Filter Results' }}
-      </button>
+      </UiButton>
     </div>
 
     <!-- Master Shipments Data Grid Card -->
-    <div class="shadcn-card overflow-hidden">
+    <UiCard >
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">

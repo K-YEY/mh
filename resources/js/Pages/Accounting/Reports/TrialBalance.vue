@@ -83,7 +83,7 @@ const getTypeLabel = (type) => {
     </div>
 
     <!-- Filter Bar (Hidden on print) -->
-    <div class="shadcn-card p-4 bg-white border border-zinc-200 print:hidden">
+    <UiCard >
       <form @submit.prevent="applyFilter" class="flex flex-wrap items-end gap-4">
         <div>
           <label class="block text-xs font-bold text-zinc-700 mb-1">
@@ -129,25 +129,25 @@ const getTypeLabel = (type) => {
 
     <!-- Summary KPI Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 print:grid-cols-4 print:gap-2">
-      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-zinc-500 uppercase">{{ isAr ? 'إجمالي الرصيد الافتتاحي' : 'Total Opening' }}</div>
         <div class="text-base font-extrabold font-mono text-zinc-900 mt-1">{{ formatMoney(totals?.opening_debit) }}</div>
         <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'متوازن دائن/مدين' : 'Balanced Dr/Cr' }}</div>
       </div>
 
-      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (مدين)' : 'Period Debits' }}</div>
         <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_debit) }}</div>
         <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Debits' }}</div>
       </div>
 
-      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (دائن)' : 'Period Credits' }}</div>
         <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_credit) }}</div>
         <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Credits' }}</div>
       </div>
 
-      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+      <UiCard >
         <div class="text-[11px] font-bold text-zinc-700 uppercase">{{ isAr ? 'إجمالي الرصيد الختامي' : 'Ending Balance' }}</div>
         <div class="text-base font-extrabold font-mono text-emerald-900 mt-1">{{ formatMoney(totals?.ending_debit) }}</div>
         <div class="text-[10px] font-bold mt-0.5" :class="totals?.is_balanced ? 'text-emerald-600' : 'text-rose-600'">
@@ -157,7 +157,7 @@ const getTypeLabel = (type) => {
     </div>
 
     <!-- Trial Balance Table Card -->
-    <div class="shadcn-card overflow-hidden bg-white border border-zinc-200 shadow-xs">
+    <UiCard >
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
           <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-300 font-mono">

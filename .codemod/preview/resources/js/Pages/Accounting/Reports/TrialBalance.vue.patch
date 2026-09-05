@@ -1,0 +1,526 @@
+--- a/resources/js/Pages/Accounting/Reports/TrialBalance.vue
++++ b/resources/js/Pages/Accounting/Reports/TrialBalance.vue
+@@
+<script setup>
+import { ref } from 'vue'
+import { router } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Scale, Printer, Calendar, Filter, CheckCircle2, AlertTriangle, ArrowUpDown } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  report: Array,
+  totals: Object,
+  filters: Object,
+})
+
+const fromDate = ref(props.filters?.from_date || '')
+const asOfDate = ref(props.filters?.as_of_date || new Date().toISOString().split('T')[0])
+
+const applyFilter = () => {
+  router.get(route('accounting.reports.trial-balance'), {
+    from_date: fromDate.value,
+    as_of_date: asOfDate.value,
+  }, {
+    preserveState: true,
+    preserveScroll: true,
+  })
+}
+
+const printReport = () => {
+  window.print()
+}
+
+const formatMoney = (val) => {
+  const num = parseFloat(val) || 0
+  if (Math.abs(num) < 0.005) return '-'
+  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const getTypeLabel = (type) => {
+  const map = {
+    ASSET: { ar: 'أصول', en: 'Asset', color: 'text-blue-700 bg-blue-50 border-blue-200' },
+    LIABILITY: { ar: 'خصوم', en: 'Liability', color: 'text-amber-700 bg-amber-50 border-amber-200' },
+    EQUITY: { ar: 'حقوق ملكية', en: 'Equity', color: 'text-purple-700 bg-purple-50 border-purple-200' },
+    REVENUE: { ar: 'إيرادات', en: 'Revenue', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+    EXPENSE: { ar: 'مصروفات', en: 'Expense', color: 'text-rose-700 bg-rose-50 border-rose-200' },
+  }
+  return map[type] || { ar: type, en: type, color: 'text-zinc-700 bg-zinc-50 border-zinc-200' }
+}
+</script>
+
+<template>
+  <div class="space-y-6 max-w-7xl mx-auto print:p-0 print:space-y-3">
+    <!-- Header (Hidden on print or simplified) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 print:border-b print:pb-4">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <Scale class="w-6 h-6 text-blue-700" />
+          <span>{{ isAr ? 'ميزان المراجعة بالمجاميع والأرصدة' : 'Trial Balance Report' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500 mt-1">
+          {{ isAr ? 'كشف شامل بالأرصدة الافتتاحية وحركات الفترة والأرصدة الختامية لجميع الحسابات المالية' : 'Comprehensive summary of Opening Balances, Net Movements, and Ending Balances across all Chart of Accounts' }}
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3 print:hidden">
+        <button
+          type="button"
+          @click="printReport"
+          class="px-3.5 py-2 text-xs font-bold text-zinc-700 bg-white hover:bg-zinc-50 border border-zinc-300 rounded shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
+        >
+          <Printer class="w-4 h-4 text-zinc-600" />
+          <span>{{ isAr ? 'طباعة التقرير / PDF' : 'Print / Export PDF' }}</span>
+        </button>
+
+        <div
+          class="px-4 py-2 rounded flex items-center gap-2 border font-bold text-xs"
+          :class="totals?.is_balanced ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-300 text-rose-900'"
+        >
+          <component :is="totals?.is_balanced ? CheckCircle2 : AlertTriangle" class="w-4 h-4" />
+          <span>{{ totals?.is_balanced ? (isAr ? 'الميزان متوازن وموثق' : 'Trial Balance in Equilibrium') : (isAr ? 'يوجد فارق غير متوازن!' : 'Out of Balance!') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar (Hidden on print) -->
+    <div class="shadcn-card p-4 bg-white border border-zinc-200 print:hidden">
+      <form @submit.prevent="applyFilter" class="flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 mb-1">
+            {{ isAr ? 'من تاريخ حركة:' : 'From Date:' }}
+          </label>
+          <input
+            type="date"
+            v-model="fromDate"
+            class="text-xs font-mono rounded border border-zinc-300 px-3 py-1.5 focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 mb-1">
+            {{ isAr ? 'إلى تاريخ (حتى):' : 'As Of Date:' }}
+          </label>
+          <input
+            type="date"
+            v-model="asOfDate"
+            required
+            class="text-xs font-mono rounded border border-zinc-300 px-3 py-1.5 focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="px-4 py-2 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Filter class="w-3.5 h-3.5" />
+          <span>{{ isAr ? 'تحديث الميزان' : 'Generate' }}</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Printable Header Banner for PDF / Print -->
+    <div class="hidden print:block text-center border-b pb-3 mb-4">
+      <h2 class="text-xl font-bold text-zinc-950">M&H Agricultural Ocean Freight & Financial ERP</h2>
+      <h3 class="text-sm font-semibold text-zinc-700 mt-0.5">{{ isAr ? 'ميزان المراجعة بالأرصدة والمجاميع' : 'Trial Balance Report' }}</h3>
+      <p class="text-xs font-mono text-zinc-500 mt-1">
+        {{ isAr ? 'الفترة حتى: ' : 'As of: ' }}{{ asOfDate }} {{ fromDate ? `(${isAr ? 'من: ' : 'From: '} ${fromDate})` : '' }}
+      </p>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 print:grid-cols-4 print:gap-2">
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+        <div class="text-[11px] font-bold text-zinc-500 uppercase">{{ isAr ? 'إجمالي الرصيد الافتتاحي' : 'Total Opening' }}</div>
+        <div class="text-base font-extrabold font-mono text-zinc-900 mt-1">{{ formatMoney(totals?.opening_debit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'متوازن دائن/مدين' : 'Balanced Dr/Cr' }}</div>
+      </div>
+
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+        <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (مدين)' : 'Period Debits' }}</div>
+        <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_debit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Debits' }}</div>
+      </div>
+
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+        <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (دائن)' : 'Period Credits' }}</div>
+        <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_credit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Credits' }}</div>
+      </div>
+
+      <div class="shadcn-card p-3 bg-white border border-zinc-200">
+        <div class="text-[11px] font-bold text-zinc-700 uppercase">{{ isAr ? 'إجمالي الرصيد الختامي' : 'Ending Balance' }}</div>
+        <div class="text-base font-extrabold font-mono text-emerald-900 mt-1">{{ formatMoney(totals?.ending_debit) }}</div>
+        <div class="text-[10px] font-bold mt-0.5" :class="totals?.is_balanced ? 'text-emerald-600' : 'text-rose-600'">
+          {{ totals?.is_balanced ? (isAr ? 'متطابق تماماً' : 'In Perfect Balance') : (isAr ? 'يوجد فارق' : 'Difference') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Trial Balance Table Card -->
+    <div class="shadcn-card overflow-hidden bg-white border border-zinc-200 shadow-xs">
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+          <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-300 font-mono">
+            <tr>
+              <th rowspan="2" class="p-3 border-r border-zinc-200">{{ isAr ? 'كود الحساب' : 'Account Code' }}</th>
+              <th rowspan="2" class="p-3 border-r border-zinc-200 min-w-[200px]">{{ isAr ? 'اسم الحساب المالي' : 'Account Name' }}</th>
+              <th rowspan="2" class="p-3 border-r border-zinc-200 text-center">{{ isAr ? 'التصنيف' : 'Type' }}</th>
+              <th colspan="2" class="p-2 border-r border-zinc-200 text-center bg-zinc-200/60">{{ isAr ? 'الرصيد الافتتاحي' : 'Opening Balance' }}</th>
+              <th colspan="2" class="p-2 border-r border-zinc-200 text-center bg-blue-50/70 text-blue-900">{{ isAr ? 'حركة الفترة' : 'Period Movement' }}</th>
+              <th colspan="2" class="p-2 text-center bg-emerald-50/70 text-emerald-900">{{ isAr ? 'الرصيد الختامي' : 'Ending Balance' }}</th>
+            </tr>
+            <tr class="border-t border-zinc-200 text-[9px]">
+              <th class="p-2 text-right border-r border-zinc-200">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200">{{ isAr ? 'دائن' : 'Credit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-blue-900">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-blue-900">{{ isAr ? 'دائن' : 'Credit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-emerald-900">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right text-emerald-900">{{ isAr ? 'دائن' : 'Credit' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 font-mono text-[11px]">
+            <tr v-for="acc in report" :key="acc.id" class="hover:bg-blue-50/30 transition-colors">
+              <td class="p-2.5 font-bold text-blue-900 border-r border-zinc-100">
+                {{ acc.code }}
+              </td>
+              <td class="p-2.5 font-sans font-semibold text-zinc-900 border-r border-zinc-100">
+                {{ isAr ? acc.name_ar : acc.name_en }}
+              </td>
+              <td class="p-2 text-center border-r border-zinc-100">
+                <span 
+                  class="px-2 py-0.5 rounded text-[9px] font-bold border font-sans"
+                  :class="getTypeLabel(acc.type).color"
+                >
+                  {{ isAr ? getTypeLabel(acc.type).ar : getTypeLabel(acc.type).en }}
+                </span>
+              </td>
+
+              <!-- Opening Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 text-zinc-600">
+                {{ formatMoney(acc.opening_debit) }}
+              </td>
+              <td class="p-2.5 text-right border-r border-zinc-100 text-zinc-600">
+                {{ formatMoney(acc.opening_credit) }}
+              </td>
+
+              <!-- Period Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 font-bold text-zinc-900">
+                {{ formatMoney(acc.period_debit) }}
+              </td>
+              <td class="p-2.5 text-right border-r border-zinc-100 font-bold text-zinc-900">
+                {{ formatMoney(acc.period_credit) }}
+              </td>
+
+              <!-- Ending Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 font-extrabold text-emerald-900">
+                {{ formatMoney(acc.ending_debit) }}
+              </td>
+              <td class="p-2.5 text-right font-extrabold text-emerald-900">
+                {{ formatMoney(acc.ending_credit) }}
+              </td>
+            </tr>
+
+            <tr v-if="!report?.length">
+              <td colspan="9" class="p-8 text-center text-zinc-500 font-sans">
+                {{ isAr ? 'لا توجد حسابات أو حركات مسجلة' : 'No accounts or transactions found for selected filters.' }}
+              </td>
+            </tr>
+          </tbody>
+
+          <!-- Grand Totals Footer -->
+          <tfoot class="bg-zinc-100 font-mono font-extrabold text-xs border-t-2 border-zinc-300">
+            <tr>
+              <td colspan="3" class="p-3 text-zinc-900 font-sans uppercase">
+                {{ isAr ? 'الإجمالي العام للميزان (Grand Total):' : 'Grand Total:' }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200">
+                {{ formatMoney(totals?.opening_debit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200">
+                {{ formatMoney(totals?.opening_credit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-blue-900">
+                {{ formatMoney(totals?.period_debit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-blue-900">
+                {{ formatMoney(totals?.period_credit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-emerald-900">
+                {{ formatMoney(totals?.ending_debit) }}
+              </td>
+              <td class="p-3 text-right text-emerald-900">
+                {{ formatMoney(totals?.ending_credit) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</template>
+
+---
++++
+<script setup>
+import { ref } from 'vue'
+import { router } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Scale, Printer, Calendar, Filter, CheckCircle2, AlertTriangle, ArrowUpDown } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  report: Array,
+  totals: Object,
+  filters: Object,
+})
+
+const fromDate = ref(props.filters?.from_date || '')
+const asOfDate = ref(props.filters?.as_of_date || new Date().toISOString().split('T')[0])
+
+const applyFilter = () => {
+  router.get(route('accounting.reports.trial-balance'), {
+    from_date: fromDate.value,
+    as_of_date: asOfDate.value,
+  }, {
+    preserveState: true,
+    preserveScroll: true,
+  })
+}
+
+const printReport = () => {
+  window.print()
+}
+
+const formatMoney = (val) => {
+  const num = parseFloat(val) || 0
+  if (Math.abs(num) < 0.005) return '-'
+  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const getTypeLabel = (type) => {
+  const map = {
+    ASSET: { ar: 'أصول', en: 'Asset', color: 'text-blue-700 bg-blue-50 border-blue-200' },
+    LIABILITY: { ar: 'خصوم', en: 'Liability', color: 'text-amber-700 bg-amber-50 border-amber-200' },
+    EQUITY: { ar: 'حقوق ملكية', en: 'Equity', color: 'text-purple-700 bg-purple-50 border-purple-200' },
+    REVENUE: { ar: 'إيرادات', en: 'Revenue', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' },
+    EXPENSE: { ar: 'مصروفات', en: 'Expense', color: 'text-rose-700 bg-rose-50 border-rose-200' },
+  }
+  return map[type] || { ar: type, en: type, color: 'text-zinc-700 bg-zinc-50 border-zinc-200' }
+}
+</script>
+
+<template>
+  <div class="space-y-6 max-w-7xl mx-auto print:p-0 print:space-y-3">
+    <!-- Header (Hidden on print or simplified) -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 print:border-b print:pb-4">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <Scale class="w-6 h-6 text-blue-700" />
+          <span>{{ isAr ? 'ميزان المراجعة بالمجاميع والأرصدة' : 'Trial Balance Report' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500 mt-1">
+          {{ isAr ? 'كشف شامل بالأرصدة الافتتاحية وحركات الفترة والأرصدة الختامية لجميع الحسابات المالية' : 'Comprehensive summary of Opening Balances, Net Movements, and Ending Balances across all Chart of Accounts' }}
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3 print:hidden">
+        <button
+          type="button"
+          @click="printReport"
+          class="px-3.5 py-2 text-xs font-bold text-zinc-700 bg-white hover:bg-zinc-50 border border-zinc-300 rounded shadow-xs flex items-center gap-2 transition-colors cursor-pointer"
+        >
+          <Printer class="w-4 h-4 text-zinc-600" />
+          <span>{{ isAr ? 'طباعة التقرير / PDF' : 'Print / Export PDF' }}</span>
+        </button>
+
+        <div
+          class="px-4 py-2 rounded flex items-center gap-2 border font-bold text-xs"
+          :class="totals?.is_balanced ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-300 text-rose-900'"
+        >
+          <component :is="totals?.is_balanced ? CheckCircle2 : AlertTriangle" class="w-4 h-4" />
+          <span>{{ totals?.is_balanced ? (isAr ? 'الميزان متوازن وموثق' : 'Trial Balance in Equilibrium') : (isAr ? 'يوجد فارق غير متوازن!' : 'Out of Balance!') }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar (Hidden on print) -->
+    <UiCard >
+      <form @submit.prevent="applyFilter" class="flex flex-wrap items-end gap-4">
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 mb-1">
+            {{ isAr ? 'من تاريخ حركة:' : 'From Date:' }}
+          </label>
+          <input
+            type="date"
+            v-model="fromDate"
+            class="text-xs font-mono rounded border border-zinc-300 px-3 py-1.5 focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 mb-1">
+            {{ isAr ? 'إلى تاريخ (حتى):' : 'As Of Date:' }}
+          </label>
+          <input
+            type="date"
+            v-model="asOfDate"
+            required
+            class="text-xs font-mono rounded border border-zinc-300 px-3 py-1.5 focus:ring-1 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="px-4 py-2 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <Filter class="w-3.5 h-3.5" />
+          <span>{{ isAr ? 'تحديث الميزان' : 'Generate' }}</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Printable Header Banner for PDF / Print -->
+    <div class="hidden print:block text-center border-b pb-3 mb-4">
+      <h2 class="text-xl font-bold text-zinc-950">M&H Agricultural Ocean Freight & Financial ERP</h2>
+      <h3 class="text-sm font-semibold text-zinc-700 mt-0.5">{{ isAr ? 'ميزان المراجعة بالأرصدة والمجاميع' : 'Trial Balance Report' }}</h3>
+      <p class="text-xs font-mono text-zinc-500 mt-1">
+        {{ isAr ? 'الفترة حتى: ' : 'As of: ' }}{{ asOfDate }} {{ fromDate ? `(${isAr ? 'من: ' : 'From: '} ${fromDate})` : '' }}
+      </p>
+    </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 print:grid-cols-4 print:gap-2">
+      <UiCard >
+        <div class="text-[11px] font-bold text-zinc-500 uppercase">{{ isAr ? 'إجمالي الرصيد الافتتاحي' : 'Total Opening' }}</div>
+        <div class="text-base font-extrabold font-mono text-zinc-900 mt-1">{{ formatMoney(totals?.opening_debit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'متوازن دائن/مدين' : 'Balanced Dr/Cr' }}</div>
+      </div>
+
+      <UiCard >
+        <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (مدين)' : 'Period Debits' }}</div>
+        <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_debit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Debits' }}</div>
+      </div>
+
+      <UiCard >
+        <div class="text-[11px] font-bold text-blue-600 uppercase">{{ isAr ? 'حركات الفترة (دائن)' : 'Period Credits' }}</div>
+        <div class="text-base font-extrabold font-mono text-blue-900 mt-1">{{ formatMoney(totals?.period_credit) }}</div>
+        <div class="text-[10px] text-zinc-400 mt-0.5">{{ isAr ? 'إجمالي قيود اليومية' : 'Total JV Credits' }}</div>
+      </div>
+
+      <UiCard >
+        <div class="text-[11px] font-bold text-zinc-700 uppercase">{{ isAr ? 'إجمالي الرصيد الختامي' : 'Ending Balance' }}</div>
+        <div class="text-base font-extrabold font-mono text-emerald-900 mt-1">{{ formatMoney(totals?.ending_debit) }}</div>
+        <div class="text-[10px] font-bold mt-0.5" :class="totals?.is_balanced ? 'text-emerald-600' : 'text-rose-600'">
+          {{ totals?.is_balanced ? (isAr ? 'متطابق تماماً' : 'In Perfect Balance') : (isAr ? 'يوجد فارق' : 'Difference') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Trial Balance Table Card -->
+    <UiCard >
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+          <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-300 font-mono">
+            <tr>
+              <th rowspan="2" class="p-3 border-r border-zinc-200">{{ isAr ? 'كود الحساب' : 'Account Code' }}</th>
+              <th rowspan="2" class="p-3 border-r border-zinc-200 min-w-[200px]">{{ isAr ? 'اسم الحساب المالي' : 'Account Name' }}</th>
+              <th rowspan="2" class="p-3 border-r border-zinc-200 text-center">{{ isAr ? 'التصنيف' : 'Type' }}</th>
+              <th colspan="2" class="p-2 border-r border-zinc-200 text-center bg-zinc-200/60">{{ isAr ? 'الرصيد الافتتاحي' : 'Opening Balance' }}</th>
+              <th colspan="2" class="p-2 border-r border-zinc-200 text-center bg-blue-50/70 text-blue-900">{{ isAr ? 'حركة الفترة' : 'Period Movement' }}</th>
+              <th colspan="2" class="p-2 text-center bg-emerald-50/70 text-emerald-900">{{ isAr ? 'الرصيد الختامي' : 'Ending Balance' }}</th>
+            </tr>
+            <tr class="border-t border-zinc-200 text-[9px]">
+              <th class="p-2 text-right border-r border-zinc-200">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200">{{ isAr ? 'دائن' : 'Credit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-blue-900">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-blue-900">{{ isAr ? 'دائن' : 'Credit' }}</th>
+              <th class="p-2 text-right border-r border-zinc-200 text-emerald-900">{{ isAr ? 'مدين' : 'Debit' }}</th>
+              <th class="p-2 text-right text-emerald-900">{{ isAr ? 'دائن' : 'Credit' }}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-zinc-200 font-mono text-[11px]">
+            <tr v-for="acc in report" :key="acc.id" class="hover:bg-blue-50/30 transition-colors">
+              <td class="p-2.5 font-bold text-blue-900 border-r border-zinc-100">
+                {{ acc.code }}
+              </td>
+              <td class="p-2.5 font-sans font-semibold text-zinc-900 border-r border-zinc-100">
+                {{ isAr ? acc.name_ar : acc.name_en }}
+              </td>
+              <td class="p-2 text-center border-r border-zinc-100">
+                <span 
+                  class="px-2 py-0.5 rounded text-[9px] font-bold border font-sans"
+                  :class="getTypeLabel(acc.type).color"
+                >
+                  {{ isAr ? getTypeLabel(acc.type).ar : getTypeLabel(acc.type).en }}
+                </span>
+              </td>
+
+              <!-- Opening Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 text-zinc-600">
+                {{ formatMoney(acc.opening_debit) }}
+              </td>
+              <td class="p-2.5 text-right border-r border-zinc-100 text-zinc-600">
+                {{ formatMoney(acc.opening_credit) }}
+              </td>
+
+              <!-- Period Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 font-bold text-zinc-900">
+                {{ formatMoney(acc.period_debit) }}
+              </td>
+              <td class="p-2.5 text-right border-r border-zinc-100 font-bold text-zinc-900">
+                {{ formatMoney(acc.period_credit) }}
+              </td>
+
+              <!-- Ending Dr / Cr -->
+              <td class="p-2.5 text-right border-r border-zinc-100 font-extrabold text-emerald-900">
+                {{ formatMoney(acc.ending_debit) }}
+              </td>
+              <td class="p-2.5 text-right font-extrabold text-emerald-900">
+                {{ formatMoney(acc.ending_credit) }}
+              </td>
+            </tr>
+
+            <tr v-if="!report?.length">
+              <td colspan="9" class="p-8 text-center text-zinc-500 font-sans">
+                {{ isAr ? 'لا توجد حسابات أو حركات مسجلة' : 'No accounts or transactions found for selected filters.' }}
+              </td>
+            </tr>
+          </tbody>
+
+          <!-- Grand Totals Footer -->
+          <tfoot class="bg-zinc-100 font-mono font-extrabold text-xs border-t-2 border-zinc-300">
+            <tr>
+              <td colspan="3" class="p-3 text-zinc-900 font-sans uppercase">
+                {{ isAr ? 'الإجمالي العام للميزان (Grand Total):' : 'Grand Total:' }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200">
+                {{ formatMoney(totals?.opening_debit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200">
+                {{ formatMoney(totals?.opening_credit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-blue-900">
+                {{ formatMoney(totals?.period_debit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-blue-900">
+                {{ formatMoney(totals?.period_credit) }}
+              </td>
+              <td class="p-3 text-right border-r border-zinc-200 text-emerald-900">
+                {{ formatMoney(totals?.ending_debit) }}
+              </td>
+              <td class="p-3 text-right text-emerald-900">
+                {{ formatMoney(totals?.ending_credit) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</template>

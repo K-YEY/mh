@@ -115,7 +115,7 @@ class FinancialAccountingTest extends TestCase
 
         $this->assertDatabaseHas('journal_entries', [
             'narration' => 'Cash transfer to Banque Misr',
-            'source_type' => 'MANUAL_ADJUSTMENT',
+            'source_type' => 'MANUAL',
         ]);
 
         $entry = JournalEntry::where('narration', 'Cash transfer to Banque Misr')->first();

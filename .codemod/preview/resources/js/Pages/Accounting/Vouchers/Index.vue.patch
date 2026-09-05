@@ -1,0 +1,200 @@
+--- a/resources/js/Pages/Accounting/Vouchers/Index.vue
++++ b/resources/js/Pages/Accounting/Vouchers/Index.vue
+@@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Wallet, Plus } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  vouchers: Object,
+})
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <Wallet class="w-6 h-6 text-zinc-950" />
+          <span>{{ isAr ? 'سندات القبض والصرف والخزينة والبنك' : 'Treasury Cash & Bank Payment Vouchers' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500">
+          {{ isAr ? 'تسجيل مقبوضات العملاء، مدفوعات الموردين، وأرصدة الخزينة والبنك' : 'Record Customer Receipts, Vendor Payments, & Treasury Balances' }}
+        </p>
+      </div>
+
+      <Link
+        :href="route('vouchers.create')"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+      >
+        <Plus class="w-4 h-4 font-bold" />
+        <span>{{ isAr ? 'إصدار سند قبض / صرف' : 'New Receipt / Payment Voucher' }}</span>
+      </Link>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="shadcn-card overflow-hidden">
+      <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+        <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+          <tr>
+            <th class="p-4">{{ isAr ? 'رقم السند' : 'Voucher #' }}</th>
+            <th class="p-4">{{ isAr ? 'النوع' : 'Type' }}</th>
+            <th class="p-4">{{ isAr ? 'الطرف (العميل / المورد)' : 'Party' }}</th>
+            <th class="p-4">{{ isAr ? 'طريقة الدفع' : 'Payment Method' }}</th>
+            <th class="p-4">{{ isAr ? 'حساب الخزينة / البنك' : 'GL Treasury Account' }}</th>
+            <th class="p-4">{{ isAr ? 'تاريخ السداد' : 'Payment Date' }}</th>
+            <th class="p-4" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'المبلغ' : 'Amount' }}</th>
+            <th class="p-4 text-center">{{ isAr ? 'إجراء' : 'Action' }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-200 font-sans">
+          <tr v-for="v in vouchers.data" :key="v.id" class="hover:bg-zinc-50 transition-colors">
+            <td class="p-4 font-mono font-bold text-zinc-950 text-sm">
+              <Link :href="route('vouchers.show', v.id)" class="text-blue-700 hover:underline">
+                {{ v.voucher_number }}
+              </Link>
+            </td>
+            <td class="p-4">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-zinc-100 text-zinc-950 border-zinc-300">
+                {{ v.voucher_type === 'RECEIPT' ? (isAr ? 'سند قبض' : 'RECEIPT') : (isAr ? 'سند صرف' : 'PAYMENT') }}
+              </span>
+            </td>
+            <td class="p-4 font-bold text-zinc-950">
+              {{ v.party?.legal_name }}
+            </td>
+            <td class="p-4 text-zinc-800 font-mono">
+              {{ v.payment_method }}
+            </td>
+            <td class="p-4 text-zinc-900 font-semibold">
+              {{ isAr ? v.account?.name_ar : v.account?.name_en }} ({{ v.account?.code }})
+            </td>
+            <td class="p-4 text-zinc-700 font-mono text-[11px]">
+              {{ v.payment_date }}
+            </td>
+            <td class="p-4 font-mono font-bold text-zinc-950 text-sm" :class="isAr ? 'text-left' : 'text-right'">
+              ${{ v.amount }} {{ v.currency_code }}
+            </td>
+            <td class="p-4 text-center">
+              <Link
+                :href="route('vouchers.show', v.id)"
+                class="px-2.5 py-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+              >
+                {{ isAr ? 'معاينة / طباعة' : 'View / Print' }}
+              </Link>
+            </td>
+          </tr>
+
+          <tr v-if="!vouchers.data?.length">
+            <td colspan="8" class="p-8 text-center text-zinc-500 font-mono">
+              {{ isAr ? 'لا توجد سندات قبض أو صرف مسجلة حالياً' : 'No treasury vouchers recorded yet.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+---
++++
+<script setup>
+import { Link } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { Wallet, Plus } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  vouchers: Object,
+})
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
+          <Wallet class="w-6 h-6 text-zinc-950" />
+          <span>{{ isAr ? 'سندات القبض والصرف والخزينة والبنك' : 'Treasury Cash & Bank Payment Vouchers' }}</span>
+        </h1>
+        <p class="text-xs text-zinc-500">
+          {{ isAr ? 'تسجيل مقبوضات العملاء، مدفوعات الموردين، وأرصدة الخزينة والبنك' : 'Record Customer Receipts, Vendor Payments, & Treasury Balances' }}
+        </p>
+      </div>
+
+      <Link
+        :href="route('vouchers.create')"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+      >
+        <Plus class="w-4 h-4 font-bold" />
+        <span>{{ isAr ? 'إصدار سند قبض / صرف' : 'New Receipt / Payment Voucher' }}</span>
+      </Link>
+    </div>
+
+    <!-- Data Table Card -->
+    <UiCard >
+      <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+        <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+          <tr>
+            <th class="p-4">{{ isAr ? 'رقم السند' : 'Voucher #' }}</th>
+            <th class="p-4">{{ isAr ? 'النوع' : 'Type' }}</th>
+            <th class="p-4">{{ isAr ? 'الطرف (العميل / المورد)' : 'Party' }}</th>
+            <th class="p-4">{{ isAr ? 'طريقة الدفع' : 'Payment Method' }}</th>
+            <th class="p-4">{{ isAr ? 'حساب الخزينة / البنك' : 'GL Treasury Account' }}</th>
+            <th class="p-4">{{ isAr ? 'تاريخ السداد' : 'Payment Date' }}</th>
+            <th class="p-4" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'المبلغ' : 'Amount' }}</th>
+            <th class="p-4 text-center">{{ isAr ? 'إجراء' : 'Action' }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-200 font-sans">
+          <tr v-for="v in vouchers.data" :key="v.id" class="hover:bg-zinc-50 transition-colors">
+            <td class="p-4 font-mono font-bold text-zinc-950 text-sm">
+              <Link :href="route('vouchers.show', v.id)" class="text-blue-700 hover:underline">
+                {{ v.voucher_number }}
+              </Link>
+            </td>
+            <td class="p-4">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-zinc-100 text-zinc-950 border-zinc-300">
+                {{ v.voucher_type === 'RECEIPT' ? (isAr ? 'سند قبض' : 'RECEIPT') : (isAr ? 'سند صرف' : 'PAYMENT') }}
+              </span>
+            </td>
+            <td class="p-4 font-bold text-zinc-950">
+              {{ v.party?.legal_name }}
+            </td>
+            <td class="p-4 text-zinc-800 font-mono">
+              {{ v.payment_method }}
+            </td>
+            <td class="p-4 text-zinc-900 font-semibold">
+              {{ isAr ? v.account?.name_ar : v.account?.name_en }} ({{ v.account?.code }})
+            </td>
+            <td class="p-4 text-zinc-700 font-mono text-[11px]">
+              {{ v.payment_date }}
+            </td>
+            <td class="p-4 font-mono font-bold text-zinc-950 text-sm" :class="isAr ? 'text-left' : 'text-right'">
+              ${{ v.amount }} {{ v.currency_code }}
+            </td>
+            <td class="p-4 text-center">
+              <Link
+                :href="route('vouchers.show', v.id)"
+                class="px-2.5 py-1 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors"
+              >
+                {{ isAr ? 'معاينة / طباعة' : 'View / Print' }}
+              </Link>
+            </td>
+          </tr>
+
+          <tr v-if="!vouchers.data?.length">
+            <td colspan="8" class="p-8 text-center text-zinc-500 font-mono">
+              {{ isAr ? 'لا توجد سندات قبض أو صرف مسجلة حالياً' : 'No treasury vouchers recorded yet.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
