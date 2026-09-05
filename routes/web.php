@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
         Route::post('currencies', [CurrencyController::class, 'store'])->name('currencies.store');
+        Route::post('currencies/{code}/set-base', [CurrencyController::class, 'setBase'])->name('currencies.set-base');
     });
 
     // Admin Integrations Settings

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { Inertia } from '@inertiajs/inertia'
 import { useI18n } from '@/Composables/useI18n'
 import { DollarSign, Plus, Coins } from 'lucide-vue-next'
 
@@ -26,6 +27,13 @@ const submit = () => {
       form.reset()
     }
   })
+}
+
+const setBase = (code) => {
+  const confirmMsg = isAr.value ? 'هل تريد تعيين هذه العملة كعملة أساسية للنظام؟' : 'Set this currency as the base system currency?'
+  if (!confirm(confirmMsg)) return
+
+  Inertia.post(route('currencies.set-base', code))
 }
 </script>
 
@@ -94,9 +102,14 @@ const submit = () => {
                   <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                   <span>{{ isAr ? 'العملة الأساسية للنظام' : 'BASE SYSTEM CURRENCY' }}</span>
                 </span>
-                <span v-else class="text-zinc-500 font-mono text-[11px]">
-                  {{ isAr ? 'عملة أجنبية' : 'Foreign Currency' }}
-                </span>
+                <div v-else class="flex items-center gap-2">
+                  <span class="text-zinc-500 font-mono text-[11px]">
+                    {{ isAr ? 'عملة أجنبية' : 'Foreign Currency' }}
+                  </span>
+                  <button @click="setBase(c.code)" class="shadcn-btn-secondary text-xs">
+                    {{ isAr ? 'تعيين كعملة أساسية' : 'Make Base' }}
+                  </button>
+                </div>
               </td>
               <td class="px-4 py-3">
                 <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950">

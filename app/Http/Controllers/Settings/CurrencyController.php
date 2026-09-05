@@ -41,4 +41,19 @@ class CurrencyController extends Controller
 
         return redirect()->back()->with('success', 'Currency added to system configuration successfully.');
     }
+
+    /**
+     * Set the given currency code as the system base currency.
+     */
+    public function setBase(string $code): RedirectResponse
+    {
+        $currency = Currency::findOrFail($code);
+
+        \DB::transaction(function () use ($currency) {
+            Currency::where('is_base_currency', true)->update(['is_base_currency' => false]);
+            $currency->update(['is_base_currency' => true]);
+        });
+
+        return redirect()->back()->with('success', 'Base currency updated successfully.');
+    }
 }
