@@ -1,0 +1,110 @@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+import { useI18n } from '@/Composables/useI18n'
+import { DollarSign, Plus, Printer, Eye } from 'lucide-vue-next'
+
+const { isAr } = useI18n()
+
+const props = defineProps({
+  invoices: Object,
+  filters: Object,
+})
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-black text-blue-950 tracking-tight flex items-center gap-2">
+          <div class="p-2 rounded-xl bg-blue-50 text-blue-800 border border-blue-200 shadow-xs">
+            <DollarSign class="w-6 h-6" />
+          </div>
+          <span>{{ isAr ? 'فواتير العملاء وفواتير الموردين' : 'Shipment Invoices & Vendor Bills' }}</span>
+        </h1>
+        <p class="text-xs text-slate-500 mt-1">
+          {{ isAr ? 'فواتير العمليات، رسوم النولون، والترحيل التلقائي لقيود اليومية مع طباعة ورق MH For Export الرسمي' : 'Operations Billing, Freight Charges, & Automatic Double-Entry Ledger Posting with Official Stationery' }}
+        </p>
+      </div>
+
+      <Link
+        :href="route('invoices.create')"
+        class="shadcn-btn-primary gap-1.5 shadow-sm cursor-pointer"
+      >
+        <Plus class="w-4 h-4 font-bold" />
+        <span>{{ isAr ? 'إصدار فاتورة جديدة' : 'Create Invoice / Bill' }}</span>
+      </Link>
+    </div>
+
+    <!-- Data Table Card -->
+    <div class="shadcn-card overflow-hidden bg-white border-slate-200">
+      <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
+        <thead class="bg-slate-50 text-slate-700 uppercase text-[10px] tracking-wider border-b border-slate-200 font-mono">
+          <tr>
+            <th class="p-4">{{ isAr ? 'رقم الفاتورة' : 'Invoice #' }}</th>
+            <th class="p-4">{{ isAr ? 'النوع' : 'Type' }}</th>
+            <th class="p-4">{{ isAr ? 'الطرف (العميل / المورد)' : 'Party (Customer / Vendor)' }}</th>
+            <th class="p-4">{{ isAr ? 'الشحنة الماستر' : 'Master Shipment' }}</th>
+            <th class="p-4">{{ isAr ? 'تاريخ الإصدار والاستحقاق' : 'Issue & Due Date' }}</th>
+            <th class="p-4">{{ isAr ? 'إجمالي المبلغ' : 'Total Amount' }}</th>
+            <th class="p-4">{{ isAr ? 'الحالة وقيد اليومية' : 'Status & JV' }}</th>
+            <th class="p-4 text-center">{{ isAr ? 'معاينة وطباعة' : 'Actions' }}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 font-sans">
+          <tr v-for="inv in invoices.data" :key="inv.id" class="hover:bg-blue-50/40 transition-colors">
+            <td class="p-4 font-mono font-black text-blue-950 text-sm">
+              <Link :href="route('invoices.show', inv.id)" class="hover:underline hover:text-blue-700">
+                {{ inv.invoice_number }}
+              </Link>
+            </td>
+            <td class="p-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase border bg-blue-50 text-blue-900 border-blue-200">
+                {{ inv.invoice_type === 'CUSTOMER_INVOICE' ? (isAr ? 'فاتورة مبيعات عميل' : 'Sales Invoice') : (isAr ? 'فاتورة مورد' : 'Vendor Bill') }}
+              </span>
+            </td>
+            <td class="p-4 font-bold text-slate-900">
+              {{ inv.party?.legal_name }}
+            </td>
+            <td class="p-4 font-mono text-slate-800 font-semibold">
+              {{ inv.master_shipment?.file_number || (isAr ? 'تشغيلي عام' : 'General Operational') }}
+            </td>
+            <td class="p-4 text-slate-700 font-mono text-[11px]">
+              <div>{{ isAr ? 'الإصدار:' : 'Issue:' }} {{ inv.issue_date }}</div>
+              <div class="text-slate-500">{{ isAr ? 'الاستحقاق:' : 'Due:' }} {{ inv.due_date }}</div>
+            </td>
+            <td class="p-4 font-mono font-black text-blue-950 text-sm">
+              ${{ inv.total_amount }} {{ inv.currency_code }}
+            </td>
+            <td class="p-4">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-900 text-white border border-blue-800">
+                  {{ inv.status }}
+                </span>
+                <span v-if="inv.journal_entry" class="text-[10px] font-mono text-blue-900 bg-blue-100 px-1.5 py-0.5 rounded border border-blue-200 font-bold">
+                  {{ isAr ? 'رحلت يومية' : 'JV Posted' }}
+                </span>
+              </div>
+            </td>
+            <td class="p-4 text-center">
+              <Link 
+                :href="route('invoices.show', inv.id)" 
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-700 hover:text-white transition-colors cursor-pointer shadow-2xs"
+                :title="isAr ? 'طباعة ومعاينة على ورق الشركة الرسمي' : 'Print Official Invoice'"
+              >
+                <Printer class="w-3.5 h-3.5" />
+                <span>{{ isAr ? 'معاينة وطباعة' : 'Print / View' }}</span>
+              </Link>
+            </td>
+          </tr>
+
+          <tr v-if="!invoices.data?.length">
+            <td colspan="8" class="p-8 text-center text-slate-500 font-mono">
+              {{ isAr ? 'لا توجد فواتير مسجلة حالياً' : 'No invoices recorded yet.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
