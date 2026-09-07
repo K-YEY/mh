@@ -6,7 +6,6 @@ import {
   Boxes, 
   TrendingUp, 
   DollarSign, 
-  ThermometerSnowflake, 
   Plus, 
   ArrowUpRight, 
   Anchor,
@@ -14,12 +13,11 @@ import {
   ChevronLeft
 } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   metrics: Object,
   recent_shipments: Array,
-  reefer_alerts: Array,
 })
 </script>
 
@@ -84,7 +82,7 @@ const props = defineProps({
         <div>
           <div class="text-2xl font-bold text-zinc-950 font-mono tracking-tight">{{ metrics.active_containers }}</div>
           <p class="text-[11px] text-zinc-700 mt-1 flex items-center gap-1 font-medium">
-            <ThermometerSnowflake class="w-3.5 h-3.5" />
+            <Boxes class="w-3.5 h-3.5" />
             <span>{{ isAr ? 'تتبع سلاسل التبريد' : 'Cold Chain Monitoring' }}</span>
           </p>
         </div>
@@ -123,63 +121,6 @@ const props = defineProps({
       </div>
     </div>
 
-    <!-- Cold Treatment Probes Section Card -->
-    <div class="shadcn-card p-5 space-y-4">
-      <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
-        <div class="flex items-center gap-2.5">
-          <ThermometerSnowflake class="w-5 h-5 text-zinc-950" />
-          <div>
-            <h2 class="text-sm font-bold text-zinc-950">
-              {{ isAr ? 'حالة التبريد والحجر الزراعي USDA' : 'Agricultural Cold Chain & USDA Treatment Status' }}
-            </h2>
-            <p class="text-[11px] text-zinc-500">
-              {{ isAr ? 'تسجيل مباشر لحساسات الحرارة الـ 3 للحاويات المبردة' : 'Live Reefer Containers with 3-Probe USDA Protocol Logging' }}
-            </p>
-          </div>
-        </div>
-        <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-zinc-100 text-zinc-950 border border-zinc-300">
-          {{ isAr ? 'بروتوكول تبريد فعال' : 'USDA CT Active' }}
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div v-for="c in reefer_alerts" :key="c.id" class="p-3.5 rounded-lg bg-zinc-50 border border-zinc-200 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-mono font-bold text-zinc-950">{{ c.container_number }}</span>
-            <span class="px-2 py-0.2 text-[9px] font-mono font-bold rounded bg-zinc-200 text-zinc-900 border border-zinc-300 uppercase">
-              {{ c.current_status }}
-            </span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 text-center py-1.5 bg-white rounded border border-zinc-200 text-xs font-mono">
-            <div>
-              <div class="text-[9px] text-zinc-500 uppercase font-sans">{{ isAr ? 'الحرارة المطلوبة' : 'Target Temp' }}</div>
-              <div class="font-bold text-zinc-950">{{ c.target_temperature }}°C</div>
-            </div>
-            <div>
-              <div class="text-[9px] text-zinc-500 uppercase font-sans">{{ isAr ? 'تدفق التهوية' : 'Vent Flow' }}</div>
-              <div class="font-bold text-zinc-950">{{ c.ventilation_flow }} CBM/h</div>
-            </div>
-            <div>
-              <div class="text-[9px] text-zinc-500 uppercase font-sans">{{ isAr ? 'الرطوبة' : 'Humidity' }}</div>
-              <div class="font-bold text-zinc-950">{{ c.humidity_percent }}%</div>
-            </div>
-          </div>
-
-          <!-- CT Probes -->
-          <div v-if="c.requires_cold_treatment" class="text-xs bg-white p-2 rounded border border-zinc-200 space-y-1">
-            <div class="text-[9px] font-bold text-zinc-700 uppercase font-sans">
-              {{ isAr ? 'حساسات التبريد 3 Probes:' : 'USDA Probes:' }}
-            </div>
-            <div class="flex justify-between font-mono text-[11px] text-zinc-800">
-              <span>P1: <strong class="text-zinc-950">{{ c.ct_probe_1 || '+1.1°C' }}</strong></span>
-              <span>P2: <strong class="text-zinc-950">{{ c.ct_probe_2 || '+1.2°C' }}</strong></span>
-              <span>P3: <strong class="text-zinc-950">{{ c.ct_probe_3 || '+1.1°C' }}</strong></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Recent Master Ocean Shipments Table Card -->
     <div class="shadcn-card overflow-hidden">
@@ -226,8 +167,8 @@ const props = defineProps({
                 {{ job.pol?.name }} ← {{ job.pod?.name }}
               </td>
               <td class="px-4 py-3 text-zinc-800 font-mono text-[11px]">
-                <div>{{ isAr ? 'مغادرة:' : 'ETD:' }} {{ job.etd }}</div>
-                <div class="text-zinc-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ job.eta }}</div>
+                <div>{{ isAr ? 'مغادرة:' : 'ETD:' }} {{ formatDateTime(job.etd) }}</div>
+                <div class="text-zinc-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ formatDateTime(job.eta) }}</div>
               </td>
               <td class="px-4 py-3">
                 <span class="px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono text-[10px] font-bold border border-zinc-300">

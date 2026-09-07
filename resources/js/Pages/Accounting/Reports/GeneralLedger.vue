@@ -4,7 +4,7 @@ import { router, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { BookOpen, Printer, Calendar, Filter, ArrowUpDown, Building2 } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   accounts: Array,
@@ -223,8 +223,8 @@ const isDebitNature = computed(() => {
 
             <!-- Transaction Rows -->
             <tr v-for="line in lines" :key="line.id" class="hover:bg-blue-50/30 transition-colors">
-              <td class="p-2.5 text-zinc-600 whitespace-nowrap">
-                {{ line.entry_date }}
+              <td class="p-2.5 text-zinc-600 whitespace-nowrap text-[11px]">
+                {{ formatDateTime(line.created_at || line.entry_date) }}
               </td>
               <td class="p-2.5 font-bold text-blue-800">
                 {{ line.entry_number }}

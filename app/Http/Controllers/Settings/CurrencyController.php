@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
+use App\Services\Financial\CurrencyExchangeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -40,5 +41,21 @@ class CurrencyController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Currency added to system configuration successfully.');
+    }
+
+    /**
+     * Set a chosen currency as the system base currency.
+     */
+    public function setBase(string $code, CurrencyExchangeService $exchangeService): RedirectResponse
+    {
+        $targetCurrency = Currency::where('code', strtoupper($code))->firstOrFail();
+
+        Currency::query()->update(['is_base_currency' => false]);
+        $targetCurrency->update(['is_base_currency' => true]);
+
+        // Automatically sync FX rates relative to newly set base currency
+        $exchangeService->syncLiveRates();
+
+        return redirect()->back()->with('success', "تم تعيين العملة الأساسية للنظام بنجاح إلى: {$targetCurrency->name} ({$targetCurrency->code}).");
     }
 }

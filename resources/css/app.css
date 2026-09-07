@@ -209,3 +209,116 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #71717a;
 }
+
+/* ==========================================================================
+   High-Fidelity Document Printing Engine (A4 Exact Print Optimization)
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* 1. Complete isolation: Hide sidebars, navigation, headers, footers, buttons, and tools */
+  aside,
+  header,
+  nav,
+  .no-print,
+  [role="navigation"],
+  button,
+  .shadow-xs,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-2xs,
+  .shadow-xl,
+  .shadow-2xl {
+    display: none !important;
+  }
+
+  /* 2. Reset document root and layout containers */
+  html,
+  body {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    overflow: hidden !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Target only specific layout shells, never generic utility classes */
+  #app,
+  .app-shell,
+  main {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 3. Printed invoice container & sheet */
+  .invoice-container {
+    display: block !important;
+    width: 210mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+  }
+
+  .invoice-sheet {
+    display: block !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: avoid !important;
+    break-before: avoid !important;
+    break-inside: avoid !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .invoice-sheet.with-letterhead {
+    background-image: url('/paper_025415.png') !important;
+    background-size: 210mm 297mm !important;
+    background-repeat: no-repeat !important;
+    background-position: top center !important;
+    padding-top: 53mm !important;
+    padding-bottom: 53mm !important;
+    padding-left: 14mm !important;
+    padding-right: 14mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .invoice-sheet.plain-white {
+    background: #ffffff !important;
+    padding-top: 53mm !important;
+    padding-bottom: 53mm !important;
+    padding-left: 14mm !important;
+    padding-right: 14mm !important;
+  }
+}
+

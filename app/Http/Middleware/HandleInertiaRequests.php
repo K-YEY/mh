@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Currency;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -31,6 +32,10 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
+        $baseCurrency = Currency::where('is_base_currency', true)->first()
+            ?? Currency::where('code', 'EGP')->first()
+            ?? Currency::first();
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -43,6 +48,18 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => ['*'],
                 ] : null,
             ],
+            'base_currency' => $baseCurrency ? [
+                'code' => $baseCurrency->code,
+                'name' => $baseCurrency->name,
+                'symbol' => $baseCurrency->symbol,
+                'decimal_places' => $baseCurrency->decimal_places,
+            ] : [
+                'code' => 'EGP',
+                'name' => 'Egyptian Pound',
+                'symbol' => 'E£',
+                'decimal_places' => 2,
+            ],
+            'active_currencies' => fn () => Currency::where('is_active', true)->get(),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

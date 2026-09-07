@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { formatDateTime as fmtDateTime, formatDate as fmtDate, formatTime as fmtTime } from '@/Utils/date'
 
 const currentLocale = ref(localStorage.getItem('app_locale') || 'ar')
 
@@ -23,11 +24,19 @@ export function useI18n() {
     document.documentElement.setAttribute('lang', currentLocale.value)
   }
 
+  const formatDateTime = (val, options = {}) => fmtDateTime(val, isAr.value, options)
+  const formatDate = (val) => fmtDate(val)
+  const formatTime = (val) => fmtTime(val, isAr.value)
+
   return {
     locale: currentLocale,
     isAr,
     dir,
     setLocale,
     toggleLocale,
+    formatDateTime,
+    formatDate,
+    formatTime,
   }
 }
+

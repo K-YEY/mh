@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { DollarSign, Plus, Printer, Eye } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   invoices: Object,
@@ -70,8 +70,8 @@ const props = defineProps({
               {{ inv.master_shipment?.file_number || (isAr ? 'تشغيلي عام' : 'General Operational') }}
             </td>
             <td class="p-4 text-slate-700 font-mono text-[11px]">
-              <div>{{ isAr ? 'الإصدار:' : 'Issue:' }} {{ inv.issue_date }}</div>
-              <div class="text-slate-500">{{ isAr ? 'الاستحقاق:' : 'Due:' }} {{ inv.due_date }}</div>
+              <div>{{ isAr ? 'الإصدار:' : 'Issue:' }} {{ formatDateTime(inv.issue_date) }}</div>
+              <div class="text-slate-500">{{ isAr ? 'الاستحقاق:' : 'Due:' }} {{ formatDateTime(inv.due_date) }}</div>
             </td>
             <td class="p-4 font-mono font-black text-blue-950 text-sm">
               ${{ inv.total_amount }} {{ inv.currency_code }}

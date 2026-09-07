@@ -4,7 +4,7 @@ import { router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { User } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   parties: Array,
@@ -80,7 +80,7 @@ const loadStatement = () => {
             <tr v-for="l in lines" :key="l.id" class="hover:bg-zinc-50 transition-colors">
               <td class="p-4 text-zinc-950 font-bold">
                 {{ l.journal_entry?.entry_number }}
-                <div class="text-[10px] text-zinc-500 font-sans font-normal">{{ l.journal_entry?.entry_date }}</div>
+                <div class="text-[10px] text-zinc-500 font-mono font-normal">{{ formatDateTime(l.journal_entry?.created_at || l.journal_entry?.entry_date) }}</div>
               </td>
               <td class="p-4 text-zinc-900 font-sans font-bold">
                 {{ isAr ? l.account?.name_ar : l.account?.name_en }} ({{ l.account?.code }})

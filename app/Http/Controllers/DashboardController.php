@@ -33,12 +33,6 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
-        $reeferAlerts = MasterContainer::with('masterShipment')
-            ->where('is_reefer', true)
-            ->where('requires_cold_treatment', true)
-            ->whereNull('returned_empty_at')
-            ->get();
-
         return Inertia::render('Dashboard/Index', [
             'metrics' => [
                 'active_shipments' => $activeShipmentsCount,
@@ -49,7 +43,6 @@ class DashboardController extends Controller
                 'net_profit' => round($netProfitTotal, 2),
             ],
             'recent_shipments' => $recentShipments,
-            'reefer_alerts' => $reeferAlerts,
         ]);
     }
 }

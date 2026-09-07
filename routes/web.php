@@ -7,7 +7,6 @@ use App\Http\Controllers\Accounting\InvoiceController;
 use App\Http\Controllers\Accounting\LedgerReportController;
 use App\Http\Controllers\Accounting\PaymentVoucherController;
 use App\Http\Controllers\Admin\AuditLogController;
-use App\Http\Controllers\Admin\IntegrationSettingController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Documents\DocumentVaultController;
@@ -67,6 +66,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->name('exchange-rates.index');
         Route::post('exchange-rates', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
+        Route::post('exchange-rates/sync', [ExchangeRateController::class, 'syncLive'])->name('exchange-rates.sync');
+        Route::delete('exchange-rates/{exchangeRate}', [ExchangeRateController::class, 'destroy'])->name('exchange-rates.destroy');
 
         Route::get('journal-entries', [LedgerReportController::class, 'journalEntries'])->name('ledger.journals');
         Route::get('journal-entries/create', [LedgerReportController::class, 'createJournalEntry'])->name('ledger.journals.create');
@@ -99,12 +100,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
         Route::post('currencies', [CurrencyController::class, 'store'])->name('currencies.store');
+        Route::post('currencies/{currency}/set-base', [CurrencyController::class, 'setBase'])->name('currencies.set-base');
     });
-
-    // Admin Integrations Settings
-    Route::get('admin/settings/integrations', [IntegrationSettingController::class, 'index'])->name('admin.settings.integrations.index');
-    Route::post('admin/settings/integrations', [IntegrationSettingController::class, 'update'])->name('admin.settings.integrations.update');
-    Route::post('admin/settings/integrations/test/{provider}', [IntegrationSettingController::class, 'testConnection'])->name('admin.settings.integrations.test');
 
     // Audit Trail Logs
     Route::get('admin/audit-logs', [AuditLogController::class, 'index'])->name('admin.audit-logs.index');

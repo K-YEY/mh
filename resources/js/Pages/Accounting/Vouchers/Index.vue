@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { Wallet, Plus } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   vouchers: Object,
@@ -70,7 +70,7 @@ const props = defineProps({
               {{ isAr ? v.account?.name_ar : v.account?.name_en }} ({{ v.account?.code }})
             </td>
             <td class="p-4 text-zinc-700 font-mono text-[11px]">
-              {{ v.payment_date }}
+              {{ formatDateTime(v.created_at || v.payment_date) }}
             </td>
             <td class="p-4 font-mono font-bold text-zinc-950 text-sm" :class="isAr ? 'text-left' : 'text-right'">
               ${{ v.amount }} {{ v.currency_code }}

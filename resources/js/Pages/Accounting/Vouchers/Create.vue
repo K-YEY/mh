@@ -1,9 +1,12 @@
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3'
+import { computed, watch } from 'vue'
+import { useForm, usePage, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const page = usePage()
+const baseCurrency = computed(() => page.props.base_currency || { code: 'EGP', symbol: 'E£' })
 
 const props = defineProps({
   parties: Array,
@@ -16,10 +19,22 @@ const form = useForm({
   payment_method: 'BANK_TRANSFER',
   account_id: 1, // Bank Account
   amount: 5000.00,
-  currency_code: 'USD',
+  currency_code: baseCurrency.value.code || 'EGP',
   exchange_rate: 1.0,
   payment_date: new Date().toISOString().split('T')[0],
   reference_number: 'TRF-990123',
+})
+
+watch(() => form.currency_code, (newCode) => {
+  if (newCode === baseCurrency.value.code) {
+    form.exchange_rate = 1.0
+  } else if (newCode === 'USD') {
+    form.exchange_rate = baseCurrency.value.code === 'EGP' ? 50.0 : 1.0
+  } else if (newCode === 'EUR') {
+    form.exchange_rate = baseCurrency.value.code === 'EGP' ? 54.5 : 1.085
+  } else if (newCode === 'EGP') {
+    form.exchange_rate = baseCurrency.value.code === 'USD' ? 0.02 : 1.0
+  }
 })
 
 const submit = () => {
@@ -38,42 +53,42 @@ const submit = () => {
           {{ isAr ? 'إصدار سند قبض / صرف خزينة وبنك' : 'Record Treasury Voucher' }}
         </h1>
         <p class="text-xs text-zinc-500">
-          {{ isAr ? 'ترحيل المقبوضات والمدفوعات إلى دفتر اليومية مع التسوية الآلية للعملاء والموردين' : 'Post Receipt / Payment to General Ledger with Sub-ledger Reconciliation' }}
+          {{ isAr ? 'ترحيل قيود اليومية المحاسبية المزدوجة التلقائية لحسابات الخزينة والبنوك والعملاء والموردين' : 'Automated double-entry cash/bank ledger posting against parties' }}
         </p>
       </div>
     </div>
 
-    <form @submit.prevent="submit" class="shadcn-card p-6 space-y-6">
+    <form @submit.prevent="submit" class="shadcn-card p-6 space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نوع السند' : 'Voucher Type' }}</label>
           <select v-model="form.voucher_type" class="shadcn-input">
-            <option value="RECEIPT">{{ isAr ? 'سند قبض (Receipt Voucher - عملاء)' : 'Receipt Voucher (Customer AR)' }}</option>
-            <option value="PAYMENT">{{ isAr ? 'سند صرف (Payment Voucher - موردين)' : 'Payment Voucher (Vendor AP)' }}</option>
+            <option value="RECEIPT">{{ isAr ? 'سند قبض (استلام من عميل)' : 'Receipt Voucher (From Client)' }}</option>
+            <option value="PAYMENT">{{ isAr ? 'سند صرف (سداد لمورد/خط ملاحي)' : 'Payment Voucher (To Vendor/Line)' }}</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الطرف (العميل / المورد)' : 'Party' }}</label>
+          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الطرف المستفيد / العميل' : 'Party / Client' }}</label>
           <select v-model="form.party_id" class="shadcn-input" required>
-            <option value="" disabled>{{ isAr ? 'اختر الطرف...' : 'Select Party...' }}</option>
+            <option value="">{{ isAr ? '-- حدد الطرف ذو الصلة --' : '-- Select Party --' }}</option>
             <option v-for="p in parties" :key="p.id" :value="p.id">{{ p.legal_name }} ({{ p.code }})</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'طريقة الدفع / التحويل' : 'Payment Method' }}</label>
-          <select v-model="form.payment_method" class="shadcn-input">
-            <option value="BANK_TRANSFER">{{ isAr ? 'تحويل بنكي (Bank Wire Transfer)' : 'Bank Wire Transfer' }}</option>
-            <option value="CASH">{{ isAr ? 'نقداً بالخزينة (Cash in Hand)' : 'Cash in Hand' }}</option>
-            <option value="CHEQUE">{{ isAr ? 'شيك بنكي (Bank Cheque)' : 'Bank Cheque' }}</option>
+          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الحساب المالي (الخزينة / البنك)' : 'Treasury / Bank Account' }}</label>
+          <select v-model="form.account_id" class="shadcn-input" required>
+            <option v-for="a in accounts" :key="a.id" :value="a.id">{{ a.code }} - {{ isAr ? a.name_ar : a.name_en }}</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'حساب الخزينة / البنك' : 'Bank / Cash Account' }}</label>
-          <select v-model="form.account_id" class="shadcn-input" required>
-            <option v-for="a in accounts" :key="a.id" :value="a.id">{{ isAr ? a.name_ar : a.name_en }} ({{ a.code }})</option>
+          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'طريقة السداد' : 'Payment Method' }}</label>
+          <select v-model="form.payment_method" class="shadcn-input">
+            <option value="BANK_TRANSFER">{{ isAr ? 'تحويل بنكي / سويفت' : 'Bank Wire / SWIFT' }}</option>
+            <option value="CASH">{{ isAr ? 'نقداً / خزينة' : 'Cash on Hand' }}</option>
+            <option value="CHEQUE">{{ isAr ? 'شيك بنكي' : 'Bank Cheque' }}</option>
           </select>
         </div>
 
@@ -85,10 +100,15 @@ const submit = () => {
         <div>
           <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'العملة' : 'Currency' }}</label>
           <select v-model="form.currency_code" class="shadcn-input">
+            <option value="EGP">EGP (E£)</option>
             <option value="USD">USD ($)</option>
             <option value="EUR">EUR (€)</option>
-            <option value="EGP">EGP (E£)</option>
           </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? ('سعر الصرف لعملة الأساس (' + baseCurrency.code + ')') : ('FX Rate to Base ' + baseCurrency.code) }}</label>
+          <input v-model="form.exchange_rate" type="number" step="0.0001" class="shadcn-input font-mono" required dir="ltr" />
         </div>
 
         <div>

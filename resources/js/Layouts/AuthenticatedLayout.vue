@@ -1,20 +1,36 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { 
   Anchor, LayoutDashboard, Ship, Calculator, Receipt, Coins, ShieldCheck, 
   TrendingUp, BookOpen, Building2, FileCheck2, User, Search, Bell, 
-  ThermometerSnowflake, ChevronsUpDown, PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
-  Truck, Scale, FileSpreadsheet, BarChart3
+  ChevronsUpDown, PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
+  Truck, Scale, FileSpreadsheet, BarChart3, Clock
 } from 'lucide-vue-next'
 
 const isSidebarOpen = ref(true)
 const page = usePage()
-const { isAr, dir, toggleLocale } = useI18n()
+const { isAr, dir, toggleLocale, formatDateTime } = useI18n()
+
+const now = ref(new Date())
+let clockTimer = null
+
+onMounted(() => {
+  clockTimer = setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (clockTimer) clearInterval(clockTimer)
+})
+
+const currentDateTime = computed(() => formatDateTime(now.value))
 
 const authUser = computed(() => page.props.auth?.user || {})
 const userRole = computed(() => authUser.value.role || 'super-admin')
+const baseCurrency = computed(() => page.props.base_currency || { code: 'EGP', symbol: 'E£' })
 
 // Fully reactive route matcher tracking page.url across client-side Inertia transitions
 const isItemActive = (pattern, href) => {
@@ -194,13 +210,6 @@ const navGroups = computed(() => [
         badge: 'RBAC' 
       },
       { 
-        name: isAr.value ? 'ربط وتتبع الحاويات (APIs)' : 'Ocean Tracking APIs', 
-        href: route('admin.settings.integrations.index'), 
-        icon: Cpu, 
-        pattern: 'admin.settings.integrations.*', 
-        badge: 'APIs' 
-      },
-      { 
         name: isAr.value ? 'سجل حركة النظام والتدقيق' : 'Audit Trail Logs', 
         href: route('admin.audit-logs.index'), 
         icon: History, 
@@ -213,10 +222,11 @@ const navGroups = computed(() => [
 </script>
 
 <template>
-  <div :dir="dir" class="min-h-screen bg-zinc-50 text-zinc-950 flex font-sans antialiased">
+  <div :dir="dir" class="app-shell min-h-screen bg-zinc-50 text-zinc-950 flex font-sans antialiased print:block print:min-h-0 print:bg-white print:p-0 print:m-0">
     <!-- Shadcn Monochromatic White Sidebar -->
     <aside 
       :class="[
+        'no-print print:hidden',
         isSidebarOpen ? 'w-64' : 'w-16',
         'bg-white border-e border-zinc-200 flex flex-col justify-between shrink-0 transition-all duration-200 select-none shadow-2xs'
       ]"
@@ -328,9 +338,9 @@ const navGroups = computed(() => [
     </aside>
 
     <!-- Main Application Shell -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden print:block print:overflow-visible">
       <!-- Shadcn Monochromatic Top Navbar Header -->
-      <header class="h-14 bg-white border-b border-zinc-200 px-4 flex items-center justify-between shrink-0 shadow-2xs">
+      <header class="no-print print:hidden h-14 bg-white border-b border-zinc-200 px-4 flex items-center justify-between shrink-0 shadow-2xs">
         <!-- Left Breadcrumbs & Sidebar Toggle -->
         <div class="flex items-center gap-3">
           <button 
@@ -370,13 +380,13 @@ const navGroups = computed(() => [
           <!-- Currency Indicator -->
           <div class="hidden sm:flex items-center gap-1.5 text-xs bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md">
             <span class="text-zinc-500 font-medium">{{ isAr ? 'الأساسية:' : 'Base:' }}</span>
-            <span class="font-mono font-bold text-blue-950">USD ($)</span>
+            <span class="font-mono font-bold text-blue-950">{{ baseCurrency.code }} ({{ baseCurrency.symbol }})</span>
           </div>
 
-          <!-- Cold Chain Status -->
-          <div class="flex items-center gap-1.5 text-xs bg-blue-50 border border-blue-200 text-blue-900 px-2.5 py-1 rounded-md font-bold">
-            <ThermometerSnowflake class="w-3.5 h-3.5 text-blue-700" />
-            <span>{{ isAr ? 'حرارة الموالح: مفعّلة' : 'USDA Probes: Active' }}</span>
+          <!-- Live System Clock (Date, Hour, AM/PM) -->
+          <div class="hidden lg:flex items-center gap-1.5 text-xs bg-blue-50/70 border border-blue-200/80 px-2.5 py-1 rounded-md text-blue-950 font-mono shadow-2xs">
+            <Clock class="w-3.5 h-3.5 text-blue-700" />
+            <span class="font-bold">{{ currentDateTime }}</span>
           </div>
 
           <!-- Notifications -->
@@ -388,9 +398,9 @@ const navGroups = computed(() => [
       </header>
 
       <!-- Main Canvas Container -->
-      <main class="flex-1 overflow-y-auto p-6 bg-slate-50/60">
+      <main class="flex-1 overflow-y-auto p-6 bg-slate-50/60 print:p-0 print:m-0 print:overflow-visible print:bg-transparent">
         <!-- Flash Alert -->
-        <div v-if="page.props.flash?.success" class="mb-4 p-3 bg-blue-900 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs border border-blue-800">
+        <div v-if="page.props.flash?.success" class="no-print mb-4 p-3 bg-blue-900 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs border border-blue-800">
           <ShieldCheck class="w-4 h-4 text-cyan-300" />
           <span>{{ page.props.flash.success }}</span>
         </div>

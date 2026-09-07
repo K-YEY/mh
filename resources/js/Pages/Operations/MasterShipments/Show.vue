@@ -28,7 +28,7 @@ import {
   ExternalLink
 } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   shipment: Object,
@@ -467,9 +467,9 @@ const complianceBadge = computed(() => {
                 {{ doc.issuing_authority || '—' }}
               </td>
               <td class="px-5 py-3.5 font-mono text-[11px] text-zinc-600">
-                <div>{{ isAr ? 'إصدار:' : 'Issued:' }} {{ doc.issue_date || '—' }}</div>
+                <div>{{ isAr ? 'إصدار:' : 'Issued:' }} {{ doc.issue_date ? formatDateTime(doc.issue_date) : '—' }}</div>
                 <div v-if="doc.expiry_date" class="text-zinc-900 font-bold">
-                  {{ isAr ? 'ينتهي:' : 'Expires:' }} {{ doc.expiry_date }}
+                  {{ isAr ? 'ينتهي:' : 'Expires:' }} {{ formatDateTime(doc.expiry_date) }}
                 </div>
               </td>
               <td class="px-5 py-3.5">

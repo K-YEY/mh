@@ -4,7 +4,7 @@ import { Link, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { Ship, Plus, Search } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   shipments: Object,
@@ -104,8 +104,8 @@ const handleSearch = () => {
                 </div>
               </td>
               <td class="px-5 py-4 text-zinc-700 font-mono text-[11px]">
-                <div>{{ isAr ? 'مغادرة:' : 'ETD:' }} {{ job.etd }}</div>
-                <div class="text-zinc-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ job.eta }}</div>
+                <div>{{ isAr ? 'مغادرة:' : 'ETD:' }} {{ formatDateTime(job.etd) }}</div>
+                <div class="text-zinc-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ formatDateTime(job.eta) }}</div>
               </td>
               <td class="px-5 py-4 font-mono">
                 <span class="px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 text-[11px] font-bold border border-zinc-300">

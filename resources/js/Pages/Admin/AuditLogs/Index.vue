@@ -4,7 +4,7 @@ import { router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { History, Search, ShieldCheck, User, Calendar, FileText, Code2, Eye } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   logs: Object,
@@ -103,7 +103,7 @@ const getEventBadgeClass = (event) => {
             <td class="p-4 font-mono text-zinc-600 text-[11px]">
               <div class="flex items-center gap-1.5">
                 <Calendar class="w-3.5 h-3.5 text-zinc-400" />
-                <span>{{ new Date(log.created_at).toLocaleString() }}</span>
+                <span>{{ formatDateTime(log.created_at) }}</span>
               </div>
             </td>
             <td class="p-4 font-bold text-zinc-950">

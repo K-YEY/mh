@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { BookOpen, Scale, Plus } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   entries: Object,
@@ -47,7 +47,7 @@ const props = defineProps({
           <div>
             <div class="font-mono font-bold text-zinc-950 text-sm flex items-center gap-2">
               {{ jv.entry_number }}
-              <span class="text-xs font-normal text-zinc-500">({{ jv.entry_date }})</span>
+              <span class="text-xs font-normal text-zinc-500">({{ formatDateTime(jv.created_at || jv.entry_date) }})</span>
             </div>
             <p class="text-xs text-zinc-600 mt-1 font-medium">{{ jv.narration }}</p>
           </div>

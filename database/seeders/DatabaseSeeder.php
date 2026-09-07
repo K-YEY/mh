@@ -14,7 +14,6 @@ use App\Models\MasterShipment;
 use App\Models\OceanFreightTariff;
 use App\Models\Party;
 use App\Models\PartyRole;
-use App\Models\Port;
 use App\Models\ShipmentInvoice;
 use App\Models\ShipmentInvoiceItem;
 use App\Models\User;
@@ -39,27 +38,22 @@ class DatabaseSeeder extends Seeder
             'role' => 'super-admin',
         ]);
 
-        // 2. Currencies
-        Currency::firstOrCreate(['code' => 'USD'], ['name' => 'US Dollar', 'symbol' => '$', 'decimal_places' => 2, 'is_base_currency' => true, 'is_active' => true]);
-        Currency::firstOrCreate(['code' => 'EUR'], ['name' => 'Euro', 'symbol' => '€', 'decimal_places' => 2, 'is_base_currency' => false, 'is_active' => true]);
-        Currency::firstOrCreate(['code' => 'EGP'], ['name' => 'Egyptian Pound', 'symbol' => 'E£', 'decimal_places' => 2, 'is_base_currency' => false, 'is_active' => true]);
+        // 2. Currencies (Base: EGP)
+        Currency::updateOrCreate(['code' => 'EGP'], ['name' => 'Egyptian Pound', 'symbol' => 'E£', 'decimal_places' => 2, 'is_base_currency' => true, 'is_active' => true]);
+        Currency::updateOrCreate(['code' => 'USD'], ['name' => 'US Dollar', 'symbol' => '$', 'decimal_places' => 2, 'is_base_currency' => false, 'is_active' => true]);
+        Currency::updateOrCreate(['code' => 'EUR'], ['name' => 'Euro', 'symbol' => '€', 'decimal_places' => 2, 'is_base_currency' => false, 'is_active' => true]);
 
-        ExchangeRate::firstOrCreate(['currency_code' => 'USD', 'effective_date' => now()->toDateString()], ['rate_to_base' => 1.000000]);
-        ExchangeRate::firstOrCreate(['currency_code' => 'EUR', 'effective_date' => now()->toDateString()], ['rate_to_base' => 1.085000]);
-        ExchangeRate::firstOrCreate(['currency_code' => 'EGP', 'effective_date' => now()->toDateString()], ['rate_to_base' => 0.020500]);
+        ExchangeRate::updateOrCreate(['currency_code' => 'EGP', 'effective_date' => now()->toDateString()], ['rate_to_base' => 1.000000]);
+        ExchangeRate::updateOrCreate(['currency_code' => 'USD', 'effective_date' => now()->toDateString()], ['rate_to_base' => 50.000000]);
+        ExchangeRate::updateOrCreate(['currency_code' => 'EUR', 'effective_date' => now()->toDateString()], ['rate_to_base' => 54.500000]);
 
-        // 3. Ports
-        $egaly = Port::firstOrCreate(['code' => 'EGALY'], ['name' => 'Alexandria Port', 'country_code' => 'EG']);
-        $egdam = Port::firstOrCreate(['code' => 'EGDAM'], ['name' => 'Damietta Port', 'country_code' => 'EG']);
-        $nlrtm = Port::firstOrCreate(['code' => 'NLRTM'], ['name' => 'Port of Rotterdam', 'country_code' => 'NL']);
-        $deham = Port::firstOrCreate(['code' => 'DEHAM'], ['name' => 'Port of Hamburg', 'country_code' => 'DE']);
+        // 3. Global Ports & Shipping Lines Seeders
+        $this->call([
+            WorldPortSeeder::class,
+            ShippingLineSeeder::class,
+        ]);
 
         // 4. Parties & Roles
-        $maersk = Party::firstOrCreate(['code' => 'LINE-MAERSK'], ['legal_name' => 'Maersk Line A/S', 'tax_number' => 'DK53166911']);
-        PartyRole::firstOrCreate(['party_id' => $maersk->id, 'role' => 'SHIPPING_LINE']);
-
-        $hapag = Party::firstOrCreate(['code' => 'LINE-HAPAG'], ['legal_name' => 'Hapag-Lloyd AG', 'tax_number' => 'DE118617325']);
-        PartyRole::firstOrCreate(['party_id' => $hapag->id, 'role' => 'SHIPPING_LINE']);
 
         $shipper = Party::firstOrCreate(['code' => 'EXP-DELTA'], ['legal_name' => 'Delta Agri Export Farms', 'tax_number' => 'EG-309182']);
         PartyRole::firstOrCreate(['party_id' => $shipper->id, 'role' => 'CUSTOMER']);

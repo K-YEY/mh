@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { DollarSign, Plus, Coins } from 'lucide-vue-next'
+import { DollarSign, Plus, Coins, RefreshCw, CheckCircle2 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
 
@@ -11,6 +11,8 @@ const props = defineProps({
 })
 
 const showCreateModal = ref(false)
+const settingBase = ref(null)
+const syncingFx = ref(false)
 
 const form = useForm({
   code: '',
@@ -27,12 +29,28 @@ const submit = () => {
     }
   })
 }
+
+const setBaseCurrency = (code) => {
+  if (confirm(isAr.value ? `هل أنت متأكد من تعيين ${code} كعملة أساسية للنظام؟ سيتم إعادة حساب أسعار الصرف تلقائياً.` : `Set ${code} as base system currency? Rates will be recalculated.`)) {
+    settingBase.value = code
+    router.post(route('currencies.set-base', { currency: code }), {}, {
+      onFinish: () => settingBase.value = null
+    })
+  }
+}
+
+const syncFxRates = () => {
+  syncingFx.value = true
+  router.post(route('exchange-rates.sync'), {}, {
+    onFinish: () => syncingFx.value = false
+  })
+}
 </script>
 
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight flex items-center gap-2">
           <Coins class="w-6 h-6 text-zinc-950" />
@@ -43,13 +61,25 @@ const submit = () => {
         </p>
       </div>
 
-      <button
-        @click="showCreateModal = true"
-        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
-      >
-        <Plus class="w-4 h-4 font-bold" />
-        <span>{{ isAr ? 'إضافة عملة جديدة' : 'Add Currency' }}</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button
+          @click="syncFxRates"
+          :disabled="syncingFx"
+          class="shadcn-btn-outline gap-1.5 shadow-xs cursor-pointer text-xs"
+          :title="isAr ? 'تحديث أسعار العملات الحية آلياً عبر Google / Live FX' : 'Sync Live FX Rates'"
+        >
+          <RefreshCw class="w-3.5 h-3.5 text-blue-700" :class="{ 'animate-spin': syncingFx }" />
+          <span>{{ syncingFx ? (isAr ? 'جاري التحديث...' : 'Syncing...') : (isAr ? 'تحديث أسعار الصرف آلياً (Live FX)' : 'Sync Live Rates') }}</span>
+        </button>
+
+        <button
+          @click="showCreateModal = true"
+          class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
+        >
+          <Plus class="w-4 h-4 font-bold" />
+          <span>{{ isAr ? 'إضافة عملة جديدة' : 'Add Currency' }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- Currencies Table Card -->
@@ -72,7 +102,7 @@ const submit = () => {
               <th class="px-4 py-3">{{ isAr ? 'الرمز' : 'Symbol' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الكسور العشرية' : 'Decimals' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'حالة العملة الأساسية' : 'Base Currency Status' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'الحالة' : 'Status' }}</th>
+              <th class="px-4 py-3">{{ isAr ? 'إجراءات العملة' : 'Actions' }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-200 font-sans">
@@ -99,8 +129,19 @@ const submit = () => {
                 </span>
               </td>
               <td class="px-4 py-3">
-                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950">
-                  {{ isAr ? 'نشط' : 'ACTIVE' }}
+                <button
+                  v-if="!c.is_base_currency"
+                  @click="setBaseCurrency(c.code)"
+                  :disabled="settingBase === c.code"
+                  class="shadcn-btn-secondary py-1 px-2.5 text-[11px] font-bold gap-1 cursor-pointer hover:border-blue-400 hover:text-blue-900 inline-flex items-center"
+                >
+                  <RefreshCw v-if="settingBase === c.code" class="w-3 h-3 animate-spin" />
+                  <Coins v-else class="w-3 h-3 text-zinc-600" />
+                  <span>{{ isAr ? 'تعيين كعملة أساسية' : 'Set as Base' }}</span>
+                </button>
+                <span v-else class="text-[11px] font-bold text-emerald-700 font-mono flex items-center gap-1">
+                  <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{{ isAr ? 'العملة الأساسية' : 'Active Base' }}</span>
                 </span>
               </td>
             </tr>

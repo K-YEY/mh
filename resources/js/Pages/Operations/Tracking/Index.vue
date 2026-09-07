@@ -29,7 +29,7 @@ import {
   Radio
 } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   search_number: String,
@@ -649,7 +649,7 @@ const isMilestoneCompleted = (code) => {
             <tbody class="divide-y divide-zinc-200 font-mono">
               <tr v-for="evt in events" :key="evt.id" class="hover:bg-blue-50/30 transition-colors">
                 <td class="px-5 py-3.5 font-bold text-blue-950 text-[11px] whitespace-nowrap">
-                  {{ evt.occurred_at }}
+                  {{ formatDateTime(evt.occurred_at) }}
                 </td>
                 <td class="px-5 py-3.5">
                   <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-900 border border-blue-200">
@@ -797,7 +797,7 @@ const isMilestoneCompleted = (code) => {
 
               <!-- Timestamp -->
               <td class="px-5 py-3.5 text-zinc-500 text-[11px] whitespace-nowrap">
-                {{ item.last_tracked_at ? new Date(item.last_tracked_at).toLocaleString() : '—' }}
+                {{ item.last_tracked_at ? formatDateTime(item.last_tracked_at) : '—' }}
               </td>
 
               <!-- Action -->

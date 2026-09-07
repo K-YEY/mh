@@ -4,7 +4,7 @@ import { useForm } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { ShieldCheck, Plus } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   deposits: Object,
@@ -80,7 +80,7 @@ const refund = (depositId) => {
                 ${{ d.amount }} {{ d.currency_code }}
               </td>
               <td class="p-4 text-zinc-700 font-mono text-[11px]">
-                {{ d.paid_date }}
+                {{ formatDateTime(d.created_at || d.paid_date) }}
               </td>
               <td class="p-4">
                 <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold border uppercase bg-zinc-950 text-white border-zinc-950">

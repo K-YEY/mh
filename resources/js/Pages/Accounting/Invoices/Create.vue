@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
-import { useForm, Link } from '@inertiajs/vue3'
+import { ref, computed, watch } from 'vue'
+import { useForm, usePage, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { ArrowLeft, ArrowRight, Plus, Trash2 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const page = usePage()
+const baseCurrency = computed(() => page.props.base_currency || { code: 'EGP', symbol: 'E£' })
 
 const props = defineProps({
   parties: Array,
@@ -16,7 +18,7 @@ const form = useForm({
   invoice_type: 'CUSTOMER_INVOICE',
   party_id: '',
   master_shipment_id: '',
-  currency_code: 'USD',
+  currency_code: baseCurrency.value.code || 'EGP',
   exchange_rate: 1.0,
   issue_date: new Date().toISOString().split('T')[0],
   due_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0],
@@ -24,6 +26,18 @@ const form = useForm({
     { charge_item_id: 1, description: 'Ocean Freight 40HR Cold Chain Tariff', quantity: 1, unit_price: 2400.00 },
     { charge_item_id: 2, description: 'Terminal Handling Charge (THC) POL', quantity: 1, unit_price: 250.00 }
   ]
+})
+
+watch(() => form.currency_code, (newCode) => {
+  if (newCode === baseCurrency.value.code) {
+    form.exchange_rate = 1.0
+  } else if (newCode === 'USD') {
+    form.exchange_rate = baseCurrency.value.code === 'EGP' ? 50.0 : 1.0
+  } else if (newCode === 'EUR') {
+    form.exchange_rate = baseCurrency.value.code === 'EGP' ? 54.5 : 1.085
+  } else if (newCode === 'EGP') {
+    form.exchange_rate = baseCurrency.value.code === 'USD' ? 0.02 : 1.0
+  }
 })
 
 const addItem = () => {
@@ -93,7 +107,7 @@ const submit = () => {
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'سعر الصرف للدولار الأساسي' : 'FX Rate to Base USD' }}</label>
+          <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? ('سعر الصرف لعملة الأساس (' + baseCurrency.code + ')') : ('FX Rate to Base ' + baseCurrency.code) }}</label>
           <input v-model="form.exchange_rate" type="number" step="0.0001" class="shadcn-input font-mono" required dir="ltr" />
         </div>
 

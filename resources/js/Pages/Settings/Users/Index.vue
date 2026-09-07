@@ -4,7 +4,7 @@ import { useForm } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { Users, Plus, UserCheck } from 'lucide-vue-next'
 
-const { isAr } = useI18n()
+const { isAr, formatDateTime } = useI18n()
 
 const props = defineProps({
   users: Array,
@@ -96,8 +96,8 @@ const submit = () => {
                   {{ isAr ? 'نشط' : 'ACTIVE' }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-zinc-500 font-mono">
-                {{ u.created_at ? new Date(u.created_at).toLocaleDateString() : (isAr ? 'مدير النظام' : 'System Admin') }}
+              <td class="px-4 py-3 text-zinc-500 font-mono text-[11px]">
+                {{ u.created_at ? formatDateTime(u.created_at) : (isAr ? 'مدير النظام' : 'System Admin') }}
               </td>
             </tr>
 
