@@ -44,8 +44,8 @@ Route::middleware('auth')->group(function () {
         Route::post('house-shipments', [HouseShipmentController::class, 'store'])->name('house-shipments.store');
         Route::post('house-shipments/{houseShipment}/release-do', [HouseShipmentController::class, 'releaseDeliveryOrder'])->name('house-shipments.release-do');
 
-        Route::resource('customs-brokers', CustomsBrokerController::class)->only(['index', 'store']);
-        Route::resource('truckers', TruckerController::class)->only(['index', 'store']);
+        Route::resource('customs-brokers', CustomsBrokerController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('truckers', TruckerController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::get('tracking', [ContainerTrackingController::class, 'index'])->name('tracking.index');
         Route::post('tracking/event', [ContainerTrackingController::class, 'addEvent'])->name('tracking.add-event');
@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('accounting')->group(function () {
         Route::get('accounts', [AccountController::class, 'index'])->name('accounts.index');
         Route::post('accounts', [AccountController::class, 'store'])->name('accounts.store');
+        Route::put('accounts/{account}', [AccountController::class, 'update'])->name('accounts.update');
+        Route::delete('accounts/{account}', [AccountController::class, 'destroy'])->name('accounts.destroy');
 
         Route::resource('invoices', InvoiceController::class);
         Route::resource('vouchers', PaymentVoucherController::class);
@@ -66,6 +68,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->name('exchange-rates.index');
         Route::post('exchange-rates', [ExchangeRateController::class, 'store'])->name('exchange-rates.store');
+        Route::put('exchange-rates/{exchangeRate}', [ExchangeRateController::class, 'update'])->name('exchange-rates.update');
         Route::post('exchange-rates/sync', [ExchangeRateController::class, 'syncLive'])->name('exchange-rates.sync');
         Route::delete('exchange-rates/{exchangeRate}', [ExchangeRateController::class, 'destroy'])->name('exchange-rates.destroy');
 
@@ -91,15 +94,23 @@ Route::middleware('auth')->group(function () {
     Route::prefix('settings')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::post('users', [UserController::class, 'store'])->name('users.store');
+        Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
         Route::get('parties', [PartyController::class, 'index'])->name('parties.index');
         Route::post('parties', [PartyController::class, 'store'])->name('parties.store');
+        Route::put('parties/{party}', [PartyController::class, 'update'])->name('parties.update');
+        Route::delete('parties/{party}', [PartyController::class, 'destroy'])->name('parties.destroy');
 
         Route::get('ports', [PortController::class, 'index'])->name('ports.index');
         Route::post('ports', [PortController::class, 'store'])->name('ports.store');
+        Route::put('ports/{port}', [PortController::class, 'update'])->name('ports.update');
+        Route::delete('ports/{port}', [PortController::class, 'destroy'])->name('ports.destroy');
 
         Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
         Route::post('currencies', [CurrencyController::class, 'store'])->name('currencies.store');
+        Route::put('currencies/{currency}', [CurrencyController::class, 'update'])->name('currencies.update');
+        Route::delete('currencies/{currency}', [CurrencyController::class, 'destroy'])->name('currencies.destroy');
         Route::post('currencies/{currency}/set-base', [CurrencyController::class, 'setBase'])->name('currencies.set-base');
     });
 

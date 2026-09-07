@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { DollarSign, Plus, Coins, RefreshCw, CheckCircle2 } from 'lucide-vue-next'
+import { DollarSign, Plus, Coins, RefreshCw, CheckCircle2, Pencil, Trash2 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
 
@@ -11,6 +11,7 @@ const props = defineProps({
 })
 
 const showCreateModal = ref(false)
+const showEditModal = ref(false)
 const settingBase = ref(null)
 const syncingFx = ref(false)
 
@@ -21,6 +22,14 @@ const form = useForm({
   decimal_places: 2,
 })
 
+const editForm = useForm({
+  code: '',
+  name: '',
+  symbol: '',
+  decimal_places: 2,
+  is_active: true,
+})
+
 const submit = () => {
   form.post(route('currencies.store'), {
     onSuccess: () => {
@@ -28,6 +37,29 @@ const submit = () => {
       form.reset()
     }
   })
+}
+
+const openEditModal = (c) => {
+  editForm.code = c.code
+  editForm.name = c.name
+  editForm.symbol = c.symbol
+  editForm.decimal_places = c.decimal_places ?? 2
+  editForm.is_active = c.is_active !== false
+  showEditModal.value = true
+}
+
+const submitEdit = () => {
+  editForm.put(route('currencies.update', editForm.code), {
+    onSuccess: () => {
+      showEditModal.value = false
+    }
+  })
+}
+
+const deleteCurrency = (c) => {
+  if (confirm(isAr.value ? `هل أنت متأكد من حذف العملة (${c.code} - ${c.name})؟` : `Delete currency (${c.code})?`)) {
+    router.delete(route('currencies.destroy', c.code))
+  }
 }
 
 const setBaseCurrency = (code) => {
@@ -102,7 +134,7 @@ const syncFxRates = () => {
               <th class="px-4 py-3">{{ isAr ? 'الرمز' : 'Symbol' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الكسور العشرية' : 'Decimals' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'حالة العملة الأساسية' : 'Base Currency Status' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'إجراءات العملة' : 'Actions' }}</th>
+              <th class="px-4 py-3 text-center">{{ isAr ? 'التحكم والإجراءات' : 'Actions' }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-200 font-sans">
@@ -129,20 +161,46 @@ const syncFxRates = () => {
                 </span>
               </td>
               <td class="px-4 py-3">
-                <button
-                  v-if="!c.is_base_currency"
-                  @click="setBaseCurrency(c.code)"
-                  :disabled="settingBase === c.code"
-                  class="shadcn-btn-secondary py-1 px-2.5 text-[11px] font-bold gap-1 cursor-pointer hover:border-blue-400 hover:text-blue-900 inline-flex items-center"
-                >
-                  <RefreshCw v-if="settingBase === c.code" class="w-3 h-3 animate-spin" />
-                  <Coins v-else class="w-3 h-3 text-zinc-600" />
-                  <span>{{ isAr ? 'تعيين كعملة أساسية' : 'Set as Base' }}</span>
-                </button>
-                <span v-else class="text-[11px] font-bold text-emerald-700 font-mono flex items-center gap-1">
-                  <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" />
-                  <span>{{ isAr ? 'العملة الأساسية' : 'Active Base' }}</span>
-                </span>
+                <div class="flex items-center justify-center gap-1.5">
+                  <!-- Edit Button -->
+                  <button
+                    type="button"
+                    @click="openEditModal(c)"
+                    class="px-2.5 py-1 rounded-lg text-xs font-bold text-blue-700 bg-blue-50/80 hover:bg-blue-100/90 border border-blue-200/80 flex items-center gap-1 transition shadow-xs cursor-pointer"
+                    :title="isAr ? 'تعديل بيانات العملة' : 'Edit Currency'"
+                  >
+                    <Pencil class="w-3.5 h-3.5 text-blue-600" />
+                    <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+                  </button>
+
+                  <!-- Set as base -->
+                  <button
+                    v-if="!c.is_base_currency"
+                    @click="setBaseCurrency(c.code)"
+                    :disabled="settingBase === c.code"
+                    class="shadcn-btn-secondary py-1 px-2 text-[11px] font-bold gap-1 cursor-pointer hover:border-blue-400 hover:text-blue-900 inline-flex items-center"
+                    :title="isAr ? 'تعيين كعملة أساسية للنظام' : 'Set as Base Currency'"
+                  >
+                    <RefreshCw v-if="settingBase === c.code" class="w-3 h-3 animate-spin" />
+                    <Coins v-else class="w-3 h-3 text-zinc-600" />
+                    <span>{{ isAr ? 'تعيين كأساس' : 'Set Base' }}</span>
+                  </button>
+                  <span v-else class="text-[11px] font-bold text-emerald-700 font-mono flex items-center gap-1 px-1.5">
+                    <CheckCircle2 class="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{{ isAr ? 'الأساسية' : 'Base' }}</span>
+                  </span>
+
+                  <!-- Delete Button -->
+                  <button
+                    v-if="!c.is_base_currency"
+                    type="button"
+                    @click="deleteCurrency(c)"
+                    class="p-1 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+                    :title="isAr ? 'حذف العملة' : 'Delete Currency'"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -157,27 +215,30 @@ const syncFxRates = () => {
     </div>
 
     <!-- Create Modal -->
-    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
+    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl rounded-2xl">
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
-          <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'إضافة عملة نظام جديدة' : 'Add System Currency' }}</h3>
+          <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+            <Plus class="w-4 h-4 text-zinc-950" />
+            <span>{{ isAr ? 'إضافة عملة نظام جديدة' : 'Add System Currency' }}</span>
+          </h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
         </div>
 
         <form @submit.prevent="submit" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">Currency Code (3 Chars)</label>
-            <input v-model="form.code" type="text" placeholder="e.g. EUR" required class="shadcn-input font-mono uppercase" dir="ltr" />
+            <label class="block text-xs font-bold text-zinc-800 mb-1">كود العملة (ISO 3 Chars)</label>
+            <input v-model="form.code" type="text" placeholder="e.g. SAR, AED, GBP" maxlength="3" required class="shadcn-input font-mono uppercase" dir="ltr" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم العملة' : 'Currency Name' }}</label>
-            <input v-model="form.name" type="text" placeholder="e.g. Euro (يورو)" required class="shadcn-input" />
+            <input v-model="form.name" type="text" placeholder="e.g. Saudi Riyal (ريال سعودي)" required class="shadcn-input" />
           </div>
 
           <div>
             <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رمز العملة' : 'Currency Symbol' }}</label>
-            <input v-model="form.symbol" type="text" placeholder="e.g. €" required class="shadcn-input font-mono" dir="ltr" />
+            <input v-model="form.symbol" type="text" placeholder="e.g. ر.س, $, €" required class="shadcn-input font-mono" dir="ltr" />
           </div>
 
           <div>
@@ -188,6 +249,46 @@ const syncFxRates = () => {
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
             <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
             <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ العملة' : 'Save Currency' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Currency Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl rounded-2xl">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
+          <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+            <Pencil class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? `تعديل بيانات العملة: ${editForm.code}` : `Edit Currency: ${editForm.code}` }}</span>
+          </h3>
+          <button @click="showEditModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
+        </div>
+
+        <form @submit.prevent="submitEdit" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'كود العملة' : 'Currency Code' }}</label>
+            <input :value="editForm.code" disabled type="text" class="shadcn-input font-mono bg-zinc-100 text-zinc-500 cursor-not-allowed uppercase" dir="ltr" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم العملة' : 'Currency Name' }}</label>
+            <input v-model="editForm.name" type="text" required class="shadcn-input" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رمز العملة' : 'Currency Symbol' }}</label>
+            <input v-model="editForm.symbol" type="text" required class="shadcn-input font-mono" dir="ltr" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'عدد الخانات العشرية' : 'Decimal Places' }}</label>
+            <input v-model="editForm.decimal_places" type="number" min="0" max="4" required class="shadcn-input font-mono" dir="ltr" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
+            <button type="button" @click="showEditModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
+            <button type="submit" :disabled="editForm.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ التعديلات' : 'Save Changes' }}</button>
           </div>
         </form>
       </div>

@@ -22,119 +22,129 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-8">
     <!-- Header Title & Quick Action Buttons -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-extrabold text-zinc-950 tracking-tight">
-          {{ isAr ? 'لوحة التحكم الرئيسية والتشغيل' : 'Dashboard Overview' }}
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+          <span>{{ isAr ? 'لوحة التحكم والتشغيل المباشر' : 'Operations Dashboard' }}</span>
         </h1>
-        <p class="text-xs text-zinc-500 mt-0.5">
+        <p class="text-xs text-slate-500 mt-1 font-medium">
           {{ isAr ? 'منظومة الشحن البحري الزراعي وسلاسل التبريد المباشرة' : 'Agricultural Export Freight Forwarding & Reefer Cold-Chain Logistics' }}
         </p>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2.5">
         <Link
           :href="route('master-shipments.create')"
-          class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+          class="shadcn-btn-primary gap-2 shadow-sm hover:shadow-md cursor-pointer text-xs"
         >
           <Plus class="w-4 h-4 font-bold" />
           <span>{{ isAr ? 'حجز شحنة بحرية جديدة' : 'New Ocean Booking' }}</span>
         </Link>
         <Link
           :href="route('tariffs.index')"
-          class="shadcn-btn-secondary gap-1.5 cursor-pointer"
+          class="shadcn-btn-secondary gap-2 cursor-pointer text-xs"
         >
-          <Anchor class="w-4 h-4 text-zinc-950" />
+          <Anchor class="w-4 h-4 text-slate-700" />
           <span>{{ isAr ? 'مستكشف النولون' : 'Rate Finder' }}</span>
         </Link>
       </div>
     </div>
 
-    <!-- Monochromatic Shadcn Metric Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Apple Liquid Glass Metric Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       <!-- Active Shipments Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
             {{ isAr ? 'الحجوزات النشطة' : 'Active Bookings' }}
           </span>
-          <Ship class="w-4 h-4 text-zinc-400" />
+          <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
+            <Ship class="w-4 h-4" />
+          </div>
         </div>
         <div>
-          <div class="text-2xl font-bold text-zinc-950 font-mono tracking-tight">{{ metrics.active_shipments }}</div>
-          <p class="text-[11px] text-zinc-700 mt-1 flex items-center gap-1 font-medium">
-            <ArrowUpRight class="w-3.5 h-3.5" />
+          <div class="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">{{ metrics.active_shipments }}</div>
+          <p class="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1 font-medium">
+            <ArrowUpRight class="w-3.5 h-3.5 text-blue-600" />
             <span>{{ isAr ? 'رحلات ماستر FCL و LCL' : 'Master FCL & LCL Voyages' }}</span>
           </p>
         </div>
       </div>
 
       <!-- Active Containers Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-            {{ isAr ? 'الحاوية المبردة المفتوحة' : 'Active Reefer Units' }}
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            {{ isAr ? 'الحاويات المبردة' : 'Active Reefer Units' }}
           </span>
-          <Boxes class="w-4 h-4 text-zinc-400" />
+          <div class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center transition-transform group-hover:scale-110">
+            <Boxes class="w-4 h-4" />
+          </div>
         </div>
         <div>
-          <div class="text-2xl font-bold text-zinc-950 font-mono tracking-tight">{{ metrics.active_containers }}</div>
-          <p class="text-[11px] text-zinc-700 mt-1 flex items-center gap-1 font-medium">
-            <Boxes class="w-3.5 h-3.5" />
-            <span>{{ isAr ? 'تتبع سلاسل التبريد' : 'Cold Chain Monitoring' }}</span>
+          <div class="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">{{ metrics.active_containers }}</div>
+          <p class="text-[11px] text-slate-600 mt-1.5 flex items-center gap-1 font-medium">
+            <Boxes class="w-3.5 h-3.5 text-sky-600" />
+            <span>{{ isAr ? 'تتبع سلاسل التبريد النشطة' : 'Cold Chain Monitoring' }}</span>
           </p>
         </div>
       </div>
 
       <!-- Invoiced Revenue Card -->
-      <div class="shadcn-card p-4 space-y-2">
+      <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-            {{ isAr ? 'إجمالي مبيعات الفواتير' : 'Invoiced Sales' }}
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            {{ isAr ? 'إجمالي المبيعات' : 'Invoiced Sales' }}
           </span>
-          <DollarSign class="w-4 h-4 text-zinc-400" />
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
+            <DollarSign class="w-4 h-4" />
+          </div>
         </div>
         <div>
-          <div class="text-2xl font-bold text-zinc-950 font-mono tracking-tight">${{ metrics.total_revenue.toLocaleString() }}</div>
-          <p class="text-[11px] text-zinc-600 mt-1 font-medium">
+          <div class="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">${{ metrics.total_revenue.toLocaleString() }}</div>
+          <p class="text-[11px] text-slate-600 mt-1.5 font-medium">
             {{ isAr ? 'أرصدة حسابات العملاء' : 'Accounts Receivable Ledger' }}
           </p>
         </div>
       </div>
 
-      <!-- Net Margin Card -->
-      <div class="shadcn-card p-4 space-y-2 bg-zinc-900 text-white">
+      <!-- Net Margin Card (Apple Dark Liquid Card) -->
+      <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white border-white/10 shadow-[0_12px_36px_rgba(15,23,42,0.25)]">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">
             {{ isAr ? 'صافي أرباح العمليات' : 'Net Job Margin' }}
           </span>
-          <TrendingUp class="w-4 h-4 text-white" />
+          <div class="w-8 h-8 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center backdrop-blur-md transition-transform group-hover:scale-110">
+            <TrendingUp class="w-4 h-4" />
+          </div>
         </div>
         <div>
-          <div class="text-2xl font-bold text-white font-mono tracking-tight">+${{ metrics.net_profit.toLocaleString() }}</div>
-          <p class="text-[11px] text-zinc-400 mt-1 font-medium">
-            {{ isAr ? 'أرباح وخسائر الرحلات التشغيلية' : 'Total Operational Job P&L' }}
+          <div class="text-3xl font-extrabold text-white font-mono tracking-tight">+${{ metrics.net_profit.toLocaleString() }}</div>
+          <p class="text-[11px] text-slate-300 mt-1.5 font-medium flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>{{ isAr ? 'أرباح وخسائر الرحلات التشغيلية' : 'Total Operational Job P&L' }}</span>
           </p>
         </div>
       </div>
     </div>
 
-
-    <!-- Recent Master Ocean Shipments Table Card -->
+    <!-- Recent Master Ocean Shipments Table Card (Apple Liquid Glass Table) -->
     <div class="shadcn-card overflow-hidden">
-      <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+      <div class="p-5 border-b border-black/[0.04] flex items-center justify-between bg-white/40 backdrop-blur-md">
         <div>
-          <h2 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
-            <Ship class="w-4 h-4 text-zinc-950" />
+          <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center">
+              <Ship class="w-3.5 h-3.5" />
+            </div>
             <span>{{ isAr ? 'أحدث الشحنات البحرية الماستر (MBL)' : 'Recent Master Ocean Shipments (MBL)' }}</span>
           </h2>
-          <p class="text-[11px] text-zinc-500">
+          <p class="text-[11px] text-slate-500 mt-0.5">
             {{ isAr ? 'متابعة الرحلات البحرية وحركة الحاويات المباشرة' : 'Live Status of Ocean Freight Voyages and Container Logistics' }}
           </p>
         </div>
-        <Link :href="route('master-shipments.index')" class="text-xs font-bold text-zinc-950 hover:underline flex items-center gap-1">
+        <Link :href="route('master-shipments.index')" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors">
           <span>{{ isAr ? 'عرض الكل' : 'View All' }}</span>
           <component :is="isAr ? ChevronLeft : ChevronRight" class="w-3.5 h-3.5" />
         </Link>
@@ -142,50 +152,50 @@ const props = defineProps({
 
       <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
-          <thead class="bg-zinc-100 text-zinc-700 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+          <thead class="bg-black/[0.02] text-slate-600 uppercase text-[10px] tracking-wider border-b border-black/[0.04] font-mono">
             <tr>
-              <th class="px-4 py-3">{{ isAr ? 'رقم الملف والبيليسية' : 'File & MBL #' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'الناقل والسفينة' : 'Carrier & Vessel' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'مسار الشحن (شحن -> تفريغ)' : 'Route (POL -> POD)' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'التغادر / الوصول' : 'ETD / ETA' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'الحاويات' : 'Units' }}</th>
-              <th class="px-4 py-3">{{ isAr ? 'الحالة' : 'Status' }}</th>
-              <th class="px-4 py-3" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'التحكم' : 'Action' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'رقم الملف والبيليسية' : 'File & MBL #' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'الناقل والسفينة' : 'Carrier & Vessel' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'مسار الشحن (شحن -> تفريغ)' : 'Route (POL -> POD)' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'المغادرة / الوصول' : 'ETD / ETA' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'الحاويات' : 'Units' }}</th>
+              <th class="px-5 py-3.5">{{ isAr ? 'الحالة' : 'Status' }}</th>
+              <th class="px-5 py-3.5" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'التحكم' : 'Action' }}</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-200 font-sans">
-            <tr v-for="job in recent_shipments" :key="job.id" class="hover:bg-zinc-50 transition-colors">
-              <td class="px-4 py-3 font-mono">
-                <div class="font-bold text-zinc-950">{{ job.file_number }}</div>
-                <div class="text-[10px] text-zinc-500">{{ job.master_bl_number || (isAr ? 'في الانتظار' : 'Pending MBL') }}</div>
+          <tbody class="divide-y divide-black/[0.03] font-sans">
+            <tr v-for="job in recent_shipments" :key="job.id" class="hover:bg-blue-500/[0.03] transition-colors">
+              <td class="px-5 py-3.5 font-mono">
+                <div class="font-bold text-slate-900">{{ job.file_number }}</div>
+                <div class="text-[10px] text-slate-500">{{ job.master_bl_number || (isAr ? 'في الانتظار' : 'Pending MBL') }}</div>
               </td>
-              <td class="px-4 py-3">
-                <div class="font-semibold text-zinc-900">{{ job.shipping_line?.legal_name }}</div>
-                <div class="text-[10px] text-zinc-500 font-mono">{{ job.vessel_name }} (v. {{ job.voyage_number }})</div>
+              <td class="px-5 py-3.5">
+                <div class="font-semibold text-slate-800">{{ job.shipping_line?.legal_name }}</div>
+                <div class="text-[10px] text-slate-500 font-mono">{{ job.vessel_name }} (v. {{ job.voyage_number }})</div>
               </td>
-              <td class="px-4 py-3 font-mono text-zinc-950 font-semibold">
+              <td class="px-5 py-3.5 font-mono text-slate-900 font-semibold">
                 {{ job.pol?.name }} ← {{ job.pod?.name }}
               </td>
-              <td class="px-4 py-3 text-zinc-800 font-mono text-[11px]">
+              <td class="px-5 py-3.5 text-slate-700 font-mono text-[11px]">
                 <div>{{ isAr ? 'مغادرة:' : 'ETD:' }} {{ formatDateTime(job.etd) }}</div>
-                <div class="text-zinc-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ formatDateTime(job.eta) }}</div>
+                <div class="text-slate-500">{{ isAr ? 'وصول:' : 'ETA:' }} {{ formatDateTime(job.eta) }}</div>
               </td>
-              <td class="px-4 py-3">
-                <span class="px-2 py-0.5 rounded bg-zinc-100 text-zinc-800 font-mono text-[10px] font-bold border border-zinc-300">
+              <td class="px-5 py-3.5">
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono text-[10px] font-bold border border-slate-200">
                   {{ job.containers?.length || 0 }} {{ isAr ? 'حاوية' : 'Units' }}
                 </span>
               </td>
-              <td class="px-4 py-3">
+              <td class="px-5 py-3.5">
                 <span 
-                  class="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase border bg-zinc-100 text-zinc-950 border-zinc-300"
+                  class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border bg-blue-500/10 text-blue-700 border-blue-500/20 backdrop-blur-sm"
                 >
                   {{ job.status }}
                 </span>
               </td>
-              <td class="px-4 py-3" :class="isAr ? 'text-left' : 'text-right'">
+              <td class="px-5 py-3.5" :class="isAr ? 'text-left' : 'text-right'">
                 <Link
                   :href="route('master-shipments.show', job.id)"
-                  class="shadcn-btn-secondary text-xs h-7 px-2.5 cursor-pointer"
+                  class="shadcn-btn-secondary text-xs h-7 px-3 rounded-xl cursor-pointer hover:border-blue-300"
                 >
                   {{ isAr ? 'فحص الشحنة' : 'Inspect' }}
                 </Link>

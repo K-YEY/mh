@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { Plus, TrendingUp, RefreshCw, Globe, Radio, Zap, Trash2 } from 'lucide-vue-next'
+import { Plus, TrendingUp, RefreshCw, Globe, Radio, Zap, Trash2, Pencil, CheckCircle2 } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
 
@@ -14,11 +14,19 @@ const props = defineProps({
 })
 
 const syncingFx = ref(false)
+const showEditModal = ref(false)
 
 const form = useForm({
   currency_code: 'USD',
   rate_to_base: 50.0000,
   effective_date: new Date().toISOString().split('T')[0],
+})
+
+const editForm = useForm({
+  id: null,
+  currency_code: '',
+  rate_to_base: 1.0,
+  effective_date: '',
 })
 
 watch(() => form.currency_code, (newCode) => {
@@ -31,6 +39,22 @@ watch(() => form.currency_code, (newCode) => {
 const submit = () => {
   form.post(route('exchange-rates.store'), {
     onSuccess: () => form.reset(),
+  })
+}
+
+const openEditModal = (r) => {
+  editForm.id = r.id
+  editForm.currency_code = r.currency_code
+  editForm.rate_to_base = Number(r.rate_to_base)
+  editForm.effective_date = r.effective_date ? r.effective_date.split('T')[0] : new Date().toISOString().split('T')[0]
+  showEditModal.value = true
+}
+
+const submitEdit = () => {
+  editForm.put(route('exchange-rates.update', editForm.id), {
+    onSuccess: () => {
+      showEditModal.value = false
+    }
   })
 }
 
@@ -170,14 +194,26 @@ const deleteRate = (rate) => {
                 </span>
               </td>
               <td class="p-4 text-center">
-                <button
-                  type="button"
-                  @click="deleteRate(r)"
-                  class="p-1.5 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                  :title="isAr ? 'حذف هذا السجل' : 'Delete this record'"
-                >
-                  <Trash2 class="w-4 h-4" />
-                </button>
+                <div class="flex items-center justify-center gap-1.5">
+                  <button
+                    type="button"
+                    @click="openEditModal(r)"
+                    class="px-2 py-1 rounded-lg text-xs font-bold text-blue-700 bg-blue-50/80 hover:bg-blue-100/90 border border-blue-200/80 flex items-center gap-1 transition shadow-xs cursor-pointer"
+                    :title="isAr ? 'تعديل سعر الصرف' : 'Edit FX Rate'"
+                  >
+                    <Pencil class="w-3.5 h-3.5 text-blue-600" />
+                    <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    @click="deleteRate(r)"
+                    class="p-1 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    :title="isAr ? 'حذف هذا السجل' : 'Delete this record'"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -231,6 +267,44 @@ const deleteRate = (rate) => {
             <RefreshCw class="w-3.5 h-3.5 text-zinc-700" />
             <span>{{ isAr ? 'حفظ وتثبيت سعر الصرف' : 'Post FX Rate Update' }}</span>
           </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Exchange Rate Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl rounded-2xl">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
+          <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+            <Pencil class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? `تعديل سعر صرف عملة: ${editForm.currency_code}` : `Edit FX Rate: ${editForm.currency_code}` }}</span>
+          </h3>
+          <button @click="showEditModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
+        </div>
+
+        <form @submit.prevent="submitEdit" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'كود العملة' : 'Currency Code' }}</label>
+            <input :value="editForm.currency_code" disabled class="shadcn-input font-mono bg-zinc-100 text-zinc-500 cursor-not-allowed uppercase" dir="ltr" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? `سعر الصرف مقابل (${base_currency?.code || 'EGP'})` : `Exchange Rate to Base (${base_currency?.code || 'EGP'})` }}</label>
+            <input v-model="editForm.rate_to_base" type="number" step="0.000001" class="shadcn-input font-mono font-bold" required dir="ltr" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'تاريخ السريان' : 'Effective Date' }}</label>
+            <input v-model="editForm.effective_date" type="date" class="shadcn-input font-mono" required dir="ltr" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
+            <button type="button" @click="showEditModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
+            <button type="submit" :disabled="editForm.processing" class="shadcn-btn-primary cursor-pointer flex items-center gap-1">
+              <CheckCircle2 class="w-4 h-4" />
+              <span>{{ isAr ? 'حفظ التعديلات' : 'Save Changes' }}</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>

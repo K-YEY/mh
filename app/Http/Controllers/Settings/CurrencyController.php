@@ -58,4 +58,34 @@ class CurrencyController extends Controller
 
         return redirect()->back()->with('success', "تم تعيين العملة الأساسية للنظام بنجاح إلى: {$targetCurrency->name} ({$targetCurrency->code}).");
     }
+
+    public function update(Request $request, Currency $currency): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'symbol' => 'required|string|max:10',
+            'decimal_places' => 'required|integer|min:0|max:4',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $currency->update([
+            'name' => $validated['name'],
+            'symbol' => $validated['symbol'],
+            'decimal_places' => $validated['decimal_places'],
+            'is_active' => $request->boolean('is_active', true),
+        ]);
+
+        return redirect()->back()->with('success', 'تم تعديل بيانات العملة بنجاح.');
+    }
+
+    public function destroy(Currency $currency): RedirectResponse
+    {
+        if ($currency->is_base_currency) {
+            return redirect()->back()->with('error', 'لا يمكن حذف العملة الأساسية للنظام.');
+        }
+
+        $currency->delete();
+
+        return redirect()->back()->with('success', 'تم حذف العملة بنجاح.');
+    }
 }

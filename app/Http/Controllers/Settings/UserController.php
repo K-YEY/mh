@@ -37,4 +37,37 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'User account provisioned successfully.');
     }
+
+    public function update(Request $request, User $user): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        $data = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ];
+
+        if (! empty($validated['password'])) {
+            $data['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($data);
+
+        return redirect()->back()->with('success', 'تم تعديل بيانات المستخدم بنجاح.');
+    }
+
+    public function destroy(Request $request, User $user): RedirectResponse
+    {
+        if ($user->id === $request->user()?->id) {
+            return redirect()->back()->with('error', 'لا يمكنك حذف حسابك الحالي أثناء تسجيل الدخول.');
+        }
+
+        $user->delete();
+
+        return redirect()->back()->with('success', 'تم حذف المستخدم بنجاح.');
+    }
 }

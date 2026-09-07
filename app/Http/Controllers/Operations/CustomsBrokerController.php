@@ -80,4 +80,47 @@ class CustomsBrokerController extends Controller
 
         return redirect()->back()->with('success', 'تم تسجيل المخلص الجمركي في جدول المخلصين بنجاح.');
     }
+
+    public function update(Request $request, CustomsBroker $customsBroker): RedirectResponse
+    {
+        $validated = $request->validate([
+            'code' => 'required|string|unique:customs_brokers,code,'.$customsBroker->id,
+            'name' => 'required|string',
+            'trade_name' => 'nullable|string',
+            'license_number' => 'nullable|string',
+            'operating_ports' => 'nullable|string',
+            'tax_number' => 'nullable|string',
+            'commercial_registry' => 'nullable|string',
+            'contact_person' => 'nullable|string',
+            'contact_phone' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'address' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $customsBroker->update($validated);
+
+        if ($customsBroker->party) {
+            $customsBroker->party->update([
+                'legal_name' => $validated['name'],
+                'trade_name' => $validated['trade_name'] ?? null,
+                'tax_number' => $validated['tax_number'] ?? null,
+                'commercial_registry' => $validated['commercial_registry'] ?? null,
+                'email' => $validated['email'] ?? null,
+                'phone' => $validated['phone'] ?? null,
+                'address' => $validated['address'] ?? null,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'تم تعديل بيانات المخلص الجمركي بنجاح.');
+    }
+
+    public function destroy(CustomsBroker $customsBroker): RedirectResponse
+    {
+        $customsBroker->delete();
+
+        return redirect()->back()->with('success', 'تم حذف المخلص الجمركي بنجاح.');
+    }
 }

@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { Users, Plus, UserCheck } from 'lucide-vue-next'
+import { Users, Plus, UserCheck, Pencil, Trash2, CheckCircle2 } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
 
@@ -11,11 +11,19 @@ const props = defineProps({
 })
 
 const showCreateModal = ref(false)
+const showEditModal = ref(false)
 
 const form = useForm({
   name: '',
   email: '',
   password: 'password',
+})
+
+const editForm = useForm({
+  id: null,
+  name: '',
+  email: '',
+  password: '',
 })
 
 const submit = () => {
@@ -25,6 +33,28 @@ const submit = () => {
       form.reset()
     }
   })
+}
+
+const openEditModal = (u) => {
+  editForm.id = u.id
+  editForm.name = u.name
+  editForm.email = u.email
+  editForm.password = ''
+  showEditModal.value = true
+}
+
+const submitEdit = () => {
+  editForm.put(route('users.update', editForm.id), {
+    onSuccess: () => {
+      showEditModal.value = false
+    }
+  })
+}
+
+const deleteUser = (u) => {
+  if (confirm(isAr.value ? `هل أنت متأكد من حذف حساب المستخدم (${u.name})؟` : `Delete user account (${u.name})?`)) {
+    router.delete(route('users.destroy', u.id))
+  }
 }
 </script>
 
@@ -44,7 +74,7 @@ const submit = () => {
 
       <button
         @click="showCreateModal = true"
-        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer"
+        class="shadcn-btn-primary gap-1.5 shadow-xs cursor-pointer text-xs"
       >
         <Plus class="w-4 h-4 font-bold" />
         <span>{{ isAr ? 'إضافة مستخدم جديد' : 'Provision User' }}</span>
@@ -71,6 +101,7 @@ const submit = () => {
               <th class="px-4 py-3">{{ isAr ? 'دور الصلاحية' : 'System Access Role' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الحالة' : 'Status' }}</th>
               <th class="px-4 py-3 font-mono">{{ isAr ? 'تاريخ الإنشاء' : 'Created Date' }}</th>
+              <th class="px-4 py-3 text-center">{{ isAr ? 'التحكم والإجراءات' : 'Actions' }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-200 font-sans">
@@ -99,10 +130,32 @@ const submit = () => {
               <td class="px-4 py-3 text-zinc-500 font-mono text-[11px]">
                 {{ u.created_at ? formatDateTime(u.created_at) : (isAr ? 'مدير النظام' : 'System Admin') }}
               </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-1.5">
+                  <button
+                    type="button"
+                    @click="openEditModal(u)"
+                    class="px-2.5 py-1 rounded-lg text-xs font-bold text-blue-700 bg-blue-50/80 hover:bg-blue-100/90 border border-blue-200/80 flex items-center gap-1 transition shadow-xs cursor-pointer"
+                    :title="isAr ? 'تعديل بيانات المستخدم' : 'Edit User'"
+                  >
+                    <Pencil class="w-3.5 h-3.5 text-blue-600" />
+                    <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    @click="deleteUser(u)"
+                    class="p-1 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+                    :title="isAr ? 'حذف المستخدم' : 'Delete User'"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </td>
             </tr>
 
             <tr v-if="!users?.length">
-              <td colspan="5" class="p-8 text-center text-zinc-500 font-mono">
+              <td colspan="6" class="p-8 text-center text-zinc-500 font-mono">
                 {{ isAr ? 'لا يوجد مستخدمون مسجلون حالياً' : 'No system users found.' }}
               </td>
             </tr>
@@ -112,8 +165,8 @@ const submit = () => {
     </div>
 
     <!-- Create Modal -->
-    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl">
+    <div v-if="showCreateModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl rounded-2xl">
         <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
           <h3 class="text-sm font-bold text-zinc-950">{{ isAr ? 'إضافة مستخدم جديد للنظام' : 'Provision System User' }}</h3>
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
@@ -138,6 +191,46 @@ const submit = () => {
           <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
             <button type="button" @click="showCreateModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
             <button type="submit" :disabled="form.processing" class="shadcn-btn-primary cursor-pointer">{{ isAr ? 'حفظ المستخدم' : 'Save User' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="shadcn-card w-full max-w-md p-6 space-y-4 bg-white border-zinc-200 shadow-2xl rounded-2xl">
+        <div class="flex items-center justify-between border-b border-zinc-200 pb-3">
+          <h3 class="text-sm font-bold text-zinc-950 flex items-center gap-2">
+            <Pencil class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? 'تعديل بيانات المستخدم' : 'Edit User Account' }}</span>
+          </h3>
+          <button @click="showEditModal = false" class="text-zinc-400 hover:text-zinc-950 font-bold">✕</button>
+        </div>
+
+        <form @submit.prevent="submitEdit" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم الموظف / المستخدم' : 'Employee Full Name' }}</label>
+            <input v-model="editForm.name" type="text" required class="shadcn-input" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني للشركة' : 'Corporate Email Address' }}</label>
+            <input v-model="editForm.email" type="email" required class="shadcn-input font-mono" dir="ltr" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">
+              {{ isAr ? 'كلمة المرور الجديدة (اتركها فارغة إذا لم ترد التغيير)' : 'New Password (leave blank to keep current)' }}
+            </label>
+            <input v-model="editForm.password" type="password" placeholder="••••••••" class="shadcn-input font-mono" dir="ltr" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-2 border-t border-zinc-200">
+            <button type="button" @click="showEditModal = false" class="shadcn-btn-secondary cursor-pointer">{{ isAr ? 'إلغاء' : 'Cancel' }}</button>
+            <button type="submit" :disabled="editForm.processing" class="shadcn-btn-primary cursor-pointer flex items-center gap-1">
+              <CheckCircle2 class="w-4 h-4" />
+              <span>{{ isAr ? 'حفظ التعديلات' : 'Save Changes' }}</span>
+            </button>
           </div>
         </form>
       </div>

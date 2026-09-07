@@ -110,10 +110,10 @@ class ContainerTrackingController extends Controller
                     );
                 }
             } else {
-                // Container tracking
+                // Container tracking via FindTEU & Carrier EDI
                 $carrierScraper = $this->scraperService->scrapeContainer($searchNumber);
 
-                // Find container by exact or partial container number
+                // Find container by exact or partial container number in local DB
                 $container = MasterContainer::with([
                     'masterShipment.shippingLine',
                     'masterShipment.pol',
@@ -134,7 +134,13 @@ class ContainerTrackingController extends Controller
                     }
                 }
 
-                if ($container) {
+                if ($carrierScraper) {
+                    $activeContainer = $carrierScraper;
+                    $trackingEvents = collect($carrierScraper['events'] ?? []);
+                    if ($container) {
+                        $activeShipment = $container->masterShipment;
+                    }
+                } elseif ($container) {
                     $activeContainer = $container;
                     $activeShipment = $container->masterShipment;
                     $trackingEvents = $container->trackingEvents;
@@ -145,55 +151,33 @@ class ContainerTrackingController extends Controller
                         $container->load(['trackingEvents' => fn ($q) => $q->orderBy('occurred_at', 'desc')]);
                         $trackingEvents = $container->trackingEvents;
                     }
-
-                    // Update or Create entry in Tracking History
-                    ContainerTrackingHistory::updateOrCreate(
-                        [
-                            'tracking_type' => 'container',
-                            'container_number' => $container->container_number,
-                        ],
-                        [
-                            'user_id' => auth()->id(),
-                            'master_container_id' => $container->id,
-                            'shipping_line' => $container->masterShipment?->shippingLine?->legal_name ?? $carrierScraper['carrier_name'] ?? 'Line Carrier',
-                            'booking_reference' => $container->masterShipment?->booking_reference ?? 'REF-9988',
-                            'master_bl_number' => $container->masterShipment?->master_bl_number ?? 'MBL-88001',
-                            'vessel_name' => $container->masterShipment?->vessel_name ?? 'CMA CGM ALEXANDER',
-                            'voyage_number' => $container->masterShipment?->voyage_number ?? '2601W',
-                            'pol_name' => $container->masterShipment?->pol?->name ?? 'Alexandria Port (EGALY)',
-                            'pod_name' => $container->masterShipment?->pod?->name ?? 'Rotterdam (NLRTM)',
-                            'current_status' => $container->current_status ?? 'SAILED_IN_TRANSIT',
-                            'last_location' => $trackingEvents->first()?->location_name ?? 'In Transit (Mediterranean Sea)',
-                            'last_tracked_at' => now(),
-                        ]
-                    );
                 } else {
-                    // Generate realistic smart tracking response for any unrecorded container number
                     $activeContainer = $this->generateVirtualTrackingRecord($searchNumber);
                     $trackingEvents = collect($activeContainer['events']);
-                    $activeShipment = $activeContainer['shipment'];
-
-                    // Save to history as well
-                    ContainerTrackingHistory::updateOrCreate(
-                        [
-                            'tracking_type' => 'container',
-                            'container_number' => strtoupper($searchNumber),
-                        ],
-                        [
-                            'user_id' => auth()->id(),
-                            'shipping_line' => $carrierScraper['carrier_name'] ?? $activeContainer['shipping_line'],
-                            'booking_reference' => $activeContainer['booking_reference'],
-                            'master_bl_number' => $activeContainer['master_bl_number'],
-                            'vessel_name' => $activeContainer['vessel_name'],
-                            'voyage_number' => $activeContainer['voyage_number'],
-                            'pol_name' => $activeContainer['pol_name'],
-                            'pod_name' => $activeContainer['pod_name'],
-                            'current_status' => $activeContainer['current_status'],
-                            'last_location' => $activeContainer['last_location'],
-                            'last_tracked_at' => now(),
-                        ]
-                    );
+                    $activeShipment = $activeContainer['shipment'] ?? null;
                 }
+
+                // Update or Create entry in Tracking History
+                ContainerTrackingHistory::updateOrCreate(
+                    [
+                        'tracking_type' => 'container',
+                        'container_number' => strtoupper($searchNumber),
+                    ],
+                    [
+                        'user_id' => auth()->id(),
+                        'master_container_id' => is_object($activeContainer) ? $activeContainer->id : null,
+                        'shipping_line' => is_object($activeContainer) ? ($activeContainer->masterShipment?->shippingLine?->legal_name ?? $carrierScraper['carrier_name'] ?? 'Carrier') : ($carrierScraper['carrier_name'] ?? $activeContainer['shipping_line'] ?? 'Carrier'),
+                        'booking_reference' => is_object($activeContainer) ? ($activeContainer->masterShipment?->booking_reference ?? 'REF-9988') : ($carrierScraper['booking_reference'] ?? $activeContainer['booking_reference'] ?? 'REF-9988'),
+                        'master_bl_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->master_bl_number ?? 'MBL-88001') : ($carrierScraper['master_bl_number'] ?? $activeContainer['master_bl_number'] ?? 'MBL-88001'),
+                        'vessel_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->vessel_name ?? 'CMA CGM ALEXANDER') : ($carrierScraper['vessel_name'] ?? $activeContainer['vessel_name'] ?? 'Vessel'),
+                        'voyage_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->voyage_number ?? '2601W') : ($carrierScraper['voyage_number'] ?? $activeContainer['voyage_number'] ?? '2601W'),
+                        'pol_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pol?->name ?? 'Alexandria Port (EGALY)') : ($carrierScraper['from_location'] ?? $activeContainer['pol_name'] ?? 'Alexandria, Egypt'),
+                        'pod_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pod?->name ?? 'Rotterdam (NLRTM)') : ($carrierScraper['to_location'] ?? $activeContainer['pod_name'] ?? 'Rotterdam'),
+                        'current_status' => is_object($activeContainer) ? ($activeContainer->current_status ?? 'SAILED_IN_TRANSIT') : ($carrierScraper['last_status']['event'] ?? $activeContainer['current_status'] ?? 'IN_TRANSIT'),
+                        'last_location' => is_object($activeContainer) ? ($trackingEvents->first()?->location_name ?? 'In Transit') : ($carrierScraper['last_status']['location'] ?? 'In Transit'),
+                        'last_tracked_at' => now(),
+                    ]
+                );
             }
 
             // Refresh history list after saving

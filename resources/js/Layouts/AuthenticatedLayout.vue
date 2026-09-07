@@ -5,7 +5,7 @@ import { useI18n } from '@/Composables/useI18n'
 import { 
   Anchor, LayoutDashboard, Ship, Calculator, Receipt, Coins, ShieldCheck, 
   TrendingUp, BookOpen, Building2, FileCheck2, User, Search, Bell, 
-  ChevronsUpDown, PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
+  PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
   Truck, Scale, FileSpreadsheet, BarChart3, Clock
 } from 'lucide-vue-next'
 
@@ -222,49 +222,33 @@ const navGroups = computed(() => [
 </script>
 
 <template>
-  <div :dir="dir" class="app-shell min-h-screen bg-zinc-50 text-zinc-950 flex font-sans antialiased print:block print:min-h-0 print:bg-white print:p-0 print:m-0">
-    <!-- Shadcn Monochromatic White Sidebar -->
+  <div :dir="dir" class="app-shell min-h-screen bg-[#f5f7fa] text-slate-900 flex font-sans antialiased relative overflow-hidden print:block print:min-h-0 print:bg-white print:p-0 print:m-0">
+    <!-- Subtle Ambient Luminous Background Lights (Apple VisionOS / macOS Ambient Mesh) -->
+    <div class="no-print pointer-events-none fixed inset-0 overflow-hidden z-0">
+      <div class="absolute -top-32 start-[10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-blue-400/10 via-sky-300/10 to-transparent blur-[120px]"></div>
+      <div class="absolute top-[35%] end-[-5%] w-[650px] h-[650px] rounded-full bg-gradient-to-tl from-indigo-300/8 via-cyan-300/8 to-transparent blur-[140px]"></div>
+      <div class="absolute -bottom-32 start-[25%] w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-slate-200/50 via-sky-100/40 to-transparent blur-[100px]"></div>
+    </div>
+
+    <!-- Apple Frosted Liquid Glass Sidebar -->
     <aside 
       :class="[
-        'no-print print:hidden',
-        isSidebarOpen ? 'w-64' : 'w-16',
-        'bg-white border-e border-zinc-200 flex flex-col justify-between shrink-0 transition-all duration-200 select-none shadow-2xs'
+        'no-print print:hidden z-20',
+        isSidebarOpen ? 'w-68' : 'w-20',
+        'bg-white/70 backdrop-blur-2xl border-e border-white/80 flex flex-col justify-between shrink-0 transition-all duration-300 select-none shadow-[4px_0_24px_rgba(0,0,0,0.02)]'
       ]"
     >
-      <div>
-        <!-- Team / Workspace Header Switcher with MH For Export Logo -->
-        <div class="h-16 px-3 flex items-center border-b border-zinc-200 bg-white">
-          <div class="w-full flex items-center justify-between p-1 rounded-lg hover:bg-blue-50/50 cursor-pointer transition-colors">
-            <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-10 h-10 rounded-lg bg-white border border-blue-100 flex items-center justify-center shrink-0 shadow-xs p-1">
-                <img src="/logo.png" alt="MH For Export" class="w-full h-full object-contain" />
-              </div>
-              <div v-if="isSidebarOpen" class="truncate">
-                <div class="font-black text-xs text-blue-950 truncate flex items-center gap-1">
-                  <span>MH For Export</span>
-                  <span class="px-1 py-0.2 rounded text-[9px] font-mono bg-blue-100 text-blue-800 font-bold border border-blue-200">
-                    ERP
-                  </span>
-                </div>
-                <p class="text-[10px] text-zinc-500 truncate font-medium">
-                  {{ isAr ? 'اللوجستيات والتصدير البحري' : 'Agri Export Logistics' }}
-                </p>
-              </div>
-            </div>
-            <ChevronsUpDown v-if="isSidebarOpen" class="w-4 h-4 text-zinc-400 shrink-0" />
-          </div>
-        </div>
-
+      <div class="flex flex-col h-full min-h-0 pt-2">
         <!-- Sidebar Navigation Groups -->
-        <div class="p-2 space-y-4 overflow-y-auto max-h-[calc(100vh-8rem)]">
+        <div class="p-3 space-y-5 overflow-y-auto flex-1">
           <div v-for="group in navGroups" :key="group.title" class="space-y-1">
             <!-- Group Title Header -->
-            <div v-if="isSidebarOpen" class="px-2 py-1 text-[10px] font-bold tracking-wider text-zinc-400 uppercase">
+            <div v-if="isSidebarOpen" class="px-3 py-1 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
               {{ group.title }}
             </div>
 
             <!-- Group Links -->
-            <div class="space-y-0.5">
+            <div class="space-y-1">
               <Link
                 v-for="item in group.items"
                 :key="item.name"
@@ -272,30 +256,26 @@ const navGroups = computed(() => [
                 :title="!isSidebarOpen ? item.name : undefined"
                 :class="[
                   isItemActive(item.pattern, item.href) 
-                    ? 'bg-blue-900 text-white font-semibold shadow-xs shadow-blue-900/20' 
-                    : 'text-zinc-600 hover:text-blue-900 hover:bg-blue-50/60',
-                  'group relative flex items-center justify-between px-2.5 py-2 text-xs font-medium rounded-lg transition-all duration-150'
+                    ? 'bg-gradient-to-r from-[#0071e3] to-[#0077ed] text-white font-semibold shadow-[0_4px_16px_rgba(0,113,227,0.28)] scale-[1.01]' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-black/[0.035] active:scale-[0.98]',
+                  'group relative flex items-center justify-between px-3 py-2.5 text-xs font-medium rounded-xl transition-all duration-200 cursor-pointer'
                 ]"
               >
-                <!-- Active Slider / Pill Accent Bar Indicator -->
-                <span 
-                  v-if="isItemActive(item.pattern, item.href)" 
-                  class="absolute start-0 top-1.5 bottom-1.5 w-1 bg-cyan-400 rounded-full shadow-sm"
-                ></span>
-
                 <div class="flex items-center gap-2.5 min-w-0" :class="{ 'mx-auto': !isSidebarOpen }">
                   <component 
                     :is="item.icon" 
-                    class="h-4 w-4 shrink-0 transition-colors" 
-                    :class="isItemActive(item.pattern, item.href) ? 'text-cyan-300' : 'text-zinc-500 group-hover:text-blue-900'" 
+                    class="h-4 w-4 shrink-0 transition-all duration-200" 
+                    :class="isItemActive(item.pattern, item.href) ? 'text-white' : 'text-slate-500 group-hover:text-slate-900 group-hover:scale-105'" 
                   />
                   <span v-if="isSidebarOpen" class="truncate">{{ item.name }}</span>
                 </div>
                 <span 
                   v-if="isSidebarOpen && item.badge" 
                   :class="[
-                    isItemActive(item.pattern, item.href) ? 'bg-blue-800 text-cyan-200 border-blue-700' : 'bg-zinc-100 text-zinc-600 border-zinc-200 group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-900',
-                    'px-1.5 py-0.5 text-[9px] font-mono font-bold rounded border transition-colors'
+                    isItemActive(item.pattern, item.href) 
+                      ? 'bg-white/20 text-white border-white/30 backdrop-blur-sm' 
+                      : 'bg-black/[0.04] text-slate-600 border-black/[0.06] group-hover:bg-blue-500/10 group-hover:text-blue-700 group-hover:border-blue-500/20',
+                    'px-2 py-0.5 text-[9px] font-mono font-bold rounded-full border transition-colors'
                   ]"
                 >
                   {{ item.badge }}
@@ -304,104 +284,108 @@ const navGroups = computed(() => [
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Footer User Account Profile Switcher & Logout -->
-      <div class="p-2 border-t border-zinc-200 bg-white">
-        <div class="flex items-center justify-between p-1.5 rounded-lg bg-zinc-50 border border-zinc-200">
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-7 h-7 rounded-full bg-blue-900 text-white font-bold text-xs flex items-center justify-center shrink-0">
-              {{ authUser.name ? authUser.name.substring(0, 2).toUpperCase() : 'MH' }}
-            </div>
-            <div v-if="isSidebarOpen" class="truncate">
-              <div class="flex items-center gap-1">
-                <p class="text-xs font-bold text-zinc-950 leading-none truncate">{{ authUser.name || 'M&H Admin' }}</p>
+        <!-- Footer User Account Profile Switcher & Logout -->
+        <div class="p-3 border-t border-black/[0.04] bg-white/40 backdrop-blur-md">
+          <div class="flex items-center justify-between p-2 rounded-2xl bg-white/80 border border-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:bg-white transition-all">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-sky-500 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                {{ authUser.name ? authUser.name.substring(0, 2).toUpperCase() : 'MH' }}
               </div>
-              <span class="inline-block mt-1 px-1.5 py-0.2 text-[9px] font-mono font-bold rounded bg-blue-900 text-blue-100 uppercase border border-blue-800">
-                {{ isAr ? 'مدير النظام' : userRole }}
-              </span>
+              <div v-if="isSidebarOpen" class="truncate">
+                <div class="flex items-center gap-1">
+                  <p class="text-xs font-bold text-slate-900 leading-none truncate">{{ authUser.name || 'M&H Admin' }}</p>
+                </div>
+                <span class="inline-block mt-1 px-1.5 py-0.2 text-[9px] font-mono font-bold rounded-full bg-blue-50 text-blue-700 uppercase border border-blue-200">
+                  {{ isAr ? 'مدير النظام' : userRole }}
+                </span>
+              </div>
             </div>
-          </div>
 
-          <Link 
-            v-if="isSidebarOpen"
-            :href="route('logout')" 
-            method="post" 
-            as="button"
-            class="p-1.5 rounded text-zinc-500 hover:text-zinc-950 hover:bg-zinc-200 transition-colors"
-            :title="isAr ? 'تسجيل الخروج' : 'Sign Out'"
-          >
-            <LogOut class="w-4 h-4" />
-          </Link>
+            <Link 
+              v-if="isSidebarOpen"
+              :href="route('logout')" 
+              method="post" 
+              as="button"
+              class="p-1.5 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50/80 transition-all cursor-pointer"
+              :title="isAr ? 'تسجيل الخروج' : 'Sign Out'"
+            >
+              <LogOut class="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </aside>
 
     <!-- Main Application Shell -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden print:block print:overflow-visible">
-      <!-- Shadcn Monochromatic Top Navbar Header -->
-      <header class="no-print print:hidden h-14 bg-white border-b border-zinc-200 px-4 flex items-center justify-between shrink-0 shadow-2xs">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden z-10 print:block print:overflow-visible">
+      <!-- Apple Frosted Glass Top Navbar Header -->
+      <header class="no-print print:hidden h-16 bg-white/70 backdrop-blur-2xl border-b border-black/[0.04] px-6 flex items-center justify-between shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.015)]">
         <!-- Left Breadcrumbs & Sidebar Toggle -->
         <div class="flex items-center gap-3">
           <button 
             @click="isSidebarOpen = !isSidebarOpen"
-            class="p-1.5 rounded-md text-zinc-600 hover:text-zinc-950 hover:bg-zinc-100 transition-colors border border-zinc-200 cursor-pointer"
+            class="p-2 rounded-xl text-slate-600 hover:text-slate-900 bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] transition-all cursor-pointer active:scale-95"
+            :title="isAr ? 'تبديل الشريط الجانبي' : 'Toggle Sidebar'"
           >
             <PanelLeft class="w-4 h-4" />
           </button>
 
-          <div class="flex items-center gap-1.5 text-xs text-zinc-500">
-            <span class="hover:text-blue-900 font-bold text-blue-950">MH For Export</span>
-            <ChevronRight class="w-3 h-3 text-zinc-400" />
-            <span class="text-zinc-800 font-semibold">{{ isAr ? 'منظومة اللوجستيات والتصدير البحري' : 'Ocean Logistics & Export ERP' }}</span>
+          <div class="flex items-center gap-2.5 text-xs text-slate-500">
+            <div class="w-7 h-7 rounded-lg bg-white/90 border border-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] flex items-center justify-center shrink-0 p-0.5">
+              <img src="/logo.png" alt="MH For Export" class="w-full h-full object-contain" />
+            </div>
+            <span class="font-extrabold text-slate-900 hover:text-blue-600 transition-colors">MH For Export</span>
+            <ChevronRight class="w-3.5 h-3.5 text-slate-400" />
+            <span class="text-slate-700 font-semibold">{{ isAr ? 'منظومة اللوجستيات والتصدير البحري' : 'Ocean Logistics & Export ERP' }}</span>
           </div>
         </div>
 
         <!-- Right Command Palette & Status Controls -->
-        <div class="flex items-center gap-2.5">
-          <!-- Language Toggle Button -->
+        <div class="flex items-center gap-3">
+          <!-- Language Toggle Button (Apple Pill) -->
           <button 
             @click="toggleLocale"
-            class="flex items-center gap-1.5 bg-zinc-100 border border-zinc-300 text-zinc-900 px-2.5 py-1 rounded-md text-xs font-bold hover:bg-blue-900 hover:text-white transition-all cursor-pointer"
+            class="flex items-center gap-1.5 bg-white/80 hover:bg-white border border-slate-200/80 text-slate-800 px-3 py-1.5 rounded-full text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer active:scale-95 backdrop-blur-md"
           >
-            <Globe class="w-3.5 h-3.5" />
+            <Globe class="w-3.5 h-3.5 text-blue-600" />
             <span>{{ isAr ? '🇪🇬 عربي (الأساسية)' : '🇬🇧 English' }}</span>
           </button>
 
-          <!-- Command K Trigger -->
-          <button class="hidden md:flex items-center gap-4 bg-zinc-50 border border-zinc-200 text-zinc-600 px-3 py-1 rounded-md text-xs hover:border-blue-300 transition-all">
+          <!-- macOS Spotlight Search Trigger -->
+          <button class="hidden md:flex items-center gap-4 bg-black/[0.03] hover:bg-black/[0.05] border border-black/[0.05] text-slate-600 px-3.5 py-1.5 rounded-full text-xs transition-all backdrop-blur-md cursor-pointer">
             <div class="flex items-center gap-2">
-              <Search class="w-3.5 h-3.5" />
-              <span>{{ isAr ? 'بحث...' : 'Search...' }}</span>
+              <Search class="w-3.5 h-3.5 text-slate-500" />
+              <span>{{ isAr ? 'بحث سريع...' : 'Quick Search...' }}</span>
             </div>
-            <kbd class="font-mono text-[10px] bg-white px-1.5 py-0.5 rounded border border-zinc-200 text-zinc-600 shadow-2xs">⌘K</kbd>
+            <kbd class="font-mono text-[10px] bg-white/90 px-1.5 py-0.5 rounded-md border border-black/[0.08] text-slate-500 shadow-2xs">⌘K</kbd>
           </button>
 
-          <!-- Currency Indicator -->
-          <div class="hidden sm:flex items-center gap-1.5 text-xs bg-zinc-50 border border-zinc-200 px-2.5 py-1 rounded-md">
-            <span class="text-zinc-500 font-medium">{{ isAr ? 'الأساسية:' : 'Base:' }}</span>
-            <span class="font-mono font-bold text-blue-950">{{ baseCurrency.code }} ({{ baseCurrency.symbol }})</span>
+          <!-- Base Currency Pill -->
+          <div class="hidden sm:flex items-center gap-1.5 text-xs bg-white/80 border border-slate-200/80 px-3 py-1.5 rounded-full backdrop-blur-md shadow-2xs">
+            <span class="text-slate-500 font-medium">{{ isAr ? 'الأساسية:' : 'Base:' }}</span>
+            <span class="font-mono font-bold text-blue-600">{{ baseCurrency.code }} ({{ baseCurrency.symbol }})</span>
           </div>
 
           <!-- Live System Clock (Date, Hour, AM/PM) -->
-          <div class="hidden lg:flex items-center gap-1.5 text-xs bg-blue-50/70 border border-blue-200/80 px-2.5 py-1 rounded-md text-blue-950 font-mono shadow-2xs">
-            <Clock class="w-3.5 h-3.5 text-blue-700" />
+          <div class="hidden lg:flex items-center gap-1.5 text-xs bg-blue-500/10 border border-blue-500/20 px-3.5 py-1.5 rounded-full text-blue-900 font-mono shadow-2xs backdrop-blur-md">
+            <Clock class="w-3.5 h-3.5 text-blue-600" />
             <span class="font-bold">{{ currentDateTime }}</span>
           </div>
 
-          <!-- Notifications -->
-          <button class="relative p-1.5 rounded-md text-zinc-600 hover:text-blue-900 hover:bg-blue-50 border border-zinc-200 transition-colors">
+          <!-- Notifications Button -->
+          <button class="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 bg-black/[0.03] hover:bg-black/[0.06] border border-black/[0.04] transition-all cursor-pointer active:scale-95">
             <Bell class="w-4 h-4" />
-            <span class="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-white animate-pulse"></span>
           </button>
         </div>
       </header>
 
-      <!-- Main Canvas Container -->
-      <main class="flex-1 overflow-y-auto p-6 bg-slate-50/60 print:p-0 print:m-0 print:overflow-visible print:bg-transparent">
-        <!-- Flash Alert -->
-        <div v-if="page.props.flash?.success" class="no-print mb-4 p-3 bg-blue-900 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs border border-blue-800">
-          <ShieldCheck class="w-4 h-4 text-cyan-300" />
+      <!-- Main Canvas Container with Apple Liquid Aesthetics -->
+      <main class="flex-1 overflow-y-auto p-6 md:p-8 relative z-10 print:p-0 print:m-0 print:overflow-visible print:bg-transparent">
+        <!-- Flash Alert in Frosted Apple Style -->
+        <div v-if="page.props.flash?.success" class="no-print mb-6 p-4 bg-emerald-500/10 border border-emerald-500/25 text-emerald-950 backdrop-blur-xl rounded-2xl text-xs font-semibold flex items-center gap-3 shadow-xs">
+          <ShieldCheck class="w-5 h-5 text-emerald-600 shrink-0" />
           <span>{{ page.props.flash.success }}</span>
         </div>
 

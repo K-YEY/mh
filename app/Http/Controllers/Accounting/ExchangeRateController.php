@@ -58,6 +58,18 @@ class ExchangeRateController extends Controller
         return redirect()->back()->with('error', $result['message']);
     }
 
+    public function update(Request $request, ExchangeRate $exchangeRate): RedirectResponse
+    {
+        $validated = $request->validate([
+            'rate_to_base' => 'required|numeric|min:0.000001',
+            'effective_date' => 'required|date',
+        ]);
+
+        $exchangeRate->update($validated);
+
+        return redirect()->back()->with('success', 'تم تعديل سعر الصرف بنجاح.');
+    }
+
     public function destroy(ExchangeRate $exchangeRate): RedirectResponse
     {
         $exchangeRate->delete();

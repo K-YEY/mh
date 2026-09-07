@@ -38,4 +38,30 @@ class PortController extends Controller
 
         return redirect()->back()->with('success', 'Ocean seaport added successfully.');
     }
+
+    public function update(Request $request, Port $port): RedirectResponse
+    {
+        $validated = $request->validate([
+            'code' => 'required|string|size:5|unique:ports,code,'.$port->id,
+            'name' => 'required|string',
+            'country_code' => 'required|string|size:2',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $port->update([
+            'code' => strtoupper($validated['code']),
+            'name' => $validated['name'],
+            'country_code' => strtoupper($validated['country_code']),
+            'is_active' => (bool) $validated['is_active'],
+        ]);
+
+        return redirect()->back()->with('success', 'تم تحديث بيانات الميناء بنجاح.');
+    }
+
+    public function destroy(Port $port): RedirectResponse
+    {
+        $port->delete();
+
+        return redirect()->back()->with('success', 'تم حذف الميناء بنجاح.');
+    }
 }

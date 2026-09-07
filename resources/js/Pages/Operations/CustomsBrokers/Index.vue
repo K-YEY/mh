@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useForm, Link } from '@inertiajs/vue3'
+import { useForm, router, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { 
   ShieldCheck, 
@@ -12,7 +12,10 @@ import {
   FileBadge, 
   UserCheck, 
   Building2,
-  X 
+  X,
+  Pencil,
+  Trash2,
+  CheckCircle2
 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
@@ -24,6 +27,7 @@ const props = defineProps({
 })
 
 const showCreateModal = ref(false)
+const showEditModal = ref(false)
 const searchQuery = ref(props.filters?.search || '')
 
 const form = useForm({
@@ -42,13 +46,68 @@ const form = useForm({
   notes: '',
 })
 
-const submit = () => {
+const editForm = useForm({
+  id: null,
+  code: '',
+  name: '',
+  trade_name: '',
+  license_number: '',
+  operating_ports: '',
+  tax_number: '',
+  commercial_registry: '',
+  contact_person: '',
+  contact_phone: '',
+  phone: '',
+  email: '',
+  address: '',
+  notes: '',
+  is_active: true,
+})
+
+const openEditModal = (broker) => {
+  editForm.id = broker.id
+  editForm.code = broker.code
+  editForm.name = broker.name
+  editForm.trade_name = broker.trade_name || ''
+  editForm.license_number = broker.license_number || ''
+  editForm.operating_ports = broker.operating_ports || ''
+  editForm.tax_number = broker.tax_number || ''
+  editForm.commercial_registry = broker.commercial_registry || ''
+  editForm.contact_person = broker.contact_person || ''
+  editForm.contact_phone = broker.contact_phone || ''
+  editForm.phone = broker.phone || ''
+  editForm.email = broker.email || ''
+  editForm.address = broker.address || ''
+  editForm.notes = broker.notes || ''
+  editForm.is_active = broker.is_active !== false
+  showEditModal.value = true
+}
+
+const submitCreate = () => {
   form.post(route('customs-brokers.store'), {
     onSuccess: () => {
       showCreateModal.value = false
       form.reset()
     }
   })
+}
+
+const submitEdit = () => {
+  editForm.put(route('customs-brokers.update', editForm.id), {
+    onSuccess: () => {
+      showEditModal.value = false
+      editForm.reset()
+    }
+  })
+}
+
+const deleteBroker = (broker) => {
+  const msg = isAr.value 
+    ? `هل أنت متأكد من حذف المخلص الجمركي ${broker.name} (${broker.code})؟` 
+    : `Are you sure you want to delete customs broker ${broker.name}?`
+  if (confirm(msg)) {
+    router.delete(route('customs-brokers.destroy', broker.id))
+  }
 }
 
 const filteredBrokers = computed(() => {
@@ -157,6 +216,7 @@ const filteredBrokers = computed(() => {
               <th class="px-4 py-3">{{ isAr ? 'الموانئ المعتمدة' : 'Operating Ports' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'مندوب الميناء والاتصال' : 'Port Agent & Contact' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الحالة' : 'Status' }}</th>
+              <th class="px-4 py-3 text-center">{{ isAr ? 'التحكم والإجراءات' : 'Actions' }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-200 font-sans">
@@ -202,10 +262,31 @@ const filteredBrokers = computed(() => {
                   {{ isAr ? 'معتمد' : 'ACCREDITED' }}
                 </span>
               </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    @click="openEditModal(b)"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 text-xs font-bold border border-blue-500/20 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    :title="isAr ? 'تعديل بيانات المخلص' : 'Edit Customs Broker'"
+                  >
+                    <Pencil class="w-3.5 h-3.5" />
+                    <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    @click="deleteBroker(b)"
+                    class="inline-flex items-center p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 transition-all cursor-pointer active:scale-95 border border-rose-500/20"
+                    :title="isAr ? 'حذف المخلص' : 'Delete Broker'"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </td>
             </tr>
 
             <tr v-if="!filteredBrokers?.length">
-              <td colspan="6" class="p-8 text-center text-zinc-500 font-mono">
+              <td colspan="7" class="p-8 text-center text-zinc-500 font-mono">
                 {{ isAr ? 'لا يوجد مخلصين جمركيين مسجلين بعد.' : 'No customs brokers found.' }}
               </td>
             </tr>
@@ -225,7 +306,7 @@ const filteredBrokers = computed(() => {
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 text-sm font-bold">✕</button>
         </div>
 
-        <form @submit.prevent="submit" class="p-6 space-y-4">
+        <form @submit.prevent="submitCreate" class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
@@ -292,6 +373,91 @@ const filteredBrokers = computed(() => {
             </button>
             <button type="submit" :disabled="form.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs">
               {{ isAr ? 'حفظ المخلص' : 'Save Broker' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Customs Broker Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-zinc-200">
+        <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+          <h3 class="font-bold text-sm text-zinc-950 flex items-center gap-2">
+            <Pencil class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? 'تعديل بيانات المخلص الجمركي' : 'Edit Customs Broker' }}</span>
+          </h3>
+          <button @click="showEditModal = false" class="text-zinc-400 hover:text-zinc-950 text-sm font-bold">✕</button>
+        </div>
+
+        <form @submit.prevent="submitEdit" class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'كود المخلص' : 'Broker Code' }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input v-model="editForm.code" type="text" class="shadcn-input font-mono uppercase" required dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'اسم مكتب / شركة التخليص' : 'Broker Legal Name' }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input v-model="editForm.name" type="text" class="shadcn-input" required />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم رخصة التخليص' : 'License #' }}</label>
+              <input v-model="editForm.license_number" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الرقم الضريبي' : 'Tax Number' }}</label>
+              <input v-model="editForm.tax_number" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الموانئ والمنافذ المعتمد بها' : 'Operating Ports' }}</label>
+            <input v-model="editForm.operating_ports" type="text" class="shadcn-input" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'اسم مندوب / مسؤول الميناء' : 'Port Agent Name' }}</label>
+              <input v-model="editForm.contact_person" type="text" class="shadcn-input" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف مندوب الميناء' : 'Agent Phone' }}</label>
+              <input v-model="editForm.contact_phone" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني' : 'Email' }}</label>
+              <input v-model="editForm.email" type="email" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف المكتب الرئيسي' : 'Office Phone' }}</label>
+              <input v-model="editForm.phone" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'العنوان' : 'Office Address' }}</label>
+            <input v-model="editForm.address" type="text" class="shadcn-input" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-4 border-t border-zinc-200">
+            <button type="button" @click="showEditModal = false" class="px-4 py-2 rounded-lg text-xs font-bold text-zinc-600 hover:bg-zinc-100">
+              {{ isAr ? 'إلغاء' : 'Cancel' }}
+            </button>
+            <button type="submit" :disabled="editForm.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs gap-1.5">
+              <CheckCircle2 class="w-4 h-4" />
+              <span>{{ isAr ? 'حفظ التعديلات' : 'Save Changes' }}</span>
             </button>
           </div>
         </form>

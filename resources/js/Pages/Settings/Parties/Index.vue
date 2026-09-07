@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useForm, Link } from '@inertiajs/vue3'
+import { useForm, router, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { 
   Users, 
@@ -13,7 +13,10 @@ import {
   Truck, 
   Anchor, 
   X,
-  Filter
+  Filter,
+  Pencil,
+  Trash2,
+  CheckCircle2
 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
@@ -100,6 +103,48 @@ const submitCreate = () => {
       form.reset()
     }
   })
+}
+
+const showEditModal = ref(false)
+const editForm = useForm({
+  id: null,
+  code: '',
+  legal_name: '',
+  role: 'CUSTOMS_BROKER',
+  tax_number: '',
+  commercial_registry: '',
+  phone: '',
+  email: '',
+  address: '',
+  is_active: true,
+})
+
+const openEditModal = (party) => {
+  editForm.id = party.id
+  editForm.code = party.code
+  editForm.legal_name = party.legal_name
+  editForm.role = party.roles?.[0]?.role || 'CUSTOMS_BROKER'
+  editForm.tax_number = party.tax_number || ''
+  editForm.commercial_registry = party.commercial_registry || ''
+  editForm.phone = party.phone || ''
+  editForm.email = party.email || ''
+  editForm.address = party.address || ''
+  editForm.is_active = party.is_active !== false
+  showEditModal.value = true
+}
+
+const submitEdit = () => {
+  editForm.put(route('parties.update', editForm.id), {
+    onSuccess: () => {
+      showEditModal.value = false
+    }
+  })
+}
+
+const deleteParty = (party) => {
+  if (confirm(isAr.value ? `هل أنت متأكد من حذف الجهة (${party.legal_name})؟` : `Delete party (${party.legal_name})?`)) {
+    router.delete(route('parties.destroy', party.id))
+  }
 }
 </script>
 
@@ -227,10 +272,31 @@ const submitCreate = () => {
         </div>
 
         <div class="pt-2 border-t border-zinc-100 flex items-center justify-between text-[11px] font-mono">
-          <span :class="party.is_active ? 'text-zinc-950 font-bold' : 'text-zinc-400'">
-            {{ party.is_active ? (isAr ? '● نشط' : '● Active') : (isAr ? 'غير نشط' : 'Inactive') }}
-          </span>
-          <span class="text-zinc-400">ID: {{ party.id }}</span>
+          <div class="flex items-center gap-1.5">
+            <span :class="party.is_active ? 'text-zinc-950 font-bold' : 'text-zinc-400'">
+              {{ party.is_active ? (isAr ? '● نشط' : '● Active') : (isAr ? 'غير نشط' : 'Inactive') }}
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button
+              type="button"
+              @click="openEditModal(party)"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 flex items-center gap-1 transition shadow-xs cursor-pointer"
+              :title="isAr ? 'تعديل بيانات الجهة' : 'Edit Party'"
+            >
+              <Pencil class="w-3.5 h-3.5 text-blue-600" />
+              <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+            </button>
+            <button
+              type="button"
+              @click="deleteParty(party)"
+              class="p-1 rounded text-zinc-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+              :title="isAr ? 'حذف' : 'Delete'"
+            >
+              <Trash2 class="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -367,6 +433,146 @@ const submitCreate = () => {
               class="shadcn-btn-primary text-xs cursor-pointer disabled:opacity-50"
             >
               {{ form.processing ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ الجهة' : 'Save Party') }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
+      <div class="shadcn-card max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
+        <button 
+          @click="showEditModal = false"
+          class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
+        >
+          <X class="w-4 h-4" />
+        </button>
+
+        <h3 class="text-base font-bold text-zinc-950 flex items-center gap-2 border-b border-zinc-100 pb-3">
+          <Pencil class="w-4 h-4 text-blue-600" />
+          <span>{{ isAr ? `تعديل بيانات الجهة (${editForm.code})` : `Edit Party (${editForm.code})` }}</span>
+        </h3>
+
+        <form @submit.prevent="submitEdit" class="space-y-3">
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">
+              {{ isAr ? 'كود الجهة' : 'Party Code' }}
+              <span class="text-red-500">*</span>
+            </label>
+            <input 
+              v-model="editForm.code"
+              type="text" 
+              required 
+              class="shadcn-input font-mono uppercase"
+              dir="ltr"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">
+              {{ isAr ? 'الاسم التجاري / القانوني' : 'Legal Name' }}
+              <span class="text-red-500">*</span>
+            </label>
+            <input 
+              v-model="editForm.legal_name"
+              type="text" 
+              required 
+              class="shadcn-input"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">
+              {{ isAr ? 'طبيعة النشاط / الدور' : 'Primary Role' }}
+              <span class="text-red-500">*</span>
+            </label>
+            <select v-model="editForm.role" class="shadcn-input" required>
+              <option value="CUSTOMS_BROKER">{{ isAr ? 'مخلص جمركي' : 'Customs Broker' }}</option>
+              <option value="TRUCKER">{{ isAr ? 'شركة نقل بري' : 'Inland Trucker' }}</option>
+              <option value="SHIPPING_LINE">{{ isAr ? 'توكيل / خط ملاحي' : 'Shipping Line' }}</option>
+              <option value="CUSTOMER">{{ isAr ? 'عميل / شاحن' : 'Customer / Shipper' }}</option>
+              <option value="PACKHOUSE">{{ isAr ? 'محطة تعبئة وتغليف' : 'Packhouse' }}</option>
+              <option value="OVERSEAS_AGENT">{{ isAr ? 'وكيل شحن بالخارج' : 'Overseas Freight Forwarder' }}</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'الرقم الضريبي' : 'Tax ID' }}
+              </label>
+              <input 
+                v-model="editForm.tax_number"
+                type="text" 
+                class="shadcn-input font-mono"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'السجل التجاري' : 'C.R. Number' }}
+              </label>
+              <input 
+                v-model="editForm.commercial_registry"
+                type="text" 
+                class="shadcn-input font-mono"
+                dir="ltr"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'رقم الهاتف' : 'Phone' }}
+              </label>
+              <input 
+                v-model="editForm.phone"
+                type="text" 
+                class="shadcn-input font-mono"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'البريد الإلكتروني' : 'Email' }}
+              </label>
+              <input 
+                v-model="editForm.email"
+                type="email" 
+                class="shadcn-input font-mono"
+                dir="ltr"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">
+              {{ isAr ? 'العنوان الرئيسي' : 'Address' }}
+            </label>
+            <input 
+              v-model="editForm.address"
+              type="text" 
+              class="shadcn-input"
+            />
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
+            <button 
+              type="button"
+              @click="showEditModal = false"
+              class="shadcn-btn-ghost text-xs cursor-pointer"
+            >
+              {{ isAr ? 'إلغاء' : 'Cancel' }}
+            </button>
+            <button 
+              type="submit"
+              :disabled="editForm.processing"
+              class="shadcn-btn-primary text-xs cursor-pointer disabled:opacity-50 gap-1"
+            >
+              <CheckCircle2 class="w-4 h-4" />
+              <span>{{ editForm.processing ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ التعديلات' : 'Save Changes') }}</span>
             </button>
           </div>
         </form>

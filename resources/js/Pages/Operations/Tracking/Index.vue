@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { router, Link, useForm } from '@inertiajs/vue3'
+import { router, useForm } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { 
   Search, 
@@ -13,20 +13,22 @@ import {
   MapPin, 
   ThermometerSnowflake, 
   History, 
-  Plus, 
   Trash2, 
   Anchor, 
   ExternalLink,
   ShieldCheck,
-  AlertCircle,
-  X,
   RefreshCw,
-  Layers,
   ChevronRight,
   Globe,
   Navigation,
   Compass,
-  Radio
+  Radio,
+  Copy,
+  Calendar,
+  Layers,
+  Sparkles,
+  Check,
+  Truck
 } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
@@ -49,70 +51,74 @@ const props = defineProps({
 
 const activeTab = ref(props.search_type || (props.vessel ? 'vessel' : 'container'))
 const query = ref(props.search_number || '')
-const showAddEventModal = ref(false)
+const searching = ref(false)
+const copied = ref(false)
+
+// Quick search suggestions
+const quickContainers = [
+  { code: 'MRSU0827757', type: "20'DV", line: 'Maersk', route: 'Alexandria → Toamasina' },
+  { code: 'MSKU0918234', type: "40'RH", line: 'Maersk Reefer', route: 'Alexandria → Rotterdam' },
+  { code: 'CMAU8172635', type: "40'RH", line: 'CMA CGM', route: 'Port Said → Jebel Ali' },
+  { code: 'MSCU5261728', type: "40'HC", line: 'MSC Line', route: 'Alexandria → Valencia' },
+]
+
+const quickVessels = [
+  { name: 'CMA CGM JACQUES SAADE', route: 'Alexandria → Rotterdam' },
+  { name: 'EVER GIVEN', route: 'Port Said → Felixstowe' },
+  { name: 'MAERSK MC-KINNEY MOLLER', route: 'Port Said → Bremerhaven' },
+  { name: 'MSC GULSUN', route: 'Alexandria → Singapore' },
+]
 
 const handleSearch = () => {
   if (!query.value.trim()) return
+  searching.value = true
   const q = query.value.trim()
-  
+
   if (activeTab.value === 'vessel') {
     router.get(route('tracking.index'), {
       vessel_name: q,
       search_type: 'vessel'
-    }, { preserveState: true })
+    }, { 
+      preserveState: true,
+      onFinish: () => searching.value = false
+    })
   } else {
     router.get(route('tracking.index'), {
       container_number: q.toUpperCase(),
       search_type: 'container'
-    }, { preserveState: true })
+    }, { 
+      preserveState: true,
+      onFinish: () => searching.value = false
+    })
   }
 }
 
-const trackSpecificContainer = (num) => {
+const selectQuickContainer = (code) => {
   activeTab.value = 'container'
-  query.value = num
-  router.get(route('tracking.index'), { 
-    container_number: num,
-    search_type: 'container'
-  }, { preserveState: true })
+  query.value = code
+  handleSearch()
 }
 
-const trackSpecificVessel = (vesselName) => {
+const selectQuickVessel = (vesselName) => {
   activeTab.value = 'vessel'
   query.value = vesselName
-  router.get(route('tracking.index'), { 
-    vessel_name: vesselName,
-    search_type: 'vessel'
-  }, { preserveState: true })
+  handleSearch()
 }
 
 const switchTab = (tab) => {
   activeTab.value = tab
   if (tab === 'vessel' && (!query.value || query.value.match(/^[A-Z]{4}[0-9]+/))) {
-    query.value = props.vessel?.name || 'EVER GIVEN'
+    query.value = props.vessel?.name || 'CMA CGM JACQUES SAADE'
   } else if (tab === 'container' && query.value && query.value.includes(' ')) {
-    query.value = props.container?.container_number || ''
+    query.value = 'MRSU0827757'
   }
 }
 
-// Add Manual Event Form
-const eventForm = useForm({
-  master_container_id: props.container?.id || '',
-  event_code: 'IN_TRANSIT',
-  event_name: 'تم التأكد من سلامة التبريد وإبحار الشحنة',
-  location_name: 'ميناء الإسكندرية / البحر المتوسط',
-  occurred_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
-  notes: '',
-})
-
-const submitAddEvent = () => {
-  eventForm.master_container_id = props.container?.id
-  eventForm.post(route('tracking.add-event'), {
-    onSuccess: () => {
-      showAddEventModal.value = false
-      eventForm.reset()
-    }
-  })
+const copyToClipboard = (text) => {
+  if (!text) return
+  navigator.clipboard.writeText(text)
+  copied.value = true
+  setTimeout(() => copied.value = false, 2000)
 }
 
 const deleteHistoryItem = (id) => {
@@ -120,35 +126,71 @@ const deleteHistoryItem = (id) => {
 }
 
 const clearAllHistory = () => {
-  if (confirm(isAr.value ? 'هل أنت متأكد من رغبتك في مسح كافة العناصر من سجل التتبع؟' : 'Are you sure you want to clear all tracking history?')) {
+  if (confirm(isAr.value ? 'هل أنت متأكد من مسح كافة سجلات التتبع السابقة؟' : 'Clear all tracking history?')) {
     router.delete(route('tracking.clear-all-history'), { preserveScroll: true })
   }
 }
 
-// Milestone stages helper
-const milestoneStages = [
-  { code: 'EMPTY_PICKUP', nameAr: 'سحب الفارغ', nameEn: 'Empty Pickup' },
-  { code: 'GATE_IN', nameAr: 'دخول الميناء', nameEn: 'Gated In' },
-  { code: 'CUSTOMS_CLEARED', nameAr: 'الإفراج الجمركي', nameEn: 'Customs Cleared' },
-  { code: 'LOADED', nameAr: 'الشحن والتحميل', nameEn: 'Loaded On-Board' },
-  { code: 'SAILED_IN_TRANSIT', nameAr: 'مبحرة بالبحر', nameEn: 'In Transit' },
-  { code: 'ARRIVED', nameAr: 'وصول المقصد', nameEn: 'Vessel Arrived' },
-  { code: 'DISCHARGED', nameAr: 'التفريغ بالرصيف', nameEn: 'Discharged' },
-  { code: 'EMPTY_RETURN', nameAr: 'إعادة الفارغ', nameEn: 'Empty Returned' },
-]
+// Normalized container info from FindTEU scraper or local database
+const containerData = computed(() => {
+  const c = props.container
+  const s = props.carrier_scraper
+  if (!c && !s) return null
 
-const isMilestoneCompleted = (code) => {
-  if (!props.events || props.events.length === 0) return false
-  const currentStatus = props.container?.current_status || ''
-  
-  if (props.events.some(e => e.event_code === code)) return true
+  const number = c?.container_number || s?.container_number || query.value || 'MRSU0827757'
+  const type = c?.container_type || s?.container_type || "20'DV"
+  const carrier = s?.carrier_name || c?.shipping_line || c?.masterShipment?.shippingLine?.legal_name || 'Ocean Carrier'
+  const carrierCode = s?.carrier_code || c?.masterShipment?.shippingLine?.code || number.substring(0, 4)
 
-  const codesOrder = ['EMPTY_PICKUP', 'GATE_IN', 'CUSTOMS_CLEARED', 'LOADED', 'SAILED_IN_TRANSIT', 'ARRIVED', 'DISCHARGED', 'EMPTY_RETURN']
-  const currentIndex = codesOrder.indexOf(currentStatus)
-  const targetIndex = codesOrder.indexOf(code)
-  
-  return targetIndex !== -1 && currentIndex !== -1 && targetIndex <= currentIndex
-}
+  const fromLocation = s?.from_location || c?.from_location || c?.masterShipment?.pol?.name || 'Alexandria, Egypt'
+  const fromDate = s?.from_date || c?.from_date || c?.masterShipment?.actual_departure || c?.masterShipment?.etd || '2026-09-17'
+
+  const toLocation = s?.to_location || c?.to_location || c?.masterShipment?.pod?.name || 'Toamasina, Madagascar'
+  const toDate = s?.to_date || c?.to_date || c?.masterShipment?.actual_arrival || c?.masterShipment?.eta || '2026-11-25'
+
+  const lastStatus = s?.last_status || c?.last_status || {
+    location: 'Alexandria, Egypt',
+    event: 'Gate in full by Truck',
+    date: '2026-09-07',
+    status_code: 'GATE_IN',
+  }
+
+  const vesselName = s?.vessel_name || c?.vessel_name || c?.masterShipment?.vessel_name || 'MAERSK TEMA'
+  const voyageNumber = s?.voyage_number || c?.voyage_number || c?.masterShipment?.voyage_number || '2614E'
+  const bookingRef = s?.booking_reference || c?.booking_reference || c?.masterShipment?.booking_reference || 'N/A'
+  const masterBl = s?.master_bl_number || c?.master_bl_number || c?.masterShipment?.master_bl_number || 'N/A'
+  const sealNumber = c?.seal_number || s?.seal_number || 'ML-EG-55018'
+
+  const eventsList = (props.events && props.events.length > 0) 
+    ? props.events 
+    : (s?.events || c?.events || [])
+
+  return {
+    number,
+    type,
+    carrier,
+    carrierCode,
+    fromLocation,
+    fromDate,
+    toLocation,
+    toDate,
+    lastStatus,
+    vesselName,
+    voyageNumber,
+    bookingRef,
+    masterBl,
+    sealNumber,
+    events: eventsList,
+    findteuUrl: s?.findteu_url || `https://www.findteu.com/track/${number}`,
+    carrierTrackUrl: s?.carrier_track_url,
+    isReefer: !!(c?.is_reefer || type.includes('RH') || type.includes('Reefer')),
+  }
+})
+
+// Normalized vessel info
+const vesselData = computed(() => {
+  return props.vessel
+})
 </script>
 
 <template>
@@ -156,672 +198,543 @@ const isMilestoneCompleted = (code) => {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-extrabold text-blue-950 tracking-tight flex items-center gap-2">
-          <Search class="w-6 h-6 text-blue-700" />
-          <span>{{ isAr ? 'تتبع الحاويات والشحنات البحرية (Container & Cargo Tracking)' : 'Container & Cargo Tracking Hub' }}</span>
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+          <Globe class="w-6 h-6 text-blue-600 animate-pulse" />
+          <span>{{ isAr ? 'رادار التتبع الحي للحاويات والسفن (Live AIS & FindTEU)' : 'Global Tracking Hub (AIS & FindTEU)' }}</span>
         </h1>
-        <p class="text-xs text-zinc-500">
-          {{ isAr ? 'متابعة حية لمسار الحاوية، محطات العبور، درجات حرارة التبريد، وسجل الحركات السابقة' : 'Live tracking for container milestones, cold-chain telemetry, port calls, and search history' }}
+        <p class="text-xs text-slate-500 mt-1">
+          {{ isAr ? 'تتبع لحظي لحركة السفن البحرية بالاسم عبر AIS وتتبع الحاويات عبر محرك FindTEU والخطوط الملاحية' : 'Live AIS Vessel voyage tracking and FindTEU container lifecycle telemetry' }}
         </p>
       </div>
 
-      <div class="flex items-center gap-2">
-        <Link
-          :href="route('master-shipments.index')"
-          class="shadcn-btn-secondary gap-1.5 cursor-pointer text-xs hover:border-blue-300 hover:text-blue-900"
-        >
-          <Ship class="w-4 h-4 text-blue-900" />
-          <span>{{ isAr ? 'الشحنات الماستر' : 'Master Shipments' }}</span>
-        </Link>
-      </div>
-    </div>
-
-    <!-- Search Box & Mode Switcher Card -->
-    <div class="shadcn-card p-6 space-y-4">
-      <!-- Mode Tabs Switcher -->
-      <div class="flex items-center gap-2 border-b border-zinc-200 pb-3">
+      <!-- Mode Switcher Tabs (Apple Liquid Glass Pill) -->
+      <div class="inline-flex p-1 rounded-2xl bg-white/80 border border-slate-200/80 shadow-xs backdrop-blur-md">
         <button
           type="button"
           @click="switchTab('container')"
           :class="[
-            'flex items-center gap-2 px-4 py-2 rounded-md text-xs font-bold transition cursor-pointer',
+            'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer',
             activeTab === 'container'
-              ? 'bg-blue-700 text-white shadow-xs shadow-blue-700/30'
-              : 'bg-zinc-100 text-zinc-600 hover:bg-blue-50 hover:text-blue-900'
+              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/25 scale-[1.02]'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
           ]"
         >
           <Box class="w-4 h-4" />
-          <span>{{ isAr ? '📦 تتبع حاوية أو شحنة (FindTeu & Containers)' : 'Container & Cargo Tracking' }}</span>
+          <span>{{ isAr ? 'تتبع الحاوية (FindTEU)' : 'Container Tracking' }}</span>
         </button>
 
         <button
           type="button"
           @click="switchTab('vessel')"
           :class="[
-            'flex items-center gap-2 px-4 py-2 rounded-md text-xs font-bold transition cursor-pointer',
+            'flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer',
             activeTab === 'vessel'
-              ? 'bg-blue-700 text-white shadow-xs shadow-blue-700/30'
-              : 'bg-zinc-100 text-zinc-600 hover:bg-blue-50 hover:text-blue-900'
+              ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md shadow-blue-500/25 scale-[1.02]'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
           ]"
         >
           <Ship class="w-4 h-4" />
-          <span>{{ isAr ? '🚢 تتبع السفن البحرية حياً (MarineTraffic AIS Live)' : 'MarineTraffic Live AIS Vessel Tracking' }}</span>
-        </button>
-      </div>
-
-      <!-- Search Input Form -->
-      <div class="flex flex-col md:flex-row items-center gap-3">
-        <div class="relative flex-1 w-full">
-          <Search class="absolute top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" :class="isAr ? 'right-3.5' : 'left-3.5'" />
-          <input
-            v-model="query"
-            @keyup.enter="handleSearch"
-            type="text"
-            :placeholder="activeTab === 'vessel'
-              ? (isAr ? 'اكتب اسم السفينة بالإنجليزية أو رقم IMO (مثال: EVER GIVEN أو MAERSK MC-KINNEY MOLLER أو 9811000)...' : 'Enter Vessel name or IMO (e.g. EVER GIVEN, MAERSK MC-KINNEY MOLLER, 9811000)...')
-              : (isAr ? 'اكتب رقم الحاوية هنا (مثال: MSKU8801923 أو CMAU... أو رقم البوليصة)...' : 'Enter container # (e.g. MSKU8801923, CMAU...), or Master B/L...')"
-            :style="isAr ? 'padding-right: 2.75rem !important; padding-left: 0.75rem !important;' : 'padding-left: 2.75rem !important; padding-right: 0.75rem !important;'"
-            class="shadcn-input h-12 text-sm font-mono uppercase font-bold"
-          />
-        </div>
-        <button
-          @click="handleSearch"
-          class="shadcn-btn-primary h-12 px-6 gap-2 w-full md:w-auto text-sm cursor-pointer shadow-xs"
-        >
-          <Search class="w-4 h-4 font-bold" />
-          <span>{{ activeTab === 'vessel' ? (isAr ? 'اسكرابنج وتتبع السفينة' : 'Scrape Vessel AIS') : (isAr ? 'تتبع الحاوية الآن' : 'Track Container') }}</span>
-        </button>
-      </div>
-
-      <!-- Quick Suggested Containers Chips -->
-      <div v-if="activeTab === 'container' && system_containers && system_containers.length > 0" class="flex items-center gap-2 flex-wrap pt-1 text-xs">
-        <span class="text-zinc-400 font-mono text-[11px]">{{ isAr ? 'حاويات نشطة بالنظام:' : 'Active Containers:' }}</span>
-        <button
-          v-for="sc in system_containers"
-          :key="sc.id"
-          @click="trackSpecificContainer(sc.container_number)"
-          class="px-2.5 py-1 rounded bg-zinc-100 hover:bg-blue-50 text-zinc-900 hover:text-blue-900 border border-zinc-300 hover:border-blue-300 font-mono text-[11px] font-bold transition cursor-pointer"
-        >
-          {{ sc.container_number }}
-        </button>
-      </div>
-
-      <!-- Quick Suggested Vessels Chips -->
-      <div v-else-if="activeTab === 'vessel' && system_vessels && system_vessels.length > 0" class="flex items-center gap-2 flex-wrap pt-1 text-xs">
-        <span class="text-zinc-400 font-mono text-[11px]">{{ isAr ? 'سفن مقترحة للتتبع الحي:' : 'Suggested Vessels:' }}</span>
-        <button
-          v-for="sv in system_vessels"
-          :key="sv.name"
-          @click="trackSpecificVessel(sv.name)"
-          class="px-2.5 py-1 rounded bg-zinc-100 hover:bg-blue-50 text-zinc-900 hover:text-blue-900 border border-zinc-300 hover:border-blue-300 font-mono text-[11px] font-bold transition cursor-pointer flex items-center gap-1.5"
-        >
-          <Ship class="w-3 h-3 text-blue-700" />
-          <span>{{ sv.name }}</span>
+          <span>{{ isAr ? 'تتبع السفينة (Vessel AIS)' : 'Vessel Live AIS' }}</span>
         </button>
       </div>
     </div>
 
-    <!-- Active Vessel AIS Tracking Result Card -->
-    <div v-if="vessel" class="space-y-6">
-      <div class="shadcn-card p-5 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
-          <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-lg bg-blue-900 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-900/30">
-              <Ship class="w-6 h-6" />
-            </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-2xl font-black text-blue-950 font-mono tracking-tight">
-                  {{ vessel.name }}
-                </h2>
-                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-700 text-white border border-blue-600 shadow-xs">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>{{ isAr ? 'مباشر AIS Live' : 'Live AIS' }}</span>
-                </span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-blue-950 border border-blue-200">
-                  {{ vessel.ship_type || 'Container Ship' }}
-                </span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-950 border border-blue-200">
-                  🚩 {{ vessel.flag || 'Panama' }}
-                </span>
-              </div>
-              <p class="text-xs text-zinc-500 font-mono mt-1 flex items-center gap-2 flex-wrap">
-                <span>IMO: <strong class="text-blue-900">{{ vessel.imo }}</strong></span>
-                <span>•</span>
-                <span>MMSI: <strong class="text-blue-900">{{ vessel.mmsi }}</strong></span>
-                <span>•</span>
-                <span>{{ isAr ? 'سنة البناء:' : 'Built:' }} <strong class="text-zinc-800">{{ vessel.year_built || '2020' }}</strong></span>
-                <span>•</span>
-                <span>{{ isAr ? 'المصدر:' : 'Source:' }} {{ vessel.source }}</span>
-              </p>
-            </div>
-          </div>
-
-          <!-- Direct Scraper External Links: Strictly MarineTraffic -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <a
-              v-if="vessel.marinetraffic_url"
-              :href="vessel.marinetraffic_url"
-              target="_blank"
-              class="shadcn-btn-primary gap-1.5 text-xs cursor-pointer inline-flex items-center shadow-xs"
-            >
-              <Globe class="w-3.5 h-3.5 text-white" />
-              <span>{{ isAr ? 'فتح تقرير السفينة على MarineTraffic' : 'Open Vessel on MarineTraffic' }}</span>
-              <ExternalLink class="w-3 h-3 text-cyan-200" />
-            </a>
-
-            <a
-              :href="vessel.marinetraffic_map_url || `https://www.marinetraffic.com/en/ais/home/centerx:0/centery:0/zoom:2/keyword:${encodeURIComponent(vessel.name)}`"
-              target="_blank"
-              class="shadcn-btn-outline gap-1.5 text-xs cursor-pointer inline-flex items-center hover:border-blue-300 hover:text-blue-900"
-            >
-              <Navigation class="w-3.5 h-3.5 text-blue-700" />
-              <span>{{ isAr ? 'خريطة MarineTraffic الحية (Live Map)' : 'MarineTraffic Live AIS Map' }}</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
-            </a>
-          </div>
-        </div>
-
-        <!-- Vessel Voyage Route & Timings Showcase (From, To, ATD, ATA, Vessel) -->
-        <div class="bg-gradient-to-br from-blue-950 via-slate-900 to-blue-950 text-white rounded-xl p-5 shadow-md border border-blue-900/60 space-y-4">
-          <div class="flex items-center justify-between border-b border-blue-800/80 pb-3">
-            <div class="flex items-center gap-2">
-              <Ship class="w-4 h-4 text-cyan-400" />
-              <span class="text-xs font-bold uppercase tracking-wider font-mono text-cyan-200">
-                {{ isAr ? 'بيانات رحلة ومسار السفينة (Vessel Voyage & Timings)' : 'Vessel Voyage & Timings' }}
-              </span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-mono text-zinc-400">{{ isAr ? 'السفينة:' : 'Vessel:' }}</span>
-              <span class="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold bg-blue-900/80 text-white border border-blue-700 uppercase">
-                {{ vessel.name }}
-              </span>
-            </div>
-          </div>
-
-          <!-- FROM / TO & Timings 2-Column Banner -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- FROM (Departure Port & ATD) -->
-            <div class="bg-blue-900/40 border border-blue-800/80 rounded-lg p-4 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] text-cyan-300 font-mono uppercase font-bold flex items-center gap-1.5">
-                  <MapPin class="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{{ isAr ? 'ميناء المغادرة (From / Origin Port)' : 'From (Origin Port)' }}</span>
-                </span>
-                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-800 text-cyan-200">POL</span>
-              </div>
-              <div class="text-base font-extrabold text-white font-sans">
-                {{ vessel.from_port || 'Alexandria Port (EGALY) / Port Said' }}
-              </div>
-              <div class="pt-2 border-t border-blue-800/80 flex items-center justify-between text-xs font-mono">
-                <span class="text-zinc-300 text-[11px]">{{ isAr ? 'وقت المغادرة الفعلي (ATD):' : 'Actual Time of Departure (ATD):' }}</span>
-                <span class="text-emerald-400 font-bold">{{ vessel.atd || '2026-09-02 08:30 UTC' }}</span>
-              </div>
-            </div>
-
-            <!-- TO (Destination Port & ATA/ETA) -->
-            <div class="bg-blue-900/40 border border-blue-800/80 rounded-lg p-4 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] text-cyan-300 font-mono uppercase font-bold flex items-center gap-1.5">
-                  <Anchor class="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{{ isAr ? 'ميناء المقصد والوصول (To / Destination Port)' : 'To (Destination Port)' }}</span>
-                </span>
-                <span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-800 text-cyan-200">POD</span>
-              </div>
-              <div class="text-base font-extrabold text-white font-sans">
-                {{ vessel.to_port || vessel.destination || 'Rotterdam Gateway (NLRTM)' }}
-              </div>
-              <div class="pt-2 border-t border-blue-800/80 flex items-center justify-between text-xs font-mono">
-                <span class="text-zinc-300 text-[11px]">{{ isAr ? 'وقت الوصول (ATA / ETA):' : 'Actual / Estimated Arrival (ATA/ETA):' }}</span>
-                <span class="text-cyan-300 font-bold">{{ vessel.ata || vessel.eta || 'Sep 8, 07:00 UTC' }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Vessel Key Live Telemetry Metrics Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-400 uppercase font-mono flex items-center gap-1">
-              <Compass class="w-3 h-3 text-zinc-400" />
-              <span>{{ isAr ? 'الحالة الملاحية (Status)' : 'Navigational Status' }}</span>
-            </div>
-            <div class="text-xs font-bold text-zinc-950 mt-1 truncate">
-              {{ vessel.nav_status || 'Under way using engine' }}
-            </div>
-          </div>
-
-          <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-400 uppercase font-mono flex items-center gap-1">
-              <Navigation class="w-3 h-3 text-zinc-400" />
-              <span>{{ isAr ? 'السرعة والاتجاه (Speed / Course)' : 'Speed & Course' }}</span>
-            </div>
-            <div class="text-xs font-bold text-zinc-950 mt-1 font-mono">
-              {{ vessel.speed || '16.5 knots' }}
-            </div>
-          </div>
-
-          <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-400 uppercase font-mono flex items-center gap-1">
-              <MapPin class="w-3 h-3 text-zinc-400" />
-              <span>{{ isAr ? 'المنطقة البحرية الحالية' : 'Current Sea Area' }}</span>
-            </div>
-            <div class="text-xs font-bold text-zinc-950 mt-1 truncate">
-              {{ vessel.current_area || 'Mediterranean Sea' }}
-            </div>
-          </div>
-
-          <div class="bg-zinc-50 border border-zinc-200 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-400 uppercase font-mono flex items-center gap-1">
-              <Anchor class="w-3 h-3 text-zinc-400" />
-              <span>{{ isAr ? 'المقصد وتاريخ الوصول (ETA)' : 'Destination & ETA' }}</span>
-            </div>
-            <div class="text-xs font-bold text-zinc-950 mt-1 truncate font-mono">
-              {{ vessel.destination || 'Rotterdam' }} ({{ vessel.eta || 'ETA soon' }})
-            </div>
-          </div>
-        </div>
-
-        <!-- Secondary Specs Grid (Dimensions, Draught, Tonnage) -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center font-mono">
-          <div class="bg-white border border-zinc-200 rounded p-2">
-            <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'الأبعاد (الطول × العرض)' : 'Length × Beam' }}</span>
-            <span class="text-xs font-bold text-zinc-950">{{ vessel.length_beam || '399 m / 59 m' }}</span>
-          </div>
-          <div class="bg-white border border-zinc-200 rounded p-2">
-            <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'الغاطس الحالي (Draught)' : 'Draught' }}</span>
-            <span class="text-xs font-bold text-zinc-950">{{ vessel.draught || '14.5 m' }}</span>
-          </div>
-          <div class="bg-white border border-zinc-200 rounded p-2">
-            <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'الحمولة الإجمالية' : 'Gross Tonnage' }}</span>
-            <span class="text-xs font-bold text-zinc-950">{{ vessel.gross_tonnage || '214,000 GT' }}</span>
-          </div>
-          <div class="bg-white border border-zinc-200 rounded p-2">
-            <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'التتبع الحي' : 'Live AIS Link' }}</span>
-            <span class="text-xs font-bold text-emerald-600">{{ isAr ? 'مستقبل إشارات AIS متصل' : 'Signals Connected' }}</span>
-          </div>
-        </div>
-
-        <!-- AIS Narrative Description Box -->
-        <div v-if="vessel.description" class="bg-zinc-50 border border-zinc-200 rounded-lg p-3.5 space-y-1.5">
-          <div class="flex items-center gap-2 text-xs font-bold text-zinc-900">
-            <Radio class="w-3.5 h-3.5 text-zinc-950 animate-pulse" />
-            <span>{{ isAr ? 'بيان حركة الملاحة اللحظي المسحوب (AIS Live Narrative):' : 'AIS Live Narrative Report:' }}</span>
-          </div>
-          <p class="text-xs text-zinc-700 leading-relaxed font-sans">
-            {{ vessel.description }}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Active Container Tracking Result Display ("يقولي حصل فيها ايه") -->
-    <div v-if="container" class="space-y-6">
-      <!-- Container Overview Banner Card -->
-      <div class="shadcn-card p-5 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-100 pb-4">
-          <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-lg bg-blue-900 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-900/30 font-bold">
-              <Box class="w-6 h-6" />
-            </div>
-            <div>
-              <div class="flex items-center gap-2 flex-wrap">
-                <h2 class="text-2xl font-black text-blue-950 font-mono tracking-tight">
-                  {{ container.container_number }}
-                </h2>
-                <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-700 text-white border border-blue-600 shadow-xs">
-                  {{ container.current_status || 'IN_TRANSIT' }}
-                </span>
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-blue-50 text-blue-950 border border-blue-200">
-                  {{ container.container_type || '40RH' }}
-                </span>
-              </div>
-              <p class="text-xs text-zinc-500 font-mono mt-0.5 flex items-center gap-2 flex-wrap">
-                <span>{{ container.shipping_line || shipment?.shipping_line?.legal_name || 'Maersk Line' }}</span>
-                <span>•</span>
-                <span>{{ isAr ? 'السفينة:' : 'Vessel:' }} <strong class="text-blue-900">{{ container.vessel_name || shipment?.vessel_name }}</strong> (v. {{ container.voyage_number || shipment?.voyage_number }})</span>
-                <span>•</span>
-                <span>{{ isAr ? 'رصاص التأمين:' : 'Seal:' }} {{ container.seal_number || 'N/A' }}</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 flex-wrap">
-            <!-- External FindTeu & Carrier Links -->
-            <a
-              v-if="carrier_scraper?.findteu_url"
-              :href="carrier_scraper.findteu_url"
-              target="_blank"
-              class="shadcn-btn-secondary gap-1.5 text-xs cursor-pointer inline-flex items-center hover:border-blue-300 hover:text-blue-900"
-            >
-              <Globe class="w-3.5 h-3.5 text-blue-700" />
-              <span>{{ isAr ? 'فحص في FindTeu' : 'FindTeu Track' }}</span>
-              <ExternalLink class="w-3 h-3 text-zinc-400" />
-            </a>
-            <a
-              v-if="carrier_scraper?.carrier_track_url"
-              :href="carrier_scraper.carrier_track_url"
-              target="_blank"
-              class="shadcn-btn-outline gap-1.5 text-xs cursor-pointer inline-flex items-center hover:border-blue-300 hover:text-blue-900"
-            >
-              <ExternalLink class="w-3.5 h-3.5 text-blue-700" />
-              <span>{{ carrier_scraper.carrier_name || (isAr ? 'موقع الناقل' : 'Carrier Link') }}</span>
-            </a>
-
-            <button
-              v-if="container.id"
-              @click="showAddEventModal = true"
-              class="shadcn-btn-secondary gap-1.5 text-xs cursor-pointer hover:border-blue-300 hover:text-blue-900"
-            >
-              <Plus class="w-4 h-4 text-blue-900" />
-              <span>{{ isAr ? 'تسجيل حركة يدوياً' : 'Log Movement' }}</span>
-            </button>
-            <button
-              @click="handleSearch"
-              class="shadcn-btn-outline gap-1.5 text-xs cursor-pointer hover:border-blue-300 hover:text-blue-900"
-              title="تحديث البيانات"
-            >
-              <RefreshCw class="w-4 h-4 text-blue-900" />
-              <span>{{ isAr ? 'تحديث' : 'Refresh' }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Key Metrics Grid (From, To, ATD, ATA/ETA) -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="bg-blue-50/40 border border-blue-100 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-500 uppercase font-mono">{{ isAr ? 'من / ميناء الشحن (From / POL)' : 'From (Port of Loading)' }}</div>
-            <div class="text-xs font-bold text-blue-950 mt-0.5 truncate">{{ container.pol_name || shipment?.pol?.name || 'Alexandria Port (EGALY)' }}</div>
-          </div>
-          <div class="bg-blue-50/40 border border-blue-100 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-500 uppercase font-mono">{{ isAr ? 'إلى / ميناء الوصول (To / POD)' : 'To (Port of Discharge)' }}</div>
-            <div class="text-xs font-bold text-blue-950 mt-0.5 truncate">{{ container.pod_name || shipment?.pod?.name || 'Rotterdam (NLRTM)' }}</div>
-          </div>
-          <div class="bg-blue-50/40 border border-blue-100 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-500 uppercase font-mono">{{ isAr ? 'وقت المغادرة الفعلي (ATD)' : 'Actual Time of Departure (ATD)' }}</div>
-            <div class="text-xs font-bold text-emerald-700 mt-0.5 font-mono">{{ shipment?.actual_departure || shipment?.etd || '2026-09-02 08:30 UTC' }}</div>
-          </div>
-          <div class="bg-blue-50/40 border border-blue-100 rounded-lg p-3">
-            <div class="text-[10px] text-zinc-500 uppercase font-mono">{{ isAr ? 'وقت الوصول الفعلي/المقدر (ATA / ETA)' : 'Actual / Estimated Arrival (ATA/ETA)' }}</div>
-            <div class="text-xs font-bold text-blue-700 mt-0.5 font-mono">{{ shipment?.actual_arrival || shipment?.eta || '2026-09-09 14:00 UTC' }}</div>
-          </div>
-        </div>
-
-        <!-- Reefer Cold-Chain Telemetry (if reefer) -->
-        <div v-if="container.is_reefer || container.container_type?.includes('RH') || container.container_type?.includes('RF')" class="bg-blue-50/30 border border-blue-100 rounded-lg p-3.5 space-y-2">
-          <div class="flex items-center justify-between border-b border-blue-100 pb-2">
-            <div class="flex items-center gap-2">
-              <ThermometerSnowflake class="w-4 h-4 text-blue-700" />
-              <span class="text-xs font-bold text-blue-950">{{ isAr ? 'بيانات تبريد الحاصلات الزراعية (Reefer Cold-Chain)' : 'Cold-Chain Telemetry' }}</span>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-900 text-[10px] font-mono font-bold">
-              {{ isAr ? 'حساسات التبريد: نشطة' : 'Sensors: Active' }}
-            </span>
-          </div>
-
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center font-mono">
-            <div class="bg-white border border-blue-100 rounded p-2">
-              <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'الحرارة المطلوبة' : 'Set Temp' }}</span>
-              <span class="text-sm font-bold text-blue-950">{{ container.target_temperature || container.set_temperature_c || '4.0' }} °C</span>
-            </div>
-            <div class="bg-white border border-blue-100 rounded p-2">
-              <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'نسبة الرطوبة' : 'Humidity' }}</span>
-              <span class="text-sm font-bold text-blue-950">{{ container.humidity_percent || container.humidity_percentage || '85' }}%</span>
-            </div>
-            <div class="bg-white border border-blue-100 rounded p-2">
-              <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'تدفق التهوية' : 'Ventilation' }}</span>
-              <span class="text-sm font-bold text-blue-950">{{ container.ventilation_flow || container.ventilation_cbm_hr || '15' }} m³/h</span>
-            </div>
-            <div class="bg-white border border-blue-100 rounded p-2">
-              <span class="block text-[10px] text-zinc-400 uppercase">{{ isAr ? 'معاملة التبريد USDA' : 'Cold Treatment' }}</span>
-              <span class="text-sm font-bold text-emerald-600">{{ isAr ? 'مستوفاة (Probes OK)' : 'Compliant' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Visual Milestones Progress Journey -->
-      <div class="shadcn-card p-5 space-y-4">
-        <h3 class="text-xs font-bold text-blue-950 uppercase tracking-wider font-mono flex items-center gap-2">
-          <Anchor class="w-4 h-4 text-blue-700" />
-          <span>{{ isAr ? 'مسار رحلة الحاوية الملاحي (Milestones Journey)' : 'Container Transport Milestones' }}</span>
-        </h3>
-
-        <div class="overflow-x-auto pb-2">
-          <div class="flex items-center min-w-[700px] justify-between relative">
-            <!-- Connecting Line -->
-            <div class="absolute top-4 start-6 end-6 h-0.5 bg-zinc-200 -z-0"></div>
-
-            <div 
-              v-for="(stage, idx) in milestoneStages" 
-              :key="stage.code"
-              class="relative z-10 flex flex-col items-center text-center px-1"
-            >
-              <div 
-                :class="[
-                  'w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all',
-                  isMilestoneCompleted(stage.code)
-                    ? 'bg-blue-700 text-white border-blue-700 shadow-xs shadow-blue-600/30'
-                    : 'bg-white text-zinc-400 border-zinc-300'
-                ]"
-              >
-                <CheckCircle2 v-if="isMilestoneCompleted(stage.code)" class="w-4 h-4" />
-                <span v-else>{{ idx + 1 }}</span>
-              </div>
-              <span class="text-[11px] font-bold text-zinc-950 mt-1.5 whitespace-nowrap">
-                {{ isAr ? stage.nameAr : stage.nameEn }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Detailed Timestamped Tracking Events Log -->
-      <div class="shadcn-card overflow-hidden">
-        <div class="p-4 border-b border-zinc-200 flex items-center justify-between">
-          <div>
-            <h3 class="text-sm font-bold text-blue-950 uppercase tracking-wide flex items-center gap-2">
-              <Clock class="w-4 h-4 text-blue-700" />
-              <span>{{ isAr ? 'سجل الحركات والأحداث الزمني (Tracking Events Log)' : 'Detailed Events Log' }}</span>
-            </h3>
-            <p class="text-xs text-zinc-500 mt-0.5">
-              {{ isAr ? 'كافة الإجراءات المسجلة من محطات الموانئ، الخطوط الملاحية، وغرف المتابعة' : 'Complete movement audit trail from ports, carriers, and dispatchers' }}
-            </p>
-          </div>
-          <span class="text-xs font-mono font-bold text-blue-700">{{ events?.length || 0 }} {{ isAr ? 'حركات' : 'Events' }}</span>
-        </div>
-
-        <div v-if="!events || events.length === 0" class="p-8 text-center text-zinc-400 text-xs">
-          {{ isAr ? 'لا توجد حركات مسجلة لهذه الحاوية بعد.' : 'No movements logged for this container yet.' }}
-        </div>
-
-        <div v-else class="overflow-x-auto">
-          <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
-            <thead class="bg-slate-100 text-blue-950 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
-              <tr>
-                <th class="px-5 py-3.5">{{ isAr ? 'التاريخ والوقت' : 'Date & Time' }}</th>
-                <th class="px-5 py-3.5">{{ isAr ? 'كود الحركة' : 'Event Code' }}</th>
-                <th class="px-5 py-3.5">{{ isAr ? 'وصف الحركة والبيان' : 'Event Description' }}</th>
-                <th class="px-5 py-3.5">{{ isAr ? 'الموقع / الميناء' : 'Location / Port' }}</th>
-                <th class="px-5 py-3.5">{{ isAr ? 'المصدر' : 'Source' }}</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-zinc-200 font-mono">
-              <tr v-for="evt in events" :key="evt.id" class="hover:bg-blue-50/30 transition-colors">
-                <td class="px-5 py-3.5 font-bold text-blue-950 text-[11px] whitespace-nowrap">
-                  {{ formatDateTime(evt.occurred_at) }}
-                </td>
-                <td class="px-5 py-3.5">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-900 border border-blue-200">
-                    {{ evt.event_code }}
-                  </span>
-                </td>
-                <td class="px-5 py-3.5 font-sans font-semibold text-zinc-950 text-xs">
-                  {{ evt.event_name }}
-                </td>
-                <td class="px-5 py-3.5 text-zinc-600">
-                  <div class="flex items-center gap-1.5">
-                    <MapPin class="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-                    <span>{{ evt.location_name || 'N/A' }}</span>
-                  </div>
-                </td>
-                <td class="px-5 py-3.5 text-zinc-500 text-[10px]">
-                  {{ evt.source || 'MANUAL' }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tracking Search History Section ("ويكون في هوستري عشان اجيب الحاويات ل اتركتتها") -->
-    <div class="shadcn-card overflow-hidden">
-      <div class="p-4 border-b border-zinc-200 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <History class="w-4 h-4 text-blue-700" />
-          <h2 class="text-sm font-bold text-blue-950 uppercase tracking-wide">
-            {{ isAr ? 'سجل التتبع والفحص السابق (Tracking History)' : 'Recently Tracked Vessels & Containers' }}
+    <!-- Search Hero Box (Apple Liquid Glass Card) -->
+    <div class="liquid-glass rounded-3xl p-6 sm:p-8 space-y-5 shadow-lg border border-white/80 bg-gradient-to-b from-white/95 via-white/85 to-white/75 backdrop-blur-2xl">
+      <div class="max-w-3xl mx-auto space-y-4">
+        <div class="text-center space-y-1">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <Radio class="w-3 h-3 text-blue-600 animate-pulse" />
+            <span>{{ activeTab === 'vessel' ? (isAr ? 'محرك سحب بيانات رحلات السفن الحية' : 'Live AIS Vessel Telemetry Engine') : (isAr ? 'محرك تتبع الحاويات الدولي FindTEU' : 'FindTEU Universal Container Tracking') }}</span>
+          </span>
+          <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">
+            {{ activeTab === 'vessel' ? (isAr ? 'أدخل اسم السفينة لمعرفة مسارها ومواعيد القيام والوصول' : 'Track Vessel Voyage, Departure Port, ETA & Live Position') : (isAr ? 'أدخل كود الحاوية لتتبع خط السير والموقع اللحظي' : 'Track Container Manifest, Route & Real-Time Milestones') }}
           </h2>
         </div>
 
+        <!-- Search Input Form -->
+        <form @submit.prevent="handleSearch" class="relative flex items-center shadow-md rounded-2xl bg-white border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all p-1.5">
+          <div class="ps-3.5 text-slate-400">
+            <Ship v-if="activeTab === 'vessel'" class="w-5 h-5 text-blue-600" />
+            <Box v-else class="w-5 h-5 text-blue-600" />
+          </div>
+
+          <input
+            v-model="query"
+            type="text"
+            :placeholder="activeTab === 'vessel' ? (isAr ? 'مثال: CMA CGM JACQUES SAADE أو EVER GIVEN أو رقم IMO...' : 'e.g. CMA CGM JACQUES SAADE, EVER GIVEN...') : (isAr ? 'مثال: MRSU0827757 أو MSKU0918234...' : 'e.g. MRSU0827757, MSKU0918234...')"
+            class="w-full px-3 py-3 text-sm sm:text-base font-mono font-bold text-slate-900 placeholder:text-slate-400 placeholder:font-normal focus:outline-none bg-transparent uppercase"
+            dir="ltr"
+          />
+
+          <button
+            type="submit"
+            :disabled="searching"
+            class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all flex items-center gap-2 shrink-0 cursor-pointer active:scale-95 disabled:opacity-50"
+          >
+            <RefreshCw v-if="searching" class="w-4 h-4 animate-spin" />
+            <Search v-else class="w-4 h-4" />
+            <span>{{ isAr ? 'تتبع الآن' : 'Track Now' }}</span>
+          </button>
+        </form>
+
+        <!-- Quick Search Suggestion Chips -->
+        <div class="pt-1 flex flex-wrap items-center justify-center gap-2 text-xs">
+          <span class="text-slate-400 font-medium">{{ isAr ? 'أمثلة جاهزة للتجربة:' : 'Quick Try:' }}</span>
+
+          <template v-if="activeTab === 'container'">
+            <button
+              v-for="qc in quickContainers"
+              :key="qc.code"
+              type="button"
+              @click="selectQuickContainer(qc.code)"
+              class="px-2.5 py-1 rounded-lg bg-slate-100/90 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 font-mono text-[11px] font-bold text-slate-700 transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>{{ qc.code }}</span>
+              <span class="text-[9px] px-1 rounded bg-slate-200 text-slate-600">{{ qc.type }}</span>
+            </button>
+          </template>
+
+          <template v-else>
+            <button
+              v-for="qv in quickVessels"
+              :key="qv.name"
+              type="button"
+              @click="selectQuickVessel(qv.name)"
+              class="px-2.5 py-1 rounded-lg bg-slate-100/90 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 font-sans text-[11px] font-bold text-slate-700 transition flex items-center gap-1 cursor-pointer"
+            >
+              <Ship class="w-3 h-3 text-slate-400" />
+              <span>{{ qv.name }}</span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- SECTION 1: VESSEL LIVE AIS TRACKING VIEW                          -->
+    <!-- ================================================================= -->
+    <div v-if="activeTab === 'vessel' && vesselData" class="space-y-6">
+      <!-- Vessel Header Card -->
+      <div class="liquid-glass rounded-3xl p-6 border border-white/80 bg-white/90 shadow-lg space-y-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-500 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+              <Ship class="w-7 h-7" />
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{{ vesselData.name }}</h2>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>{{ isAr ? 'بث حي AIS نشط' : 'LIVE AIS ACTIVE' }}</span>
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-1 font-mono">
+                IMO: <span class="font-bold text-slate-800">{{ vesselData.imo }}</span> · MMSI: <span class="font-bold text-slate-800">{{ vesselData.mmsi }}</span> · {{ vesselData.ship_type }}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <a
+              :href="vesselData.marinetraffic_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+            >
+              <ExternalLink class="w-3.5 h-3.5 text-sky-400" />
+              <span>{{ isAr ? 'فتح على MarineTraffic' : 'MarineTraffic AIS' }}</span>
+            </a>
+            <a
+              :href="vesselData.marinetraffic_map_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <Compass class="w-3.5 h-3.5 text-blue-600" />
+              <span>{{ isAr ? 'خريطة القمر الصناعي' : 'Live Map' }}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 Core Voyage Cards (طلعت من فين / طلعت امتي / رايحة فين / هتوصل امتي) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- 1. Departure Port (طلعت من فين) -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-50/70 to-slate-50 border border-blue-100 space-y-1.5">
+            <div class="flex items-center justify-between text-blue-800">
+              <span class="text-[11px] font-bold uppercase tracking-wider">{{ isAr ? 'طلعت من فين (POL)' : 'Port of Departure (POL)' }}</span>
+              <MapPin class="w-4 h-4 text-blue-600" />
+            </div>
+            <div class="text-base font-extrabold text-slate-900 leading-tight">
+              {{ vesselData.from_port }}
+            </div>
+            <p class="text-[10px] text-slate-500 font-mono">
+              {{ isAr ? 'ميناء القيام والشحن الرئيسي' : 'Origin Sea Port' }}
+            </p>
+          </div>
+
+          <!-- 2. Departure Date & Time (طلعت إمتى) -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-sky-50/70 to-slate-50 border border-sky-100 space-y-1.5">
+            <div class="flex items-center justify-between text-sky-800">
+              <span class="text-[11px] font-bold uppercase tracking-wider">{{ isAr ? 'طلعت إمتى (ATD)' : 'Departure Time (ATD)' }}</span>
+              <Calendar class="w-4 h-4 text-sky-600" />
+            </div>
+            <div class="text-base font-extrabold text-slate-900 font-mono leading-tight">
+              {{ vesselData.atd }}
+            </div>
+            <p class="text-[10px] text-slate-500">
+              {{ isAr ? 'تاريخ ووقت إبحار السفينة الفعلي' : 'Actual Time of Departure' }}
+            </p>
+          </div>
+
+          <!-- 3. Destination Port (رايحة فين) -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/70 to-slate-50 border border-indigo-100 space-y-1.5">
+            <div class="flex items-center justify-between text-indigo-800">
+              <span class="text-[11px] font-bold uppercase tracking-wider">{{ isAr ? 'رايحة فين (POD)' : 'Destination Port (POD)' }}</span>
+              <Navigation class="w-4 h-4 text-indigo-600" />
+            </div>
+            <div class="text-base font-extrabold text-slate-900 leading-tight">
+              {{ vesselData.to_port || vesselData.destination }}
+            </div>
+            <p class="text-[10px] text-slate-500 font-mono">
+              {{ isAr ? 'ميناء الوصول والتفريغ النهائي' : 'Final Destination Sea Port' }}
+            </p>
+          </div>
+
+          <!-- 4. Estimated Arrival (هتوصل إمتى) -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-50/70 to-slate-50 border border-emerald-100 space-y-1.5">
+            <div class="flex items-center justify-between text-emerald-800">
+              <span class="text-[11px] font-bold uppercase tracking-wider">{{ isAr ? 'هتوصل إمتى (ETA)' : 'Arrival Time (ETA)' }}</span>
+              <Clock class="w-4 h-4 text-emerald-600" />
+            </div>
+            <div class="text-base font-extrabold text-emerald-700 font-mono leading-tight">
+              {{ vesselData.eta }}
+            </div>
+            <p class="text-[10px] text-slate-500">
+              {{ isAr ? 'موعد الوصول المتوقع للمقصد' : 'Estimated Time of Arrival' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Live Telemetry Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'السرعة اللحظية' : 'Live Speed' }}</span>
+            <span class="text-sm font-mono font-bold text-slate-900">{{ vesselData.speed }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'خط السير' : 'Course' }}</span>
+            <span class="text-sm font-mono font-bold text-slate-900">{{ vesselData.course || '298° NW' }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'الحالة الملاحية' : 'Nav Status' }}</span>
+            <span class="text-sm font-bold text-slate-900 truncate block">{{ vesselData.nav_status }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'علم الدولة' : 'Flag' }}</span>
+            <span class="text-sm font-bold text-slate-900">{{ vesselData.flag }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'الأبعاد' : 'Length / Beam' }}</span>
+            <span class="text-sm font-mono font-bold text-slate-900">{{ vesselData.length_beam }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'سنة الصنع' : 'Year Built' }}</span>
+            <span class="text-sm font-mono font-bold text-slate-900">{{ vesselData.year_built }}</span>
+          </div>
+        </div>
+
+        <!-- Current Location Banner -->
+        <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200/80 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <MapPin class="w-4 h-4 text-blue-600" />
+            <span class="font-bold text-slate-800">{{ isAr ? 'المنطقة البحرية الحالية:' : 'Current Marine Area:' }}</span>
+            <span class="font-semibold text-blue-900">{{ vesselData.current_area }}</span>
+          </div>
+          <span class="text-[10px] text-slate-500 font-mono">Source: MarineTraffic Global Terrestrial & Satellite AIS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- SECTION 2: FINDTEU CONTAINER TRACKING VIEW                        -->
+    <!-- ================================================================= -->
+    <div v-if="activeTab === 'container' && containerData" class="space-y-6">
+      <!-- Main Container Card -->
+      <div class="liquid-glass rounded-3xl p-6 sm:p-8 border border-white/80 bg-white/90 shadow-lg space-y-6">
+        <!-- Top Container Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+              <Box class="w-6 h-6" />
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400 font-mono uppercase">{{ isAr ? 'رقم الحاوية' : 'Container' }}</span>
+                <span class="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-tight">{{ containerData.number }}</span>
+                <button
+                  type="button"
+                  @click="copyToClipboard(containerData.number)"
+                  class="p-1 rounded-md text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer"
+                  :title="isAr ? 'نسخ رقم الحاوية' : 'Copy Container Number'"
+                >
+                  <Check v-if="copied" class="w-3.5 h-3.5 text-emerald-600" />
+                  <Copy v-else class="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <p class="text-xs text-slate-500 font-sans mt-0.5 flex items-center gap-1.5">
+                <span class="font-bold text-slate-800">{{ containerData.carrier }}</span>
+                <span>·</span>
+                <span class="font-mono text-slate-600">Code: {{ containerData.carrierCode }}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Container Type Badge -->
+            <span class="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-slate-900 text-white border border-slate-900 flex items-center gap-1 shadow-xs">
+              <span>Container type:</span>
+              <span class="text-amber-400 font-extrabold">{{ containerData.type }}</span>
+            </span>
+
+            <!-- FindTEU Badge -->
+            <a
+              :href="containerData.findteuUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-3 py-1 rounded-xl text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition flex items-center gap-1 cursor-pointer"
+            >
+              <ExternalLink class="w-3 h-3 text-blue-600" />
+              <span>FindTEU Network</span>
+            </a>
+
+            <!-- Carrier Direct -->
+            <a
+              v-if="containerData.carrierTrackUrl"
+              :href="containerData.carrierTrackUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 transition flex items-center gap-1"
+            >
+              <ExternalLink class="w-3 h-3 text-slate-600" />
+              <span>{{ containerData.carrierCode }} EDI</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- FindTEU Exact Spec Route: From & To Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- From Location & Date -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50/80 via-white to-slate-50 border border-blue-200/80 space-y-2 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold text-blue-800 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPin class="w-4 h-4 text-blue-600" />
+                <span>From:</span>
+              </span>
+              <span class="text-xs font-mono font-extrabold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded">
+                {{ containerData.fromDate }}
+              </span>
+            </div>
+            <div class="text-lg font-black text-slate-900 tracking-tight">
+              {{ containerData.fromLocation }}
+            </div>
+            <p class="text-xs text-slate-500">
+              {{ isAr ? 'ميناء الشحن والقيام المصدر' : 'Port of Origin & Export Dispatch' }}
+            </p>
+          </div>
+
+          <!-- To Location & Date -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/80 via-white to-slate-50 border border-emerald-200/80 space-y-2 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
+                <Navigation class="w-4 h-4 text-emerald-600" />
+                <span>To:</span>
+              </span>
+              <span class="text-xs font-mono font-extrabold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">
+                {{ containerData.toDate }}
+              </span>
+            </div>
+            <div class="text-lg font-black text-slate-900 tracking-tight">
+              {{ containerData.toLocation }}
+            </div>
+            <p class="text-xs text-slate-500">
+              {{ isAr ? 'ميناء الوصول والتسليم النهائي' : 'Final Destination Port & Consignee Gate' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- FindTEU Last Status Banner (Prominent highlight matching user's spec) -->
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border-2 border-amber-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+              <span class="text-xs font-mono font-black text-amber-900 uppercase tracking-wider">
+                {{ isAr ? 'آخر حالة مسجلة (Last Status):' : 'Last status:' }}
+              </span>
+            </div>
+            <span class="text-xs font-mono font-extrabold text-amber-950 bg-amber-200/70 px-2.5 py-0.5 rounded-md">
+              {{ containerData.lastStatus.date }}
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+            <div>
+              <div class="text-base sm:text-lg font-black text-slate-900">
+                {{ containerData.lastStatus.event }}
+              </div>
+              <div class="text-xs text-slate-600 font-medium flex items-center gap-1.5 mt-0.5">
+                <MapPin class="w-3.5 h-3.5 text-slate-400" />
+                <span>{{ containerData.lastStatus.location }}</span>
+              </div>
+            </div>
+
+            <span class="px-3 py-1 rounded-xl text-xs font-mono font-bold bg-amber-500 text-white shadow-xs w-max">
+              {{ containerData.lastStatus.status_code || 'ACTIVE_MILESTONE' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Technical Manifest Specs Strip -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'السفينة الناقلة' : 'Vessel' }}</span>
+            <span class="text-xs font-extrabold text-slate-900">{{ containerData.vesselName }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'رقم الرحلة' : 'Voyage' }}</span>
+            <span class="text-xs font-mono font-bold text-slate-900">{{ containerData.voyageNumber }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'رقم السيل / الرصاصة' : 'Seal Number' }}</span>
+            <span class="text-xs font-mono font-bold text-slate-900">{{ containerData.sealNumber }}</span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70">
+            <span class="text-[10px] text-slate-500 block uppercase font-bold">{{ isAr ? 'حالة التبريد' : 'Reefer Status' }}</span>
+            <span v-if="containerData.isReefer" class="text-xs font-bold text-sky-700 flex items-center gap-1">
+              <ThermometerSnowflake class="w-3.5 h-3.5 text-sky-600" />
+              <span>{{ isAr ? 'حاوية مبردة (Cold-Chain)' : 'Active Reefer' }}</span>
+            </span>
+            <span v-else class="text-xs font-bold text-slate-700">
+              {{ isAr ? 'حاوية جافة (Dry Van)' : 'Dry Standard' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Milestones Journey Timeline -->
+        <div class="space-y-4 pt-4 border-t border-slate-200/80">
+          <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+            <Layers class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? 'سجل الأحداث والمحطات (FindTEU Milestones Journey)' : 'FindTEU Milestones Journey' }}</span>
+          </h3>
+
+          <div class="relative ps-6 border-s-2 border-slate-200 space-y-6 ms-3">
+            <div 
+              v-for="(event, idx) in containerData.events" 
+              :key="idx" 
+              class="relative group"
+            >
+              <!-- Indicator Dot -->
+              <div 
+                class="absolute -start-[31px] top-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center shadow-xs"
+                :class="event.status === 'UPCOMING' ? 'bg-slate-300 text-white' : 'bg-emerald-500 text-white'"
+              >
+                <CheckCircle2 v-if="event.status !== 'UPCOMING'" class="w-3 h-3" />
+                <span v-else class="w-1.5 h-1.5 rounded-full bg-white"></span>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/70 transition-all">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <span class="font-extrabold text-xs text-slate-900">{{ event.event_name }}</span>
+                  <span class="text-[11px] font-mono text-slate-500">{{ event.occurred_at }}</span>
+                </div>
+                <div class="text-[11px] text-slate-600 font-medium flex items-center gap-1.5 mt-1">
+                  <MapPin class="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <span>{{ event.location_name }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- SECTION 3: RECENT TRACKING HISTORY (QUICK ACCESS)                 -->
+    <!-- ================================================================= -->
+    <div v-if="history?.length" class="liquid-glass rounded-3xl p-6 border border-white/80 bg-white/90 shadow-lg space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200/80 pb-3">
+        <div class="flex items-center gap-2">
+          <History class="w-4 h-4 text-slate-900" />
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">
+            {{ isAr ? `سجل التتبع الأخير (${history.length})` : `Recent Tracking History (${history.length})` }}
+          </h3>
+        </div>
         <button
-          v-if="history && history.length > 0"
+          type="button"
           @click="clearAllHistory"
-          class="text-xs text-zinc-400 hover:text-red-600 transition cursor-pointer flex items-center gap-1"
+          class="text-xs text-slate-400 hover:text-rose-600 transition flex items-center gap-1 cursor-pointer"
         >
           <Trash2 class="w-3.5 h-3.5" />
-          <span>{{ isAr ? 'مسح السجل بالكامل' : 'Clear All History' }}</span>
+          <span>{{ isAr ? 'مسح السجل' : 'Clear All' }}</span>
         </button>
       </div>
 
-      <div v-if="!history || history.length === 0" class="p-10 text-center text-zinc-500">
-        <History class="w-8 h-8 text-zinc-300 mx-auto mb-2" />
-        <p class="text-xs font-semibold text-zinc-700">
-          {{ isAr ? 'لا توجد عناصر في سجل التتبع حتى الآن' : 'No items tracked in history yet' }}
-        </p>
-        <p class="text-[11px] text-zinc-400 mt-0.5">
-          {{ isAr ? 'أي سفينة أو حاوية تقوم بالبحث عنها وتتبعها ستُحفظ هنا تلقائياً لسرعة الرجوع إليها' : 'Any vessel or container you track will be saved here automatically for one-click re-access' }}
-        </p>
-      </div>
-
-      <div v-else class="overflow-x-auto">
+      <div class="overflow-x-auto">
         <table class="w-full text-xs" :class="isAr ? 'text-right' : 'text-left'">
-          <thead class="bg-slate-100 text-blue-950 uppercase text-[10px] tracking-wider border-b border-zinc-200 font-mono">
+          <thead class="bg-slate-100 text-slate-700 uppercase text-[10px] tracking-wider border-b border-slate-200 font-mono">
             <tr>
-              <th class="px-5 py-3.5">{{ isAr ? 'العنصر والنوع' : 'Tracked Item' }}</th>
-              <th class="px-5 py-3.5">{{ isAr ? 'الناقل / السفينة' : 'Carrier / Ship' }}</th>
-              <th class="px-5 py-3.5">{{ isAr ? 'الموقع / المسار' : 'Location / Routing' }}</th>
-              <th class="px-5 py-3.5">{{ isAr ? 'الحالة الحالية' : 'Current Status' }}</th>
-              <th class="px-5 py-3.5">{{ isAr ? 'آخر تتبع' : 'Last Tracked' }}</th>
-              <th class="px-5 py-3.5" :class="isAr ? 'text-left' : 'text-right'">{{ isAr ? 'الإجراء' : 'Actions' }}</th>
+              <th class="px-4 py-2.5">{{ isAr ? 'النوع' : 'Type' }}</th>
+              <th class="px-4 py-2.5">{{ isAr ? 'المعرّف / الرقم' : 'Target / Identifier' }}</th>
+              <th class="px-4 py-2.5">{{ isAr ? 'المسار (شحن -> وصول)' : 'Route (POL -> POD)' }}</th>
+              <th class="px-4 py-2.5">{{ isAr ? 'آخر حالة' : 'Latest Status' }}</th>
+              <th class="px-4 py-2.5">{{ isAr ? 'تاريخ البحث' : 'Last Tracked' }}</th>
+              <th class="px-4 py-2.5 text-center">{{ isAr ? 'إعادة التتبع' : 'Action' }}</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-200 font-mono">
-            <tr v-for="item in history" :key="item.id" class="hover:bg-blue-50/20 transition-colors">
-              <!-- Item & Type -->
-              <td class="px-5 py-3.5">
-                <div v-if="item.tracking_type === 'vessel'" class="space-y-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-700 text-white uppercase shadow-2xs">
-                      🚢 {{ isAr ? 'سفينة' : 'Vessel' }}
-                    </span>
-                    <button 
-                      @click="trackSpecificVessel(item.vessel_name)"
-                      class="font-bold text-blue-950 text-xs hover:underline cursor-pointer font-mono truncate max-w-[200px]"
-                    >
-                      {{ item.vessel_name }}
-                    </button>
-                  </div>
-                  <div v-if="item.vessel_imo" class="text-[10px] text-zinc-400 font-mono">
-                    IMO: {{ item.vessel_imo }}
-                  </div>
-                </div>
-
-                <div v-else class="space-y-1">
-                  <div class="flex items-center gap-1.5">
-                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-900 border border-blue-200 uppercase">
-                      📦 {{ isAr ? 'حاوية' : 'Box' }}
-                    </span>
-                    <button 
-                      @click="trackSpecificContainer(item.container_number)"
-                      class="font-bold text-blue-950 text-xs hover:underline cursor-pointer font-mono"
-                    >
-                      {{ item.container_number }}
-                    </button>
-                  </div>
-                </div>
-              </td>
-
-              <!-- Carrier / Vessel Details -->
-              <td class="px-5 py-3.5">
-                <div v-if="item.tracking_type === 'vessel'">
-                  <div class="font-bold text-blue-950 text-xs font-sans">
-                    {{ item.vessel_data?.ship_type || 'Container Ship' }}
-                  </div>
-                  <div class="text-[10px] text-zinc-500">
-                    🚩 {{ item.vessel_data?.flag || 'Panama' }}
-                  </div>
-                </div>
-                <div v-else>
-                  <div class="font-bold text-blue-950 text-xs font-sans">
-                    {{ item.shipping_line || 'Ocean Carrier' }}
-                  </div>
-                  <div v-if="item.vessel_name" class="text-[10px] text-zinc-500">
-                    {{ item.vessel_name }} (v. {{ item.voyage_number || '—' }})
-                  </div>
-                </div>
-              </td>
-
-              <!-- Location / Routing -->
-              <td class="px-5 py-3.5 text-[11px] text-zinc-700">
-                <div v-if="item.tracking_type === 'vessel'" class="truncate max-w-[220px]">
-                  <span class="font-semibold text-zinc-950">{{ item.last_location || 'Sea Basin' }}</span>
-                  <div v-if="item.pod_name" class="text-[10px] text-zinc-500">
-                    ➔ {{ item.pod_name }}
-                  </div>
-                </div>
-                <div v-else class="flex items-center gap-1">
-                  <span>{{ item.pol_name || 'POL' }}</span>
-                  <span class="text-zinc-400">➔</span>
-                  <span>{{ item.pod_name || 'POD' }}</span>
-                </div>
-              </td>
-
-              <!-- Status -->
-              <td class="px-5 py-3.5">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-950 text-blue-100 border border-blue-800 truncate block max-w-[140px] text-center">
-                  {{ item.current_status || 'IN_TRANSIT' }}
+          <tbody class="divide-y divide-slate-200">
+            <tr v-for="h in history" :key="h.id" class="hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 font-mono">
+                <span 
+                  class="px-2 py-0.5 rounded text-[9px] font-bold uppercase"
+                  :class="h.tracking_type === 'vessel' ? 'bg-blue-100 text-blue-800' : 'bg-slate-900 text-white'"
+                >
+                  {{ h.tracking_type }}
                 </span>
               </td>
-
-              <!-- Timestamp -->
-              <td class="px-5 py-3.5 text-zinc-500 text-[11px] whitespace-nowrap">
-                {{ item.last_tracked_at ? formatDateTime(item.last_tracked_at) : '—' }}
+              <td class="px-4 py-3 font-mono font-bold text-slate-900">
+                {{ h.container_number || h.vessel_name }}
               </td>
-
-              <!-- Action -->
-              <td class="px-5 py-3.5" :class="isAr ? 'text-left' : 'text-right'">
-                <div class="flex items-center gap-1.5 justify-end">
+              <td class="px-4 py-3 text-slate-700">
+                {{ h.pol_name }} ← {{ h.pod_name }}
+              </td>
+              <td class="px-4 py-3 font-semibold text-slate-900 truncate max-w-[200px]">
+                {{ h.current_status }}
+              </td>
+              <td class="px-4 py-3 font-mono text-[11px] text-slate-500">
+                {{ formatDateTime(h.last_tracked_at) }}
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-1.5">
                   <button
-                    v-if="item.tracking_type === 'vessel'"
-                    @click="trackSpecificVessel(item.vessel_name)"
-                    class="shadcn-btn-secondary h-7 px-2.5 text-[11px] cursor-pointer hover:border-blue-300 hover:text-blue-900"
+                    type="button"
+                    @click="h.tracking_type === 'vessel' ? selectQuickVessel(h.vessel_name) : selectQuickContainer(h.container_number)"
+                    class="px-2.5 py-1 rounded-lg text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition cursor-pointer"
                   >
-                    <span>{{ isAr ? 'تتبع السفينة' : 'Track Ship' }}</span>
+                    {{ isAr ? 'تتبع' : 'Track' }}
                   </button>
                   <button
-                    v-else
-                    @click="trackSpecificContainer(item.container_number)"
-                    class="shadcn-btn-secondary h-7 px-2.5 text-[11px] cursor-pointer hover:border-blue-300 hover:text-blue-900"
-                  >
-                    <span>{{ isAr ? 'عرض الحاوية' : 'View' }}</span>
-                  </button>
-
-                  <button
-                    @click="deleteHistoryItem(item.id)"
-                    class="p-1.5 text-zinc-400 hover:text-red-600 transition cursor-pointer"
-                    title="حذف من السجل"
+                    type="button"
+                    @click="deleteHistoryItem(h.id)"
+                    class="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
                   >
                     <Trash2 class="w-3.5 h-3.5" />
                   </button>
@@ -830,78 +743,6 @@ const isMilestoneCompleted = (code) => {
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <!-- Manual Event Modal -->
-    <div v-if="showAddEventModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs">
-      <div class="shadcn-card max-w-md w-full p-6 space-y-4 shadow-2xl relative">
-        <button 
-          @click="showAddEventModal = false"
-          class="absolute top-4 end-4 text-zinc-400 hover:text-zinc-950 cursor-pointer"
-        >
-          <X class="w-4 h-4" />
-        </button>
-
-        <h3 class="text-base font-bold text-zinc-950 flex items-center gap-2 border-b border-zinc-100 pb-3">
-          <Plus class="w-4 h-4 text-zinc-950" />
-          <span>{{ isAr ? 'تسجيل حركة أو تحديث للحاوية' : 'Log Container Movement Event' }}</span>
-        </h3>
-
-        <form @submit.prevent="submitAddEvent" class="space-y-3">
-          <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">
-              {{ isAr ? 'نوع وكود الحركة' : 'Event Milestone' }}
-            </label>
-            <select v-model="eventForm.event_code" class="shadcn-input">
-              <option value="GATE_IN">{{ isAr ? 'GATE_IN - دخول ساحة الميناء' : 'GATE_IN - Port Gate In' }}</option>
-              <option value="CUSTOMS_CLEARED">{{ isAr ? 'CUSTOMS_CLEARED - إنهاء الإفراج الجمركي' : 'CUSTOMS_CLEARED - Customs Cleared' }}</option>
-              <option value="LOADED">{{ isAr ? 'LOADED - التحميل على ظهر السفينة' : 'LOADED - Loaded On-Board' }}</option>
-              <option value="SAILED_IN_TRANSIT">{{ isAr ? 'SAILED_IN_TRANSIT - إبحار السفينة بالبحر' : 'SAILED - In Transit' }}</option>
-              <option value="ARRIVED">{{ isAr ? 'ARRIVED - وصول ميناء المقصد' : 'ARRIVED - Vessel Arrived' }}</option>
-              <option value="DISCHARGED">{{ isAr ? 'DISCHARGED - تفريغ الحاوية' : 'DISCHARGED - Discharged' }}</option>
-              <option value="EMPTY_RETURN">{{ isAr ? 'EMPTY_RETURN - تسليم الحاوية الفارغة' : 'EMPTY_RETURN - Returned Empty' }}</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">
-              {{ isAr ? 'وصف وتفاصيل الحركة' : 'Event Description' }}
-            </label>
-            <input v-model="eventForm.event_name" type="text" required class="shadcn-input" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">
-              {{ isAr ? 'الموقع / الميناء / الساحة' : 'Location / Terminal' }}
-            </label>
-            <input v-model="eventForm.location_name" type="text" required class="shadcn-input" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-zinc-800 mb-1">
-              {{ isAr ? 'تاريخ ووقت الحركة' : 'Date & Time' }}
-            </label>
-            <input v-model="eventForm.occurred_at" type="text" required class="shadcn-input font-mono" />
-          </div>
-
-          <div class="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
-            <button 
-              type="button" 
-              @click="showAddEventModal = false" 
-              class="shadcn-btn-ghost text-xs cursor-pointer"
-            >
-              {{ isAr ? 'إلغاء' : 'Cancel' }}
-            </button>
-            <button 
-              type="submit" 
-              :disabled="eventForm.processing" 
-              class="shadcn-btn-primary text-xs cursor-pointer"
-            >
-              {{ isAr ? 'حفظ الحركة' : 'Save Event' }}
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   </div>

@@ -1,213 +1,324 @@
 @import "tailwindcss";
 
-/* Shadcn UI Kit Official Monochromatic Black & White Theme */
+/* ==========================================================================
+   Apple & Liquid Glass Design System
+   Serene, Translucent, Multi-Layered Frosted Glassmorphism
+   ========================================================================== */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
+  --background: 210 40% 98%;
+  --foreground: 222.2 84% 4.9%;
 
   --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
+  --card-foreground: 222.2 84% 4.9%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
+  --popover-foreground: 222.2 84% 4.9%;
 
-  --primary: 221.2 83.2% 53.3%;
-  --primary-foreground: 0 0% 100%;
+  /* Apple System Blue */
+  --primary: 211 100% 45%;
+  --primary-foreground: 210 40% 98%;
 
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
 
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
 
-  --accent: 214 95% 93%;
-  --accent-foreground: 222 47% 11%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
 
   --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 221.2 83.2% 53.3%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 211 100% 45%;
 
-  --radius: 0.5rem;
+  --radius: 0.875rem;
 
   --sidebar: 0 0% 100%;
-  --sidebar-foreground: 240 5.9% 10%;
-  --sidebar-primary: 221.2 83.2% 53.3%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 214 95% 93%;
-  --sidebar-accent-foreground: 222 47% 11%;
-  --sidebar-border: 240 5.9% 90%;
+  --sidebar-foreground: 222.2 47.4% 11.2%;
+  --sidebar-primary: 211 100% 45%;
+  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+  --sidebar-border: 214.3 31.8% 91.4%;
 }
 
 @theme {
   --font-cairo: 'Cairo', sans-serif;
-  --font-sans: 'Cairo', 'Plus Jakarta Sans', 'Alexandria', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', 'Cairo', 'Plus Jakarta Sans', 'Alexandria', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @layer base {
   * {
-    border-color: #e4e4e7;
+    border-color: rgba(226, 232, 240, 0.7);
   }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
-    background-color: #f8fafc;
+    background-color: #f6f8fb;
     color: #0f172a;
-    font-family: 'Cairo', 'Plus Jakarta Sans', 'Alexandria', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Cairo', 'Plus Jakarta Sans', 'Alexandria', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   [dir="rtl"], body[dir="rtl"], html[dir="rtl"] {
-    font-family: 'Cairo', 'Alexandria', system-ui, -apple-system, sans-serif;
+    font-family: 'Cairo', 'Alexandria', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   [dir="ltr"], body[dir="ltr"], html[dir="ltr"] {
-    font-family: 'Plus Jakarta Sans', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', 'Cairo', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 }
 
-/* Shadcnuikit Pure Trust Blue & Crisp Card Primitives */
-.shadcn-card {
-  background-color: #ffffff;
-  color: #0f172a;
-  border: 1px solid #e2e8f0;
+/* ==========================================================================
+   Liquid Glass & Apple Glassmorphic Surfaces
+   ========================================================================== */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 10px 30px -10px rgba(15, 23, 42, 0.05),
+    0 1px 3px 0 rgba(15, 23, 42, 0.02),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
   border-radius: var(--radius);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
 }
 
+.liquid-glass-subtle {
+  background: rgba(255, 255, 255, 0.52);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 16px -4px rgba(15, 23, 42, 0.03);
+}
+
+.liquid-glass-dark {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  box-shadow: 
+    0 16px 36px -8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius);
+}
+
+/* Shadcn Card Primitive re-engineered as Apple Liquid Glass Card */
+.shadcn-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  color: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 1.125rem;
+  box-shadow: 
+    0 8px 32px -8px rgba(15, 23, 42, 0.05),
+    0 1px 2px 0 rgba(15, 23, 42, 0.02),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  transition: box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.shadcn-card:hover {
+  box-shadow: 
+    0 14px 38px -10px rgba(15, 23, 42, 0.08),
+    0 2px 6px 0 rgba(15, 23, 42, 0.03),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* Apple Frosted Input */
 .shadcn-input {
   display: flex;
-  height: 2.25rem;
+  height: 2.375rem;
   width: 100%;
-  border-radius: calc(var(--radius) - 0.125rem);
-  border: 1px solid #cbd5e1;
-  background-color: #ffffff;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(203, 213, 225, 0.7);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
   font-size: 0.875rem;
   color: #0f172a;
-  transition: all 0.15s ease-in-out;
+  box-shadow: inset 0 1px 2px 0 rgba(15, 23, 42, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .shadcn-input:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 1px #2563eb;
+  background-color: #ffffff;
+  border-color: #0071e3;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15), inset 0 1px 1px 0 rgba(0, 0, 0, 0.02);
 }
 
+/* Apple Liquid Primary Button */
 .shadcn-btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: calc(var(--radius) - 0.125rem);
+  border-radius: 0.75rem;
   font-size: 0.875rem;
   font-weight: 600;
-  height: 2.25rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  background-color: #1d4ed8;
+  height: 2.375rem;
+  padding-left: 1.125rem;
+  padding-right: 1.125rem;
+  background: linear-gradient(180deg, #0077ed 0%, #0065cf 100%);
   color: #ffffff;
-  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 14px 0 rgba(0, 113, 227, 0.32),
+    0 1px 2px 0 rgba(0, 0, 0, 0.08),
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgb(29 78 216 / 0.2);
+  user-select: none;
 }
 
 .shadcn-btn-primary:hover {
-  background-color: #1e40af;
+  background: linear-gradient(180deg, #1385f5 0%, #006edd 100%);
+  box-shadow: 
+    0 6px 20px 0 rgba(0, 113, 227, 0.42),
+    0 1px 2px 0 rgba(0, 0, 0, 0.08),
+    inset 0 1px 0.5px 0 rgba(255, 255, 255, 0.45);
+  transform: translateY(-0.5px);
 }
 
+.shadcn-btn-primary:active {
+  transform: scale(0.975);
+  box-shadow: 0 2px 6px 0 rgba(0, 113, 227, 0.25);
+}
+
+/* Apple Frosted Secondary Button */
 .shadcn-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: calc(var(--radius) - 0.125rem);
+  border-radius: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  height: 2.25rem;
+  height: 2.375rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  background-color: #f4f4f5;
-  color: #09090b;
-  border: 1px solid #e4e4e7;
-  transition: all 0.15s ease;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #1e293b;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .shadcn-btn-secondary:hover {
-  background-color: #e4e4e7;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(203, 213, 225, 0.95);
+  color: #0f172a;
+  transform: translateY(-0.5px);
+  box-shadow: 0 4px 12px 0 rgba(15, 23, 42, 0.05);
 }
 
+.shadcn-btn-secondary:active {
+  transform: scale(0.975);
+}
+
+/* Apple Frosted Outline Button */
 .shadcn-btn-outline {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: calc(var(--radius) - 0.125rem);
+  border-radius: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  height: 2.25rem;
+  height: 2.375rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  background-color: #ffffff;
-  color: #09090b;
-  border: 1px solid #e4e4e7;
-  transition: all 0.15s ease;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #1e293b;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
 }
 
 .shadcn-btn-outline:hover {
-  background-color: #f4f4f5;
-  color: #000000;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(203, 213, 225, 0.95);
+  color: #0071e3;
+  transform: translateY(-0.5px);
 }
 
+.shadcn-btn-outline:active {
+  transform: scale(0.975);
+}
+
+/* Apple Ghost Button */
 .shadcn-btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: calc(var(--radius) - 0.125rem);
+  border-radius: 0.75rem;
   font-size: 0.875rem;
   font-weight: 500;
-  height: 2.25rem;
+  height: 2.375rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   background-color: transparent;
-  color: #52525b;
+  color: #475569;
   transition: all 0.15s ease;
   cursor: pointer;
 }
 
 .shadcn-btn-ghost:hover {
-  background-color: #f4f4f5;
-  color: #09090b;
+  background: rgba(0, 0, 0, 0.04);
+  color: #0f172a;
 }
 
+.shadcn-btn-ghost:active {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+/* Apple Frosted Badge Pill */
 .shadcn-badge {
   display: inline-flex;
   align-items: center;
   border-radius: 9999px;
-  padding-left: 0.625rem;
-  padding-right: 0.625rem;
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
+  padding-left: 0.65rem;
+  padding-right: 0.65rem;
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
   font-size: 0.75rem;
   font-weight: 600;
-  background-color: #f4f4f5;
-  color: #09090b;
-  border: 1px solid #e4e4e7;
+  background: rgba(241, 245, 249, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #1e293b;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
-/* Monochromatic Scrollbars */
+/* Apple-style Smooth Minimal Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f4f4f5;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #a1a1aa;
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
+  transition: background 0.2s ease;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #71717a;
+  background: rgba(100, 116, 139, 0.6);
 }
 
 /* ==========================================================================

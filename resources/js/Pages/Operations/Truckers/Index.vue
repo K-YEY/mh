@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
 import { 
   Truck, 
@@ -13,7 +13,10 @@ import {
   UserCheck, 
   Cpu, 
   FileText,
-  X 
+  X,
+  Pencil,
+  Trash2,
+  CheckCircle2
 } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
@@ -24,6 +27,7 @@ const props = defineProps({
 })
 
 const showCreateModal = ref(false)
+const showEditModal = ref(false)
 const searchQuery = ref(props.filters?.search || '')
 
 const form = useForm({
@@ -44,13 +48,72 @@ const form = useForm({
   notes: '',
 })
 
-const submit = () => {
+const editForm = useForm({
+  id: null,
+  code: '',
+  name: '',
+  trade_name: '',
+  fleet_size: 10,
+  truck_types: '',
+  coverage_areas: '',
+  license_number: '',
+  tax_number: '',
+  commercial_registry: '',
+  dispatch_contact: '',
+  dispatch_phone: '',
+  phone: '',
+  email: '',
+  address: '',
+  notes: '',
+  is_active: true,
+})
+
+const openEditModal = (trucker) => {
+  editForm.id = trucker.id
+  editForm.code = trucker.code
+  editForm.name = trucker.name
+  editForm.trade_name = trucker.trade_name || ''
+  editForm.fleet_size = trucker.fleet_size || 1
+  editForm.truck_types = trucker.truck_types || ''
+  editForm.coverage_areas = trucker.coverage_areas || ''
+  editForm.license_number = trucker.license_number || ''
+  editForm.tax_number = trucker.tax_number || ''
+  editForm.commercial_registry = trucker.commercial_registry || ''
+  editForm.dispatch_contact = trucker.dispatch_contact || ''
+  editForm.dispatch_phone = trucker.dispatch_phone || ''
+  editForm.phone = trucker.phone || ''
+  editForm.email = trucker.email || ''
+  editForm.address = trucker.address || ''
+  editForm.notes = trucker.notes || ''
+  editForm.is_active = trucker.is_active !== false
+  showEditModal.value = true
+}
+
+const submitCreate = () => {
   form.post(route('truckers.store'), {
     onSuccess: () => {
       showCreateModal.value = false
       form.reset()
     }
   })
+}
+
+const submitEdit = () => {
+  editForm.put(route('truckers.update', editForm.id), {
+    onSuccess: () => {
+      showEditModal.value = false
+      editForm.reset()
+    }
+  })
+}
+
+const deleteTrucker = (trucker) => {
+  const msg = isAr.value 
+    ? `هل أنت متأكد من حذف شركة النقل البري ${trucker.name} (${trucker.code})؟` 
+    : `Are you sure you want to delete trucking company ${trucker.name}?`
+  if (confirm(msg)) {
+    router.delete(route('truckers.destroy', trucker.id))
+  }
 }
 
 const totalFleet = computed(() => {
@@ -163,6 +226,7 @@ const filteredTruckers = computed(() => {
               <th class="px-4 py-3">{{ isAr ? 'نطاق التغطية والمزارع' : 'Operating Coverage' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'مسؤول الحركة والديسباتش' : 'Dispatch Control' }}</th>
               <th class="px-4 py-3">{{ isAr ? 'الحالة' : 'Status' }}</th>
+              <th class="px-4 py-3 text-center">{{ isAr ? 'التحكم والإجراءات' : 'Actions' }}</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-zinc-200 font-sans">
@@ -212,10 +276,31 @@ const filteredTruckers = computed(() => {
                   {{ isAr ? 'نشط' : 'ACTIVE' }}
                 </span>
               </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    @click="openEditModal(t)"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 text-xs font-bold border border-blue-500/20 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    :title="isAr ? 'تعديل بيانات الناقل' : 'Edit Trucker'"
+                  >
+                    <Pencil class="w-3.5 h-3.5" />
+                    <span>{{ isAr ? 'تعديل' : 'Edit' }}</span>
+                  </button>
+                  <button
+                    type="button"
+                    @click="deleteTrucker(t)"
+                    class="inline-flex items-center p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 transition-all cursor-pointer active:scale-95 border border-rose-500/20"
+                    :title="isAr ? 'حذف الناقل' : 'Delete Trucker'"
+                  >
+                    <Trash2 class="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </td>
             </tr>
 
             <tr v-if="!filteredTruckers?.length">
-              <td colspan="6" class="p-8 text-center text-zinc-500 font-mono">
+              <td colspan="7" class="p-8 text-center text-zinc-500 font-mono">
                 {{ isAr ? 'لا يوجد شركات نقل مسجلة بعد.' : 'No trucking carriers found.' }}
               </td>
             </tr>
@@ -235,7 +320,7 @@ const filteredTruckers = computed(() => {
           <button @click="showCreateModal = false" class="text-zinc-400 hover:text-zinc-950 text-sm font-bold">✕</button>
         </div>
 
-        <form @submit.prevent="submit" class="p-6 space-y-4">
+        <form @submit.prevent="submitCreate" class="p-6 space-y-4">
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-zinc-800 mb-1">
@@ -307,6 +392,96 @@ const filteredTruckers = computed(() => {
             </button>
             <button type="submit" :disabled="form.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs">
               {{ isAr ? 'حفظ شركة النقل' : 'Save Carrier' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Trucker Modal -->
+    <div v-if="showEditModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+      <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-zinc-200">
+        <div class="p-4 border-b border-zinc-200 flex items-center justify-between bg-zinc-50">
+          <h3 class="font-bold text-sm text-zinc-950 flex items-center gap-2">
+            <Pencil class="w-4 h-4 text-blue-600" />
+            <span>{{ isAr ? 'تعديل بيانات شركة النقل البري' : 'Edit Trucking Carrier' }}</span>
+          </h3>
+          <button @click="showEditModal = false" class="text-zinc-400 hover:text-zinc-950 text-sm font-bold">✕</button>
+        </div>
+
+        <form @submit.prevent="submitEdit" class="p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'كود شركة النقل' : 'Haulier Code' }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input v-model="editForm.code" type="text" class="shadcn-input font-mono uppercase" required dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">
+                {{ isAr ? 'اسم شركة النقل' : 'Company Name' }}
+                <span class="text-red-500">*</span>
+              </label>
+              <input v-model="editForm.name" type="text" class="shadcn-input" required />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'حجم الأسطول' : 'Fleet Size' }}</label>
+              <input v-model="editForm.fleet_size" type="number" min="1" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'رقم ترخيص النقل' : 'Transport License #' }}</label>
+              <input v-model="editForm.license_number" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'أنواع الشاحنات والتجهيزات' : 'Truck Types / Gensets' }}</label>
+            <input v-model="editForm.truck_types" type="text" class="shadcn-input" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'نطاق التغطية ومناطق التحميل' : 'Operating Coverage' }}</label>
+            <input v-model="editForm.coverage_areas" type="text" class="shadcn-input" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'مسؤول الحركة والديسباتش' : 'Dispatcher Name' }}</label>
+              <input v-model="editForm.dispatch_contact" type="text" class="shadcn-input" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'هاتف غرفة الحركة' : 'Dispatch Phone' }}</label>
+              <input v-model="editForm.dispatch_phone" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'الرقم الضريبي' : 'Tax Number' }}</label>
+              <input v-model="editForm.tax_number" type="text" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'البريد الإلكتروني' : 'Email' }}</label>
+              <input v-model="editForm.email" type="email" class="shadcn-input font-mono" dir="ltr" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-zinc-800 mb-1">{{ isAr ? 'مقر الشركة / الجراج الرئيسي' : 'Yard / Office Address' }}</label>
+            <input v-model="editForm.address" type="text" class="shadcn-input" />
+          </div>
+
+          <div class="flex justify-end gap-2 pt-4 border-t border-zinc-200">
+            <button type="button" @click="showEditModal = false" class="px-4 py-2 rounded-lg text-xs font-bold text-zinc-600 hover:bg-zinc-100">
+              {{ isAr ? 'إلغاء' : 'Cancel' }}
+            </button>
+            <button type="submit" :disabled="editForm.processing" class="shadcn-btn-primary px-6 py-2 cursor-pointer font-bold text-xs gap-1.5">
+              <CheckCircle2 class="w-4 h-4" />
+              <span>{{ isAr ? 'حفظ التعديلات' : 'Save Changes' }}</span>
             </button>
           </div>
         </form>
