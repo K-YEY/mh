@@ -2,6 +2,7 @@
 
 namespace App\Services\Financial;
 
+use App\Models\Account;
 use App\Models\JournalEntry;
 use App\Models\JournalEntryLine;
 use App\Models\PaymentVoucher;
@@ -43,8 +44,8 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
-            $arAccountId = \App\Models\Account::where('code', '11200')->value('id') ?? 2;
-            $apAccountId = \App\Models\Account::where('code', '21100')->value('id') ?? 3;
+            $arAccountId = Account::where('code', '11200')->value('id') ?? 2;
+            $apAccountId = Account::where('code', '21100')->value('id') ?? 3;
 
             if ($isCustomerInvoice) {
                 // AR Account (11200) Debit
@@ -138,8 +139,8 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
-            $arAccountId = \App\Models\Account::where('code', '11200')->value('id') ?? 2;
-            $apAccountId = \App\Models\Account::where('code', '21100')->value('id') ?? 3;
+            $arAccountId = Account::where('code', '11200')->value('id') ?? 2;
+            $apAccountId = Account::where('code', '21100')->value('id') ?? 3;
 
             if ($isReceipt) {
                 // Bank/Cash Account Debit

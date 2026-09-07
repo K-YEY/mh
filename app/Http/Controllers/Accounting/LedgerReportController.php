@@ -98,7 +98,7 @@ class LedgerReportController extends Controller
             $entry = JournalEntry::create([
                 'entry_number' => $entryNo,
                 'entry_date' => $validated['entry_date'],
-                'source_type' => 'MANUAL_JOURNAL',
+                'source_type' => 'MANUAL',
                 'source_id' => null,
                 'narration' => $validated['narration'],
                 'is_posted' => true,
