@@ -15,6 +15,7 @@ use App\Http\Controllers\Operations\CustomsBrokerController;
 use App\Http\Controllers\Operations\HouseShipmentController;
 use App\Http\Controllers\Operations\MasterShipmentController;
 use App\Http\Controllers\Operations\TruckerController;
+use App\Http\Controllers\QuickSearchController;
 use App\Http\Controllers\Settings\CurrencyController;
 use App\Http\Controllers\Settings\PartyController;
 use App\Http\Controllers\Settings\PortController;
@@ -31,8 +32,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
+    // Global Command Palette / Quick Search API
+    Route::get('quick-search', [QuickSearchController::class, 'search'])->name('quick-search');
+
     // Dashboard Overview
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Operations Domain
     Route::prefix('operations')->group(function () {
@@ -48,6 +53,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('truckers', TruckerController::class)->only(['index', 'store', 'update', 'destroy']);
 
         Route::get('tracking', [ContainerTrackingController::class, 'index'])->name('tracking.index');
+        Route::get('tracking/api/{containerNumber}', [ContainerTrackingController::class, 'apiGetContainerTracking'])->name('tracking.api.show');
+        Route::post('tracking/api/{containerNumber}/sync', [ContainerTrackingController::class, 'apiSyncContainerTracking'])->name('tracking.api.sync');
         Route::post('tracking/event', [ContainerTrackingController::class, 'addEvent'])->name('tracking.add-event');
         Route::delete('tracking/history/{id}', [ContainerTrackingController::class, 'deleteHistory'])->name('tracking.delete-history');
         Route::delete('tracking/clear-history', [ContainerTrackingController::class, 'clearAllHistory'])->name('tracking.clear-all-history');

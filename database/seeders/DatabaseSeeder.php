@@ -14,6 +14,7 @@ use App\Models\MasterShipment;
 use App\Models\OceanFreightTariff;
 use App\Models\Party;
 use App\Models\PartyRole;
+use App\Models\Port;
 use App\Models\ShipmentInvoice;
 use App\Models\ShipmentInvoiceItem;
 use App\Models\User;
@@ -85,6 +86,15 @@ class DatabaseSeeder extends Seeder
             'address' => 'طريق الإسكندرية الصحراوي - مجمع النقل المبرد',
         ]);
         PartyRole::firstOrCreate(['party_id' => $truckerNile->id, 'role' => 'TRUCKER']);
+
+        $maersk = Party::firstOrCreate(['code' => 'LINE-MAERSK'], ['legal_name' => 'Maersk Line A/S', 'tax_number' => 'DK-129831']);
+        PartyRole::firstOrCreate(['party_id' => $maersk->id, 'role' => 'SHIPPING_LINE']);
+
+        $hapag = Party::firstOrCreate(['code' => 'LINE-HAPAG'], ['legal_name' => 'Hapag-Lloyd AG', 'tax_number' => 'DE-881290']);
+        PartyRole::firstOrCreate(['party_id' => $hapag->id, 'role' => 'SHIPPING_LINE']);
+
+        $egaly = Port::where('code', 'EGALY')->first() ?? Port::firstOrCreate(['code' => 'EGALY'], ['name' => 'Alexandria Port (EGALY)', 'country' => 'Egypt', 'is_active' => true]);
+        $nlrtm = Port::where('code', 'NLRTM')->first() ?? Port::firstOrCreate(['code' => 'NLRTM'], ['name' => 'Rotterdam (NLRTM)', 'country' => 'Netherlands', 'is_active' => true]);
 
         // 5. Ocean Tariffs
         OceanFreightTariff::firstOrCreate([

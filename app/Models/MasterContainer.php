@@ -31,11 +31,18 @@ class MasterContainer extends Model
         'free_days',
         'returned_empty_at',
         'current_status',
+        'carrier_code',
+        'carrier_deep_link',
+        'iso_valid',
+        'eta',
+        'etd',
+        'last_sync_at',
     ];
 
     protected $casts = [
         'is_reefer' => 'boolean',
         'requires_cold_treatment' => 'boolean',
+        'iso_valid' => 'boolean',
         'target_temperature' => 'decimal:1',
         'ventilation_flow' => 'integer',
         'humidity_percent' => 'integer',
@@ -44,11 +51,19 @@ class MasterContainer extends Model
         'free_days' => 'integer',
         'discharged_at' => 'datetime',
         'returned_empty_at' => 'datetime',
+        'eta' => 'datetime',
+        'etd' => 'datetime',
+        'last_sync_at' => 'datetime',
     ];
 
     public function masterShipment(): BelongsTo
     {
         return $this->belongsTo(MasterShipment::class, 'master_shipment_id');
+    }
+
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(ContainerMilestone::class, 'master_container_id')->orderBy('occurred_at', 'asc');
     }
 
     public function trackingEvents(): HasMany

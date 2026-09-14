@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ContainerTrackingHistory;
 use App\Models\MasterContainer;
 use App\Models\User;
+use App\Services\Tracking\ContainerTrackingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -123,5 +124,67 @@ class ContainerTrackingTest extends TestCase
         $response->assertRedirect(route('tracking.index'));
 
         $this->assertEquals(0, ContainerTrackingHistory::count());
+    }
+
+    public function test_iso_6346_validation_identifies_valid_and_invalid_containers(): void
+    {
+        $service = app(ContainerTrackingService::class);
+
+        // Valid ISO 6346 container number (CSQU 305438-3)
+        $validResult = $service->validateIso6346('CSQU3054383');
+        $this->assertTrue($validResult['is_valid']);
+        $this->assertEquals('CSQ', $validResult['owner_code']);
+        $this->assertEquals('U', $validResult['category']);
+        $this->assertEquals('305438', $validResult['serial']);
+        $this->assertEquals(3, $validResult['check_digit']);
+        $this->assertEquals(3, $validResult['calculated_check_digit']);
+
+        // Invalid check digit (MSCU1234560 vs calculated)
+        $invalidResult = $service->validateIso6346('MSCU1234569');
+        $this->assertFalse($invalidResult['is_valid']);
+        $this->assertNotNull($invalidResult['error']);
+
+        // Malformed container number
+        $malformedResult = $service->validateIso6346('INVALID');
+        $this->assertFalse($malformedResult['is_valid']);
+    }
+
+    public function test_carrier_auto_detection_and_deep_link(): void
+    {
+        $service = app(ContainerTrackingService::class);
+
+        // MSC prefix
+        $mscCarrier = $service->detectCarrier('MSCU1234567');
+        $this->assertNotNull($mscCarrier);
+        $this->assertEquals('MSC', $mscCarrier->code);
+
+        $deepLink = $service->generateDeepLink('MSCU1234567', $mscCarrier);
+        $this->assertStringContainsString('msc.com', $deepLink);
+        $this->assertStringContainsString('MSCU1234567', $deepLink);
+
+        // Maersk prefix
+        $maerskCarrier = $service->detectCarrier('MAEU9988776');
+        $this->assertNotNull($maerskCarrier);
+        $this->assertEquals('MAERSK', $maerskCarrier->code);
+    }
+
+    public function test_api_container_tracking_returns_json_with_milestones(): void
+    {
+        $response = $this->actingAs($this->user)->getJson(route('tracking.api.show', 'CSQU3054383'));
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'data' => [
+                'container_number',
+                'iso',
+                'carrier',
+                'deep_link',
+                'milestones',
+            ],
+        ]);
+
+        $this->assertDatabaseHas('container_milestones', [
+            'container_number' => 'CSQU3054383',
+        ]);
     }
 }

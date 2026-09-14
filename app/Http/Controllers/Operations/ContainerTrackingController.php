@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Operations;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\SyncContainerTrackingJob;
 use App\Models\ContainerTrackingEvent;
 use App\Models\ContainerTrackingHistory;
 use App\Models\MasterContainer;
 use App\Models\MasterShipment;
+use App\Services\Tracking\ContainerTrackingService;
 use App\Services\Tracking\LiveWebScraperService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +19,8 @@ use Inertia\Response;
 class ContainerTrackingController extends Controller
 {
     public function __construct(
-        protected LiveWebScraperService $scraperService
+        protected LiveWebScraperService $scraperService,
+        protected ContainerTrackingService $trackingService
     ) {}
 
     /**
@@ -52,6 +56,10 @@ class ContainerTrackingController extends Controller
         $activeVessel = null;
         $carrierScraper = null;
         $trackingEvents = collect();
+        $isoValidation = null;
+        $detectedCarrier = null;
+        $carrierDeepLink = null;
+        $milestones = collect();
 
         // 1. Fetch recent tracking history for quick access
         $history = ContainerTrackingHistory::orderBy('last_tracked_at', 'desc')
@@ -110,20 +118,27 @@ class ContainerTrackingController extends Controller
                     );
                 }
             } else {
-                // Container tracking via FindTEU & Carrier EDI
-                $carrierScraper = $this->scraperService->scrapeContainer($searchNumber);
+                // Hybrid Container Tracking Architecture
+                $isoValidation = $this->trackingService->validateIso6346($searchNumber);
+                $detectedCarrier = $this->trackingService->detectCarrier($searchNumber);
+                $carrierDeepLink = $this->trackingService->generateDeepLink($searchNumber, $detectedCarrier);
 
-                // Find container by exact or partial container number in local DB
+                // Synchronize milestones and carrier data
+                $syncResult = $this->trackingService->syncMilestones($searchNumber);
+                $milestones = $syncResult['milestones'] ?? collect();
+
+                // Find container in local DB
                 $container = MasterContainer::with([
                     'masterShipment.shippingLine',
                     'masterShipment.pol',
                     'masterShipment.pod',
+                    'milestones' => fn ($q) => $q->orderBy('occurred_at', 'asc'),
                     'trackingEvents' => fn ($q) => $q->orderBy('occurred_at', 'desc'),
                 ])->where('container_number', 'LIKE', "%{$searchNumber}%")->first();
 
                 // If not found by container number, search by B/L or booking reference
                 if (! $container) {
-                    $shipment = MasterShipment::with(['containers.trackingEvents', 'shippingLine', 'pol', 'pod'])
+                    $shipment = MasterShipment::with(['containers.trackingEvents', 'containers.milestones', 'shippingLine', 'pol', 'pod'])
                         ->where('master_bl_number', $searchNumber)
                         ->orWhere('booking_reference', $searchNumber)
                         ->orWhere('file_number', $searchNumber)
@@ -134,22 +149,13 @@ class ContainerTrackingController extends Controller
                     }
                 }
 
-                if ($carrierScraper) {
-                    $activeContainer = $carrierScraper;
-                    $trackingEvents = collect($carrierScraper['events'] ?? []);
-                    if ($container) {
-                        $activeShipment = $container->masterShipment;
-                    }
-                } elseif ($container) {
+                if ($container) {
                     $activeContainer = $container;
                     $activeShipment = $container->masterShipment;
                     $trackingEvents = $container->trackingEvents;
 
-                    // Ensure at least sample standard milestones exist if none recorded
-                    if ($trackingEvents->isEmpty()) {
-                        $this->seedSampleTrackingEvents($container);
-                        $container->load(['trackingEvents' => fn ($q) => $q->orderBy('occurred_at', 'desc')]);
-                        $trackingEvents = $container->trackingEvents;
+                    if ($container->milestones->isNotEmpty()) {
+                        $milestones = $container->milestones;
                     }
                 } else {
                     $activeContainer = $this->generateVirtualTrackingRecord($searchNumber);
@@ -165,16 +171,16 @@ class ContainerTrackingController extends Controller
                     ],
                     [
                         'user_id' => auth()->id(),
-                        'master_container_id' => is_object($activeContainer) ? $activeContainer->id : null,
-                        'shipping_line' => is_object($activeContainer) ? ($activeContainer->masterShipment?->shippingLine?->legal_name ?? $carrierScraper['carrier_name'] ?? 'Carrier') : ($carrierScraper['carrier_name'] ?? $activeContainer['shipping_line'] ?? 'Carrier'),
-                        'booking_reference' => is_object($activeContainer) ? ($activeContainer->masterShipment?->booking_reference ?? 'REF-9988') : ($carrierScraper['booking_reference'] ?? $activeContainer['booking_reference'] ?? 'REF-9988'),
-                        'master_bl_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->master_bl_number ?? 'MBL-88001') : ($carrierScraper['master_bl_number'] ?? $activeContainer['master_bl_number'] ?? 'MBL-88001'),
-                        'vessel_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->vessel_name ?? 'CMA CGM ALEXANDER') : ($carrierScraper['vessel_name'] ?? $activeContainer['vessel_name'] ?? 'Vessel'),
-                        'voyage_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->voyage_number ?? '2601W') : ($carrierScraper['voyage_number'] ?? $activeContainer['voyage_number'] ?? '2601W'),
-                        'pol_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pol?->name ?? 'Alexandria Port (EGALY)') : ($carrierScraper['from_location'] ?? $activeContainer['pol_name'] ?? 'Alexandria, Egypt'),
-                        'pod_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pod?->name ?? 'Rotterdam (NLRTM)') : ($carrierScraper['to_location'] ?? $activeContainer['pod_name'] ?? 'Rotterdam'),
-                        'current_status' => is_object($activeContainer) ? ($activeContainer->current_status ?? 'SAILED_IN_TRANSIT') : ($carrierScraper['last_status']['event'] ?? $activeContainer['current_status'] ?? 'IN_TRANSIT'),
-                        'last_location' => is_object($activeContainer) ? ($trackingEvents->first()?->location_name ?? 'In Transit') : ($carrierScraper['last_status']['location'] ?? 'In Transit'),
+                        'master_container_id' => is_object($activeContainer) && isset($activeContainer->id) ? $activeContainer->id : null,
+                        'shipping_line' => $detectedCarrier?->name ?? (is_object($activeContainer) ? ($activeContainer->masterShipment?->shippingLine?->legal_name ?? 'Carrier') : ($activeContainer['shipping_line'] ?? 'Carrier')),
+                        'booking_reference' => is_object($activeContainer) ? ($activeContainer->masterShipment?->booking_reference ?? 'REF-9988') : ($activeContainer['booking_reference'] ?? 'REF-9988'),
+                        'master_bl_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->master_bl_number ?? 'MBL-88001') : ($activeContainer['master_bl_number'] ?? 'MBL-88001'),
+                        'vessel_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->vessel_name ?? ($detectedCarrier ? "{$detectedCarrier->name} EXPRESS" : 'Vessel')) : ($activeContainer['vessel_name'] ?? 'Vessel'),
+                        'voyage_number' => is_object($activeContainer) ? ($activeContainer->masterShipment?->voyage_number ?? '2601W') : ($activeContainer['voyage_number'] ?? '2601W'),
+                        'pol_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pol?->name ?? 'Alexandria Port (EGALY)') : ($activeContainer['pol_name'] ?? 'Alexandria, Egypt'),
+                        'pod_name' => is_object($activeContainer) ? ($activeContainer->masterShipment?->pod?->name ?? 'Rotterdam (NLRTM)') : ($activeContainer['pod_name'] ?? 'Rotterdam'),
+                        'current_status' => is_object($activeContainer) ? ($activeContainer->current_status ?? 'SAILED_IN_TRANSIT') : ($activeContainer['current_status'] ?? 'IN_TRANSIT'),
+                        'last_location' => is_object($activeContainer) ? ($trackingEvents->first()?->location_name ?? 'In Transit') : 'In Transit',
                         'last_tracked_at' => now(),
                     ]
                 );
@@ -197,6 +203,49 @@ class ContainerTrackingController extends Controller
             'history' => $history,
             'system_containers' => $systemContainers,
             'system_vessels' => $systemVessels,
+            'iso_validation' => $isoValidation,
+            'detected_carrier' => $detectedCarrier,
+            'carrier_deep_link' => $carrierDeepLink,
+            'milestones' => $milestones,
+        ]);
+    }
+
+    /**
+     * API Endpoint: Get container tracking data and milestone timeline as JSON.
+     */
+    public function apiGetContainerTracking(string $containerNumber): JsonResponse
+    {
+        $data = $this->trackingService->syncMilestones($containerNumber);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ]);
+    }
+
+    /**
+     * API Endpoint: Trigger live container synchronization or background job.
+     */
+    public function apiSyncContainerTracking(Request $request, string $containerNumber): JsonResponse
+    {
+        $async = $request->boolean('async', false);
+
+        if ($async) {
+            SyncContainerTrackingJob::dispatch($containerNumber);
+
+            return response()->json([
+                'status' => 'queued',
+                'message' => 'Tracking synchronization job dispatched to background queue.',
+                'container_number' => strtoupper(trim($containerNumber)),
+            ]);
+        }
+
+        $data = $this->trackingService->syncMilestones($containerNumber);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Container tracking and milestones synchronized successfully.',
+            'data' => $data,
         ]);
     }
 
