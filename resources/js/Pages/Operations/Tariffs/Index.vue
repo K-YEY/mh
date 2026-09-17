@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { Anchor, Search, Clock } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const { formatMoney, currentCurrency } = useCurrency()
 
 const props = defineProps({
   tariffs: Array,

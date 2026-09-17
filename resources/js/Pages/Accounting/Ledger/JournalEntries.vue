@@ -1,9 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { BookOpen, Scale, Plus } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
+const { formatMoney, currentCurrency } = useCurrency()
 
 const props = defineProps({
   entries: Object,
@@ -70,8 +72,8 @@ const props = defineProps({
                 <th class="py-2">{{ isAr ? 'حساب دفتر اليومية' : 'GL Account' }}</th>
                 <th class="py-2">{{ isAr ? 'الطرف (دفتر مساعد)' : 'Sub-ledger Party' }}</th>
                 <th class="py-2">{{ isAr ? 'الوصف' : 'Description' }}</th>
-                <th class="py-2 text-right">{{ isAr ? 'مدين ($)' : 'Debit ($)' }}</th>
-                <th class="py-2 text-right">{{ isAr ? 'دائن ($)' : 'Credit ($)' }}</th>
+                <th class="py-2 text-right">{{ isAr ? 'مدين (' + currentCurrency.symbol + ')' : 'Debit (' + currentCurrency.code + ')' }}</th>
+                <th class="py-2 text-right">{{ isAr ? 'دائن (' + currentCurrency.symbol + ')' : 'Credit (' + currentCurrency.code + ')' }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-zinc-200 font-mono">
@@ -86,10 +88,10 @@ const props = defineProps({
                   {{ line.description }}
                 </td>
                 <td class="py-2 text-right text-zinc-950 font-bold">
-                  {{ line.debit > 0 ? '$' + Number(line.debit).toFixed(2) : '-' }}
+                  {{ line.debit > 0 ? formatMoney(line.debit_base || line.debit) : '-' }}
                 </td>
                 <td class="py-2 text-right text-zinc-950 font-bold">
-                  {{ line.credit > 0 ? '$' + Number(line.credit).toFixed(2) : '-' }}
+                  {{ line.credit > 0 ? formatMoney(line.credit_base || line.credit) : '-' }}
                 </td>
               </tr>
             </tbody>

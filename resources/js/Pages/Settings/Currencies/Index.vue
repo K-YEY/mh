@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
-import { DollarSign, Plus, Coins, RefreshCw, CheckCircle2, Pencil, Trash2 } from 'lucide-vue-next'
+import { useCurrency } from '@/Composables/useCurrency'
+import { DollarSign, Plus, Coins, RefreshCw, CheckCircle2, Pencil, Trash2, Eye } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const { currentCurrency, switchCurrency, getFlag } = useCurrency()
 
 const props = defineProps({
   currencies: Array,
@@ -140,7 +142,10 @@ const syncFxRates = () => {
           <tbody class="divide-y divide-zinc-200 font-sans">
             <tr v-for="c in currencies" :key="c.code" class="hover:bg-zinc-50 transition-colors">
               <td class="px-4 py-3 font-mono font-bold text-zinc-950 text-sm">
-                {{ c.code }}
+                <div class="flex items-center gap-2">
+                  <span class="text-lg leading-none">{{ getFlag(c.code) }}</span>
+                  <span>{{ c.code }}</span>
+                </div>
               </td>
               <td class="px-4 py-3 font-bold text-zinc-950">
                 {{ c.name }}
@@ -152,16 +157,31 @@ const syncFxRates = () => {
                 {{ c.decimal_places }} {{ isAr ? 'خانة عشرية' : 'Places' }}
               </td>
               <td class="px-4 py-3">
-                <span v-if="c.is_base_currency" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950 flex items-center gap-1 w-max">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
-                  <span>{{ isAr ? 'العملة الأساسية للنظام' : 'BASE SYSTEM CURRENCY' }}</span>
-                </span>
-                <span v-else class="text-zinc-500 font-mono text-[11px]">
-                  {{ isAr ? 'عملة أجنبية' : 'Foreign Currency' }}
-                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span v-if="c.is_base_currency" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-zinc-950 text-white border border-zinc-950 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+                    <span>{{ isAr ? 'العملة الأساسية' : 'BASE' }}</span>
+                  </span>
+                  <span v-if="c.code === currentCurrency.code" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>{{ isAr ? 'معروضة حالياً' : 'ACTIVE DISPLAY' }}</span>
+                  </span>
+                </div>
               </td>
               <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-1.5">
+                  <!-- Switch Display Currency Button -->
+                  <button
+                    v-if="c.code !== currentCurrency.code"
+                    type="button"
+                    @click="switchCurrency(c.code)"
+                    class="px-2 py-1 rounded-lg text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 flex items-center gap-1 transition shadow-2xs cursor-pointer"
+                    :title="isAr ? 'عرض بيانات النظام بهذه العملة' : 'Switch System Display'"
+                  >
+                    <Eye class="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{{ isAr ? 'عرض بها' : 'Display' }}</span>
+                  </button>
+
                   <!-- Edit Button -->
                   <button
                     type="button"

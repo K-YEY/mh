@@ -2,9 +2,11 @@
 import { ref, computed } from 'vue'
 import { router, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { BookOpen, Printer, Calendar, Filter, ArrowUpDown, Building2 } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
+const { formatMoney: fmtCurrency, currentCurrency } = useCurrency()
 
 const props = defineProps({
   accounts: Array,
@@ -37,7 +39,7 @@ const printReport = () => {
 const formatMoney = (val) => {
   const num = parseFloat(val) || 0
   if (Math.abs(num) < 0.005) return '-'
-  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return fmtCurrency(num)
 }
 
 const totalPeriodDebit = computed(() => {

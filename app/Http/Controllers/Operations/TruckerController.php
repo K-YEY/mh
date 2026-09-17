@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Operations;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\Party;
 use App\Models\PartyRole;
 use App\Models\Trucker;
@@ -52,6 +53,8 @@ class TruckerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $truckerAccount = Account::where('code', '21200')->first();
+
         // 1. Create corresponding Party record for sub-ledger & billing compatibility
         $party = Party::create([
             'code' => $validated['code'],
@@ -62,6 +65,7 @@ class TruckerController extends Controller
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
+            'account_id' => $truckerAccount?->id,
             'is_active' => true,
         ]);
 

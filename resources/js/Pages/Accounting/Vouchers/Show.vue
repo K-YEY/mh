@@ -1,9 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { Wallet, Printer, ArrowLeft, ArrowRight, CheckCircle2, Building2, Calendar, FileText, Scale } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
+const { formatMoney: fmtSysMoney, currentCurrency, activeCurrencies } = useCurrency()
 
 const props = defineProps({
   voucher: Object,
@@ -162,16 +164,16 @@ const formatMoney = (val, currency) => {
               <tr>
                 <th class="p-2.5">{{ isAr ? 'كود الحساب' : 'Account Code' }}</th>
                 <th class="p-2.5 font-sans">{{ isAr ? 'اسم الحساب' : 'Account Name' }}</th>
-                <th class="p-2.5 text-right">{{ isAr ? 'مدين ($)' : 'Debit ($)' }}</th>
-                <th class="p-2.5 text-right">{{ isAr ? 'دائن ($)' : 'Credit ($)' }}</th>
+                <th class="p-2.5 text-right">{{ isAr ? 'مدين (' + currentCurrency.symbol + ')' : 'Debit (' + currentCurrency.code + ')' }}</th>
+                <th class="p-2.5 text-right">{{ isAr ? 'دائن (' + currentCurrency.symbol + ')' : 'Credit (' + currentCurrency.code + ')' }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-zinc-200">
               <tr v-for="line in voucher.journal_entry.lines" :key="line.id" class="hover:bg-zinc-50">
                 <td class="p-2.5 font-bold text-zinc-900">{{ line.account?.code }}</td>
                 <td class="p-2.5 font-sans text-zinc-800">{{ isAr ? line.account?.name_ar : line.account?.name_en }}</td>
-                <td class="p-2.5 text-right font-bold">{{ line.debit > 0 ? '$' + Number(line.debit).toFixed(2) : '-' }}</td>
-                <td class="p-2.5 text-right font-bold">{{ line.credit > 0 ? '$' + Number(line.credit).toFixed(2) : '-' }}</td>
+                <td class="p-2.5 text-right font-bold">{{ line.debit > 0 ? fmtSysMoney(line.debit_base || line.debit) : '-' }}</td>
+                <td class="p-2.5 text-right font-bold">{{ line.credit > 0 ? fmtSysMoney(line.credit_base || line.credit) : '-' }}</td>
               </tr>
             </tbody>
           </table>

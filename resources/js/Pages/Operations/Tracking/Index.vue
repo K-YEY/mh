@@ -68,13 +68,34 @@ const quickContainers = [
   { code: 'MSCU5261728', type: "40'HC", line: 'MSC Line', route: 'Alexandria → Valencia' },
 ]
 
-const quickVessels = [
-  { name: 'PORT SAID VOYAGER', route: 'Port Said Anch → El Dekheila' },
-  { name: 'CMA CGM JACQUES SAADE', route: 'Alexandria → Rotterdam' },
-  { name: 'EVER GIVEN', route: 'Port Said → Felixstowe' },
-  { name: 'MAERSK MC-KINNEY MOLLER', route: 'Port Said → Bremerhaven' },
-  { name: 'MSC GULSUN', route: 'Alexandria → Singapore' },
-]
+const quickVessels = computed(() => {
+  const result = []
+  if (props.system_vessels && props.system_vessels.length > 0) {
+    props.system_vessels.forEach(v => {
+      result.push({
+        name: v.name,
+        route: v.route || `${v.pol || 'Alexandria'} → ${v.pod || 'Rotterdam'}`
+      })
+    })
+  }
+
+  const defaults = [
+    { name: 'MAERSK MC-KINNEY MOLLER', route: 'Alexandria → Rotterdam' },
+    { name: 'CMA CGM JACQUES SAADE', route: 'Alexandria → Rotterdam' },
+    { name: 'EVER GIVEN', route: 'Rotterdam (At Berth)' },
+    { name: 'SIMONE MARTINI', route: 'Trapani → Favignana (Egadi)' },
+    { name: 'PORT SAID VOYAGER', route: 'Port Said Anch → El Dekheila' },
+    { name: 'MSC GULSUN', route: 'Xiamen → Long Beach' },
+  ]
+
+  defaults.forEach(d => {
+    if (!result.some(r => r.name === d.name)) {
+      result.push(d)
+    }
+  })
+
+  return result.slice(0, 6)
+})
 
 const handleSearch = () => {
   if (!query.value.trim()) return

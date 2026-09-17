@@ -1,9 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { DollarSign, Plus, Printer, Eye } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
+const { formatMoney, currentCurrency } = useCurrency()
 
 const props = defineProps({
   invoices: Object,
@@ -74,7 +76,10 @@ const props = defineProps({
               <div class="text-slate-500">{{ isAr ? 'الاستحقاق:' : 'Due:' }} {{ formatDateTime(inv.due_date) }}</div>
             </td>
             <td class="p-4 font-mono font-black text-blue-950 text-sm">
-              ${{ inv.total_amount }} {{ inv.currency_code }}
+              <div>{{ formatMoney(inv.total_amount, inv.currency_code) }}</div>
+              <div v-if="currentCurrency.code !== inv.currency_code" class="text-[10px] text-slate-400 font-normal">
+                {{ isAr ? 'الأصل:' : 'Orig:' }} {{ inv.total_amount }} {{ inv.currency_code }}
+              </div>
             </td>
             <td class="p-4">
               <div class="flex items-center gap-2">

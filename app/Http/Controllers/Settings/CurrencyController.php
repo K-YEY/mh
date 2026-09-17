@@ -88,4 +88,19 @@ class CurrencyController extends Controller
 
         return redirect()->back()->with('success', 'تم حذف العملة بنجاح.');
     }
+
+    /**
+     * Switch the active display currency for the user session.
+     */
+    public function switchCurrency(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'currency' => 'required|string|exists:currencies,code',
+        ]);
+
+        $code = strtoupper($validated['currency']);
+        $request->session()->put('display_currency', $code);
+
+        return redirect()->back()->with('success', "تم تبديل عملة النظام المعروضة إلى ({$code}).");
+    }
 }

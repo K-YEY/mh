@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { 
   Ship, 
   Boxes, 
@@ -23,6 +24,7 @@ import {
 } from 'lucide-vue-next'
 
 const { isAr, dir, formatDateTime } = useI18n()
+const { formatMoney, currentCurrency } = useCurrency()
 
 const props = defineProps({
   metrics: Object,
@@ -156,14 +158,14 @@ const props = defineProps({
       <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group hover:-translate-y-0.5 transition-all">
         <div class="flex items-center justify-between">
           <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            {{ isAr ? 'إجمالي المبيعات' : 'Invoiced Revenue' }}
+            {{ isAr ? 'إجمالي المبيعات' : 'Invoiced Revenue' }} ({{ currentCurrency.symbol }})
           </span>
           <div class="w-9 h-9 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs">
             <DollarSign class="w-4.5 h-4.5" />
           </div>
         </div>
         <div>
-          <div class="text-2xl font-extrabold text-slate-900 font-mono tracking-tight">${{ Number(metrics.total_revenue || 0).toLocaleString() }}</div>
+          <div class="text-2xl font-extrabold text-slate-900 font-mono tracking-tight">{{ formatMoney(metrics.total_revenue || 0) }}</div>
           <p class="text-[11px] text-slate-500 mt-1.5 font-medium">
             {{ isAr ? 'فواتير العملاء المرحلة' : 'Posted AR Invoices' }}
           </p>
@@ -174,14 +176,14 @@ const props = defineProps({
       <div class="shadcn-card p-5 space-y-3 relative overflow-hidden group hover:-translate-y-0.5 transition-all bg-gradient-to-br from-[#1d1e24] via-[#121316] to-[#0c0d0f] text-white border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.3)]">
         <div class="flex items-center justify-between">
           <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">
-            {{ isAr ? 'صافي أرباح العمليات' : 'Operating Margin' }}
+            {{ isAr ? 'صافي أرباح العمليات' : 'Operating Margin' }} ({{ currentCurrency.symbol }})
           </span>
           <div class="w-9 h-9 rounded-2xl bg-white/10 text-emerald-400 flex items-center justify-center backdrop-blur-md transition-transform group-hover:scale-110">
             <TrendingUp class="w-4.5 h-4.5" />
           </div>
         </div>
         <div>
-          <div class="text-2xl font-extrabold text-white font-mono tracking-tight">+${{ Number(metrics.net_profit || 0).toLocaleString() }}</div>
+          <div class="text-2xl font-extrabold text-white font-mono tracking-tight">+{{ formatMoney(metrics.net_profit || 0) }}</div>
           <p class="text-[11px] text-slate-300 mt-1.5 font-medium flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>{{ isAr ? 'أرباح الرحلات المسجلة' : 'Total Job Net Margin' }}</span>

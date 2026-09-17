@@ -140,8 +140,9 @@ class DatabaseSeeder extends Seeder
         $cExp = Account::where('code', '51100')->first();
 
         // 8. Charge Items
-        $ciFreight = ChargeItem::firstOrCreate(['code' => 'OFRT'], ['name_ar' => 'نولون شحن بحري مبرد', 'name_en' => 'Ocean Freight Reefer', 'revenue_account_id' => $cRev->id, 'expense_account_id' => $cExp->id]);
-        $ciTHC = ChargeItem::firstOrCreate(['code' => 'THC'], ['name_ar' => 'رسوم تفريغ وتداول بالحاوية', 'name_en' => 'Terminal Handling Charge (THC)', 'revenue_account_id' => $cRev->id, 'expense_account_id' => $cExp->id]);
+        $this->call(ChargeItemsSeeder::class);
+        $ciFreight = ChargeItem::where('code', 'OFRT')->first();
+        $ciTHC = ChargeItem::where('code', 'THC')->first();
 
         // 9. Master Shipment & Reefer Container
         $master = MasterShipment::firstOrCreate(['file_number' => 'EXP-AGRI-2026-0001'], [

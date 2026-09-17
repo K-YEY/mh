@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\AccountController;
+use App\Http\Controllers\Accounting\ChargeItemController;
 use App\Http\Controllers\Accounting\ExchangeRateController;
 use App\Http\Controllers\Accounting\FinancialReportController;
 use App\Http\Controllers\Accounting\InvoiceController;
@@ -68,6 +69,8 @@ Route::middleware('auth')->group(function () {
         Route::put('accounts/{account}', [AccountController::class, 'update'])->name('accounts.update');
         Route::delete('accounts/{account}', [AccountController::class, 'destroy'])->name('accounts.destroy');
 
+        Route::resource('charge-items', ChargeItemController::class)->only(['index', 'store', 'update', 'destroy']);
+
         Route::resource('invoices', InvoiceController::class);
         Route::resource('vouchers', PaymentVoucherController::class);
 
@@ -115,6 +118,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('ports/{port}', [PortController::class, 'destroy'])->name('ports.destroy');
 
         Route::get('currencies', [CurrencyController::class, 'index'])->name('currencies.index');
+        Route::post('currencies/switch', [CurrencyController::class, 'switchCurrency'])->name('currencies.switch');
         Route::post('currencies', [CurrencyController::class, 'store'])->name('currencies.store');
         Route::put('currencies/{currency}', [CurrencyController::class, 'update'])->name('currencies.update');
         Route::delete('currencies/{currency}', [CurrencyController::class, 'destroy'])->name('currencies.destroy');

@@ -197,4 +197,21 @@ class FinancialAccountingTest extends TestCase
                 ->where('voucher.amount', '5000.00');
         });
     }
+
+    public function test_user_can_switch_system_display_currency(): void
+    {
+        $response = $this->actingAs($this->user)->post(route('currencies.switch'), [
+            'currency' => 'USD',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('display_currency', 'USD');
+
+        // Verify that subsequent inertia request has current_currency as USD
+        $pageResponse = $this->actingAs($this->user)->get(route('dashboard'));
+        $pageResponse->assertStatus(200);
+        $pageResponse->assertInertia(function ($page) {
+            $page->where('current_currency.code', 'USD');
+        });
+    }
 }

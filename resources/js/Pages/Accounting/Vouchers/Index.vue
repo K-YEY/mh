@@ -1,9 +1,11 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { Wallet, Plus } from 'lucide-vue-next'
 
 const { isAr, formatDateTime } = useI18n()
+const { formatMoney, currentCurrency } = useCurrency()
 
 const props = defineProps({
   vouchers: Object,
@@ -73,7 +75,10 @@ const props = defineProps({
               {{ formatDateTime(v.created_at || v.payment_date) }}
             </td>
             <td class="p-4 font-mono font-bold text-zinc-950 text-sm" :class="isAr ? 'text-left' : 'text-right'">
-              ${{ v.amount }} {{ v.currency_code }}
+              <div>{{ formatMoney(v.amount, v.currency_code) }}</div>
+              <div v-if="currentCurrency.code !== v.currency_code" class="text-[10px] text-zinc-400 font-normal">
+                {{ isAr ? 'الأصل:' : 'Orig:' }} {{ v.amount }} {{ v.currency_code }}
+              </div>
             </td>
             <td class="p-4 text-center">
               <Link

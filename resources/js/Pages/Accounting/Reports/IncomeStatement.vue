@@ -2,9 +2,11 @@
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { TrendingUp, Printer, Calendar, Filter, DollarSign, Percent, ArrowUpRight, ArrowDownRight } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const { formatMoney: fmtCurrency, currentCurrency } = useCurrency()
 
 const props = defineProps({
   revenues: Object,
@@ -34,7 +36,7 @@ const printReport = () => {
 
 const formatMoney = (val) => {
   const num = parseFloat(val) || 0
-  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return fmtCurrency(num)
 }
 
 const grossMarginPct = computed(() => {

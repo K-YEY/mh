@@ -72,24 +72,29 @@ class ContainerTrackingController extends Controller
             ->take(15)
             ->get();
 
-        // 3. Fetch list of vessels from MasterShipment
+        // 3. Fetch list of vessels from MasterShipment with actual port manifest
         $systemVessels = MasterShipment::query()
+            ->with(['pol', 'pod'])
             ->whereNotNull('vessel_name')
             ->where('vessel_name', '!=', '')
-            ->select('vessel_name', 'voyage_number')
-            ->distinct()
             ->take(8)
             ->get()
-            ->map(fn ($s) => ['name' => $s->vessel_name, 'voyage' => $s->voyage_number])
+            ->map(fn ($s) => [
+                'name' => $s->vessel_name,
+                'voyage' => $s->voyage_number,
+                'pol' => $s->pol?->name,
+                'pod' => $s->pod?->name,
+                'route' => ($s->pol?->name && $s->pod?->name) ? "{$s->pol->name} → {$s->pod->name}" : null,
+            ])
             ->toArray();
 
         if (empty($systemVessels)) {
             $systemVessels = [
-                ['name' => 'EVER GIVEN', 'voyage' => '008E'],
-                ['name' => 'MAERSK MC-KINNEY MOLLER', 'voyage' => '2604E'],
-                ['name' => 'CMA CGM JACQUES SAADE', 'voyage' => '041FRA'],
-                ['name' => 'MSC GULSUN', 'voyage' => 'MS992W'],
-                ['name' => 'AL ZUBARA EXPRESS', 'voyage' => 'HL2601'],
+                ['name' => 'MAERSK MC-KINNEY MOLLER', 'voyage' => '2604E', 'route' => 'Alexandria Port → Port of Rotterdam'],
+                ['name' => 'CMA CGM JACQUES SAADE', 'voyage' => '041FRA', 'route' => 'Alexandria Port → Port of Rotterdam'],
+                ['name' => 'EVER GIVEN', 'voyage' => '008E', 'route' => 'Port of Rotterdam (At Berth)'],
+                ['name' => 'SIMONE MARTINI', 'voyage' => 'SM01', 'route' => 'Trapani → Favignana (Egadi)'],
+                ['name' => 'PORT SAID VOYAGER', 'voyage' => 'PSV02', 'route' => 'Port Said Anch → El Dekheila'],
             ];
         }
 
@@ -190,6 +195,12 @@ class ContainerTrackingController extends Controller
             $history = ContainerTrackingHistory::orderBy('last_tracked_at', 'desc')
                 ->take(20)
                 ->get();
+        }
+
+        // Ensure initial vessel telemetry is always present for Vessel AIS mode
+        if (empty($activeVessel)) {
+            $defaultVesselName = ! empty($systemVessels[0]['name']) ? $systemVessels[0]['name'] : 'CMA CGM JACQUES SAADE';
+            $activeVessel = $this->scraperService->scrapeVessel($defaultVesselName);
         }
 
         return Inertia::render('Operations/Tracking/Index', [

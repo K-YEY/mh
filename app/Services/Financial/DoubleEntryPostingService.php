@@ -44,14 +44,15 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
-            $arAccountId = Account::where('code', '11200')->value('id') ?? 2;
-            $apAccountId = Account::where('code', '21100')->value('id') ?? 3;
+            $partyAccountId = $isCustomerInvoice
+                ? $invoice->party->getEffectiveAccountId('AR')
+                : $invoice->party->getEffectiveAccountId('AP');
 
             if ($isCustomerInvoice) {
-                // AR Account (11200) Debit
+                // AR Account Debit (Party's specific account or role control account)
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $arAccountId, // Accounts Receivable
+                    'account_id' => $partyAccountId, // Customer Account
                     'party_id' => $invoice->party_id,
                     'description' => "AR - Invoice {$invoice->invoice_number}",
                     'currency_code' => $invoice->currency_code,
@@ -88,10 +89,10 @@ class DoubleEntryPostingService
                     ]);
                 }
 
-                // AP Account (21100) Credit
+                // AP Account Credit (Party's specific account or role control account)
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $apAccountId, // Accounts Payable
+                    'account_id' => $partyAccountId, // Vendor / Carrier / Broker Account
                     'party_id' => $invoice->party_id,
                     'description' => "AP - Bill {$invoice->invoice_number}",
                     'currency_code' => $invoice->currency_code,
@@ -139,8 +140,9 @@ class DoubleEntryPostingService
                 'posted_at' => now(),
             ]);
 
-            $arAccountId = Account::where('code', '11200')->value('id') ?? 2;
-            $apAccountId = Account::where('code', '21100')->value('id') ?? 3;
+            $partyAccountId = $isReceipt
+                ? $voucher->party->getEffectiveAccountId('AR')
+                : $voucher->party->getEffectiveAccountId('AP');
 
             if ($isReceipt) {
                 // Bank/Cash Account Debit
@@ -155,10 +157,10 @@ class DoubleEntryPostingService
                     'credit' => 0.00,
                 ]);
 
-                // AR Account Credit
+                // AR Account Credit (Party's specific account)
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $arAccountId, // AR
+                    'account_id' => $partyAccountId, // Party Account
                     'party_id' => $voucher->party_id,
                     'description' => 'AR Payment received',
                     'currency_code' => $voucher->currency_code,
@@ -167,10 +169,10 @@ class DoubleEntryPostingService
                     'credit' => $voucher->amount,
                 ]);
             } else {
-                // AP Account Debit
+                // AP Account Debit (Party's specific account)
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $apAccountId, // AP
+                    'account_id' => $partyAccountId, // Party Account
                     'party_id' => $voucher->party_id,
                     'description' => 'AP Vendor payment made',
                     'currency_code' => $voucher->currency_code,

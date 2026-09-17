@@ -133,7 +133,10 @@ class LedgerReportController extends Controller
     public function subLedgerStatement(Request $request): Response
     {
         $partyId = $request->input('party_id');
-        $parties = Party::where('is_active', true)->get();
+        $parties = Party::with(['roles', 'account'])
+            ->where('is_active', true)
+            ->orderBy('legal_name')
+            ->get();
 
         $lines = collect();
         $selectedParty = null;
@@ -141,7 +144,7 @@ class LedgerReportController extends Controller
         $totalCreditBase = 0.00;
 
         if ($partyId) {
-            $selectedParty = Party::find($partyId);
+            $selectedParty = Party::with(['roles', 'account'])->find($partyId);
             $lines = JournalEntryLine::with(['journalEntry', 'account', 'currency'])
                 ->where('party_id', $partyId)
                 ->orderBy('id', 'asc')

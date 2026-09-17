@@ -2,18 +2,28 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import QuickSearchModal from '@/Components/QuickSearchModal.vue'
 import { 
   Anchor, LayoutDashboard, Ship, Calculator, Receipt, Coins, ShieldCheck, 
   TrendingUp, BookOpen, Building2, FileCheck2, User, Search, Bell, 
-  PanelLeft, ChevronRight, History, LogOut, Globe, Cpu,
-  Truck, Scale, FileSpreadsheet, BarChart3, Clock
+  PanelLeft, ChevronRight, ChevronDown, History, LogOut, Globe, Cpu,
+  Truck, Scale, FileSpreadsheet, BarChart3, Clock, Layers
 } from 'lucide-vue-next'
 
 const isSidebarOpen = ref(true)
 const isSearchOpen = ref(false)
+const isCurrencyMenuOpen = ref(false)
+const currencyMenuRef = ref(null)
+
 const page = usePage()
 const { isAr, dir, toggleLocale, formatDateTime } = useI18n()
+const { currentCurrency, baseCurrency, activeCurrencies, switchCurrency, getFlag } = useCurrency()
+
+const selectCurrency = (code) => {
+  isCurrencyMenuOpen.value = false
+  switchCurrency(code)
+}
 
 const now = ref(new Date())
 let clockTimer = null
@@ -25,8 +35,15 @@ const handleGlobalKeydown = (e) => {
   }
 }
 
+const handleClickOutside = (e) => {
+  if (currencyMenuRef.value && !currencyMenuRef.value.contains(e.target)) {
+    isCurrencyMenuOpen.value = false
+  }
+}
+
 onMounted(() => {
   window.addEventListener('keydown', handleGlobalKeydown)
+  window.addEventListener('click', handleClickOutside)
   clockTimer = setInterval(() => {
     now.value = new Date()
   }, 1000)
@@ -34,6 +51,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleGlobalKeydown)
+  window.removeEventListener('click', handleClickOutside)
   if (clockTimer) clearInterval(clockTimer)
 })
 
@@ -41,7 +59,6 @@ const currentDateTime = computed(() => formatDateTime(now.value))
 
 const authUser = computed(() => page.props.auth?.user || {})
 const userRole = computed(() => authUser.value.role || 'super-admin')
-const baseCurrency = computed(() => page.props.base_currency || { code: 'EGP', symbol: 'E£' })
 
 // Fully reactive route matcher tracking page.url across client-side Inertia transitions
 const isItemActive = (pattern, href) => {
@@ -124,11 +141,31 @@ const navGroups = computed(() => [
     title: isAr.value ? 'المحاسبة والمالية' : 'FINANCIAL ACCOUNTING',
     items: [
       { 
-        name: isAr.value ? 'دليل الحسابات (COA)' : 'Chart of Accounts (COA)', 
+        name: isAr.value ? 'شجرة الحسابات (COA)' : 'Chart of Accounts (COA)', 
         href: route('accounts.index'), 
         icon: BookOpen, 
         pattern: 'accounts.*', 
         badge: isAr.value ? 'شجري' : 'Tree' 
+      },
+      { 
+        name: isAr.value ? 'حسابات الشركات والأطراف' : 'Company Accounts (Parties)', 
+        href: route('parties.index'), 
+        icon: Building2, 
+        pattern: 'parties.*', 
+        badge: isAr.value ? 'أطراف' : 'Ledger' 
+      },
+      { 
+        name: isAr.value ? 'خطوات وعناصر التكاليف' : 'Freight Charge Steps', 
+        href: route('charge-items.index'), 
+        icon: Layers, 
+        pattern: 'charge-items.*', 
+        badge: isAr.value ? 'ربط' : 'Map' 
+      },
+      { 
+        name: isAr.value ? 'كشف حساب تفصيلي' : 'Party Statement', 
+        href: route('ledger.statement'), 
+        icon: FileSpreadsheet, 
+        pattern: 'ledger.statement*' 
       },
       { 
         name: isAr.value ? 'الفواتير وفواتير الموردين' : 'Invoices & Bills', 
@@ -159,12 +196,6 @@ const navGroups = computed(() => [
         href: route('accounting.reports.general-ledger'), 
         icon: FileSpreadsheet, 
         pattern: 'accounting.reports.general-ledger*' 
-      },
-      { 
-        name: isAr.value ? 'كشف حساب الأطراف' : 'Party Sub-Ledger', 
-        href: route('ledger.statement'), 
-        icon: Building2, 
-        pattern: 'ledger.statement*' 
       },
       { 
         name: isAr.value ? 'ميزان المراجعة (Trial Balance)' : 'Trial Balance', 
@@ -389,10 +420,77 @@ const navGroups = computed(() => [
             <Search class="w-4 h-4" />
           </button>
 
-          <!-- Base Currency Pill -->
-          <div class="hidden sm:flex items-center gap-1.5 text-xs bg-white/90 border border-slate-200/80 px-3 py-1.5 rounded-full backdrop-blur-md shadow-2xs">
-            <span class="text-slate-500 font-medium">{{ isAr ? 'الأساسية:' : 'Base:' }}</span>
-            <span class="font-mono font-bold text-slate-900">{{ baseCurrency.code }} ({{ baseCurrency.symbol }})</span>
+          <!-- Apple Interactive Currency Switcher Pill -->
+          <div class="relative" ref="currencyMenuRef">
+            <button
+              type="button"
+              @click="isCurrencyMenuOpen = !isCurrencyMenuOpen"
+              class="flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200/80 hover:border-slate-300 text-slate-800 px-3 py-1.5 rounded-full text-xs font-semibold shadow-2xs hover:shadow-xs transition-all cursor-pointer active:scale-95 backdrop-blur-md"
+              :title="isAr ? 'تبديل عملة النظام' : 'Switch System Currency'"
+            >
+              <span class="text-sm leading-none">{{ getFlag(currentCurrency.code) }}</span>
+              <span class="font-mono font-bold text-slate-900">{{ currentCurrency.code }}</span>
+              <span class="text-slate-500 font-mono text-[11px]">({{ currentCurrency.symbol }})</span>
+              <ChevronDown class="w-3 h-3 text-slate-400 transition-transform duration-200" :class="{ 'rotate-180': isCurrencyMenuOpen }" />
+            </button>
+
+            <!-- Apple Frosted Glass Dropdown Popover -->
+            <div
+              v-if="isCurrencyMenuOpen"
+              class="absolute end-0 mt-2 w-72 rounded-2xl bg-white/95 backdrop-blur-2xl border border-slate-200/80 shadow-[0_16px_40px_rgba(0,0,0,0.12)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+            >
+              <div class="px-2.5 py-1.5 border-b border-slate-100 flex items-center justify-between text-[11px]">
+                <span class="font-bold text-slate-500 uppercase tracking-wider">{{ isAr ? 'عملة العرض والتشغيل' : 'ACTIVE CURRENCY' }}</span>
+                <span class="font-mono text-[10px] text-slate-400">{{ isAr ? 'الأساسية: ' : 'Base: ' }}{{ baseCurrency.code }}</span>
+              </div>
+
+              <div class="py-1 space-y-0.5">
+                <button
+                  v-for="curr in activeCurrencies"
+                  :key="curr.code"
+                  type="button"
+                  @click="selectCurrency(curr.code)"
+                  class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs transition-all text-start cursor-pointer group"
+                  :class="curr.code === currentCurrency.code ? 'bg-slate-900 text-white font-bold shadow-xs' : 'hover:bg-slate-100/80 text-slate-800'"
+                >
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="text-base leading-none shrink-0">{{ getFlag(curr.code) }}</span>
+                    <div class="min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-mono font-bold">{{ curr.code }}</span>
+                        <span class="text-[11px]" :class="curr.code === currentCurrency.code ? 'text-slate-300' : 'text-slate-500'">({{ curr.symbol }})</span>
+                        <span v-if="curr.is_base_currency" class="px-1.5 py-0.2 text-[9px] rounded-full font-mono uppercase" :class="curr.code === currentCurrency.code ? 'bg-white/20 text-white' : 'bg-blue-50 text-blue-700 border border-blue-200'">
+                          {{ isAr ? 'أساسية' : 'Base' }}
+                        </span>
+                      </div>
+                      <div class="text-[10px] truncate max-w-[120px]" :class="curr.code === currentCurrency.code ? 'text-slate-300' : 'text-slate-400'">
+                        {{ curr.name }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="text-end font-mono text-[10px] shrink-0" :class="curr.code === currentCurrency.code ? 'text-slate-300' : 'text-slate-500'">
+                    <div v-if="curr.code !== baseCurrency.code">
+                      1 {{ curr.code }} = {{ Number(curr.rate_to_base || 1).toFixed(2) }} {{ baseCurrency.symbol }}
+                    </div>
+                    <div v-else>
+                      {{ isAr ? 'الأساس 1:1' : '1.00 Base' }}
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              <div class="pt-1.5 mt-1 border-t border-slate-100 px-1">
+                <Link
+                  :href="route('currencies.index')"
+                  @click="isCurrencyMenuOpen = false"
+                  class="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11px] font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100/60 transition cursor-pointer"
+                >
+                  <Coins class="w-3.5 h-3.5" />
+                  <span>{{ isAr ? 'إدارة العملات وأسعار الصرف' : 'Manage Multi-Currencies' }}</span>
+                </Link>
+              </div>
+            </div>
           </div>
 
           <!-- Live System Clock (Date, Hour, AM/PM) -->

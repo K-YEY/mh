@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Operations;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\CustomsBroker;
 use App\Models\Party;
 use App\Models\PartyRole;
@@ -54,6 +55,8 @@ class CustomsBrokerController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $customsAccount = Account::where('code', '21300')->first();
+
         // 1. Create corresponding Party record for sub-ledger & billing compatibility
         $party = Party::create([
             'code' => $validated['code'],
@@ -64,6 +67,7 @@ class CustomsBrokerController extends Controller
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
+            'account_id' => $customsAccount?->id,
             'is_active' => true,
         ]);
 

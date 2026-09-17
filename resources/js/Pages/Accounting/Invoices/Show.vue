@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { formatDateTime as fmtDateTime } from '@/Utils/date'
 import { 
   Printer, ArrowLeft, ArrowRight, Layers, FilePlus2, 
@@ -10,9 +11,15 @@ import {
 } from 'lucide-vue-next'
 
 const { isAr, locale } = useI18n()
+const { formatMoney, currentCurrency, activeCurrencies } = useCurrency()
 
 const props = defineProps({
   invoice: Object,
+})
+
+const invCurrencySymbol = computed(() => {
+  const c = activeCurrencies.value.find(curr => curr.code === props.invoice?.currency_code)
+  return c?.symbol || props.invoice?.currency_code || '$'
 })
 
 // Control toggles
@@ -393,10 +400,10 @@ const numberToWordsEn = (amount, currency = 'USD') => {
                       {{ Number(item.quantity) }}
                     </td>
                     <td class="py-1.5 px-3 text-center font-mono text-slate-700">
-                      ${{ Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                      {{ invCurrencySymbol }} {{ Number(item.unit_price).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                     </td>
                     <td class="py-1.5 px-3 text-center font-mono font-black text-blue-950">
-                      ${{ Number(item.line_total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                      {{ invCurrencySymbol }} {{ Number(item.line_total).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                     </td>
                   </tr>
 
@@ -441,18 +448,18 @@ const numberToWordsEn = (amount, currency = 'USD') => {
                 <div class="flex justify-between text-slate-600 text-[10px]">
                   <span>{{ isArabicDoc ? 'المجموع الفرعي:' : 'Subtotal:' }}</span>
                   <span class="font-mono font-bold text-slate-900">
-                    ${{ Number(invoice.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                    {{ invCurrencySymbol }} {{ Number(invoice.subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                   </span>
                 </div>
                 <div class="flex justify-between text-slate-600 text-[10px]">
                   <span>{{ isArabicDoc ? 'ضريبة القيمة المضافة (0% تصدير):' : 'VAT (0% Export):' }}</span>
-                  <span class="font-mono font-bold text-slate-900">$0.00</span>
+                  <span class="font-mono font-bold text-slate-900">{{ invCurrencySymbol }} 0.00</span>
                 </div>
                 <div class="border-t border-slate-300 pt-1 flex justify-between items-center text-blue-950">
                   <span class="font-black text-xs">{{ isArabicDoc ? 'الإجمالي الصافي:' : 'Grand Total:' }}</span>
                   <div class="text-right">
                     <span class="font-mono font-black text-base text-blue-900">
-                      ${{ Number(invoice.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+                      {{ invCurrencySymbol }} {{ Number(invoice.total_amount).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
                     </span>
                     <span class="text-[10px] font-bold text-slate-600 ms-1">{{ invoice.currency_code }}</span>
                   </div>

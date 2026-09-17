@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { useI18n } from '@/Composables/useI18n'
+import { useCurrency } from '@/Composables/useCurrency'
 import { Scale, Printer, Calendar, Filter, CheckCircle2, AlertTriangle, ArrowUpDown } from 'lucide-vue-next'
 
 const { isAr } = useI18n()
+const { formatMoney: fmtCurrency, currentCurrency } = useCurrency()
 
 const props = defineProps({
   report: Array,
@@ -32,7 +34,7 @@ const printReport = () => {
 const formatMoney = (val) => {
   const num = parseFloat(val) || 0
   if (Math.abs(num) < 0.005) return '-'
-  return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return fmtCurrency(num)
 }
 
 const getTypeLabel = (type) => {

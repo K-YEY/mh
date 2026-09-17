@@ -106,10 +106,10 @@ const submit = () => {
           <!-- Titles -->
           <div class="text-center space-y-1.5 mb-5">
             <h1 class="text-[22px] font-bold text-slate-900 tracking-tight leading-tight">
-              {{ isAr ? 'تسجيل الدخول بالبريد' : 'Sign in with email' }}
+              {{ isAr ? 'تسجيل الدخول' : 'Sign in' }}
             </h1>
             <p class="text-xs text-slate-400 font-normal leading-relaxed max-w-[280px] mx-auto">
-              {{ isAr ? 'سجّل الدخول لمتابعة الشحنات، الحسابات والبيانات في منصة واحدة.' : 'Make a new doc to bring your words, data, and teams together. For free' }}
+              {{ isAr ? 'سجّل الدخول لمتابعة الشحنات، الحسابات والبيانات في منصة واحدة.' : 'Sign in to manage shipments, accounts, and operations in one place.' }}
             </p>
           </div>
 
@@ -168,60 +168,11 @@ const submit = () => {
               :disabled="form.processing"
               class="w-full h-11 sm:h-12 rounded-2xl bg-gradient-to-b from-[#25262c] to-[#121316] hover:from-[#32343b] hover:to-[#1a1b1f] text-white text-xs sm:text-sm font-semibold tracking-wide shadow-md hover:shadow-lg active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center disabled:opacity-75 disabled:cursor-not-allowed mt-2"
             >
-              <span v-if="!form.processing">{{ isAr ? 'تسجيل الدخول' : 'Get Started' }}</span>
+              <span v-if="!form.processing">{{ isAr ? 'تسجيل الدخول' : 'Sign In' }}</span>
               <div v-else class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             </button>
           </form>
 
-          <!-- Divider: "Or sign in with" -->
-          <div class="relative my-5 flex items-center justify-center">
-            <div class="w-full border-t border-dotted border-slate-300"></div>
-            <span class="absolute bg-white/95 px-2.5 text-[11px] text-slate-400 font-medium">
-              {{ isAr ? 'أو الدخول عبر' : 'Or sign in with' }}
-            </span>
-          </div>
-
-          <!-- Social Buttons (Google, Facebook, Apple) -->
-          <div class="grid grid-cols-3 gap-2.5">
-            <!-- Google -->
-            <button
-              type="button"
-              @click="fillDemo"
-              class="h-10 rounded-xl bg-white hover:bg-slate-50/90 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-xs transition-all flex items-center justify-center cursor-pointer active:scale-95"
-              title="Google"
-            >
-              <svg class="w-4 h-4" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
-                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.94 0 12c0 2.06.45 3.84 1.25 5.42l4.03-3.15z"/>
-                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-              </svg>
-            </button>
-
-            <!-- Facebook -->
-            <button
-              type="button"
-              @click="fillDemo"
-              class="h-10 rounded-xl bg-white hover:bg-slate-50/90 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-xs transition-all flex items-center justify-center cursor-pointer active:scale-95"
-              title="Facebook"
-            >
-              <svg class="w-4 h-4 text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </button>
-
-            <!-- Apple -->
-            <button
-              type="button"
-              @click="fillDemo"
-              class="h-10 rounded-xl bg-white hover:bg-slate-50/90 border border-slate-200/80 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-xs transition-all flex items-center justify-center cursor-pointer active:scale-95"
-              title="Apple"
-            >
-              <svg class="w-4 h-4 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.85-.9.04-2 .6-2.65 1.36-.58.66-1.08 1.73-1.04 2.76 1.01.08 2.06-.52 2.68-1.27z"/>
-              </svg>
-            </button>
-          </div>
 
         </div>
 
