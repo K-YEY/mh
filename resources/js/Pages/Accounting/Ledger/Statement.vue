@@ -377,7 +377,6 @@ const roleName = (role) => {
             </tr>
           </tfoot>
         </table>
-        </table>
       </div>
     </div>
   </div>
